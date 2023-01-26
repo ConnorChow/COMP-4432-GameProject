@@ -13,14 +13,33 @@ public struct WFCTile
         this.sockets = s;
         return this;
     }
+    public Tile GetTile()
+    {
+        return tile;
+    }
+    public int[] GetSockets()
+    {
+        return sockets;
+    }
+    public void SetSockets(int direction, int SocketType)
+    {
+        this.sockets[direction] = SocketType;
+    }
 }
 
 public class SceneSimulator : MonoBehaviour {
     //Socketing info
+    static int Empty = -1;
     static int Grass = 0;
     static int Dirt = 1;
     static int GrassVDirt = 2;
     static int DirtVGrass = 3;
+
+    //directional info
+    static int left = 0;
+    static int right = 2;
+    static int up = 1;
+    static int down = 3;
 
     WFCTile[] tiles = new WFCTile[18];
 
@@ -47,11 +66,77 @@ public class SceneSimulator : MonoBehaviour {
     public Tile DirtGrassDownRight;
 
     [Header("Tile Maps")]
-    public int TerrainSize = 512;
-    public Tilemap GroundTiles;
+    public int TerrainSize = 16;
+    public Tilemap GroundTileMap;
 
-    private void CollapseTerrain(int posx, int posy)
-    {
+    private void CollapseTerrain(int posx, int posy, WFCTile[,] Map2D) {
+        if (Map2D[posx, posy].GetTile() == null && posx < TerrainSize && posy < TerrainSize)
+        {
+            int[] TileOptions = new int[18];
+            int count = 0;
+            //get tiles around inst
+            if (posx > 0)
+            {
+                Map2D[posx, posy].SetSockets(
+                    left,
+                    Map2D[posx - 1, posy].GetSockets()[right]
+                );
+            }
+            if (posx < TerrainSize - 1)
+            {
+                Map2D[posx, posy].SetSockets(
+                    right,
+                    Map2D[posx + 1, posy].GetSockets()[left]
+                );
+            }
+            if (posy < TerrainSize - 1)
+            {
+                Map2D[posx, posy].SetSockets(
+                    up,
+                    Map2D[posx, posy + 1].GetSockets()[down]
+                );
+            }
+            if (posy > 0)
+            {
+                Map2D[posx, posy].SetSockets(
+                    down,
+                    Map2D[posx, posy - 1].GetSockets()[up]
+                );
+            }
+            //find tiletype matching socket
+            for (int type = 0; type < tiles.Length; type++)
+            {
+                if (Map2D[posx, posy].GetSockets()[left] == tiles[type].GetSockets()[left] || Map2D[posx, posy].GetSockets()[left] == Empty)
+                { }
+                else { continue; }
+                if (Map2D[posx, posy].GetSockets()[right] == tiles[type].GetSockets()[right] || Map2D[posx, posy].GetSockets()[right] == Empty)
+                { }
+                else { continue; }
+                if (Map2D[posx, posy].GetSockets()[up] == tiles[type].GetSockets()[up] || Map2D[posx, posy].GetSockets()[up] == Empty)
+                { }
+                else { continue; }
+                if (Map2D[posx, posy].GetSockets()[down] == tiles[type].GetSockets()[down] || Map2D[posx, posy].GetSockets()[down] == Empty)
+                { }
+                else { continue; }
+
+                TileOptions[count] = type;
+                count++;
+            }
+            //set tile and socket
+            int RandomFittingTile = Random.Range(0, count - 1);
+            Map2D[posx, posy] = tiles[TileOptions[RandomFittingTile]];
+
+            GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize/2), posy - (TerrainSize/2), 0), Map2D[posx, posy].GetTile());
+
+            if (posx < TerrainSize - 1)
+                CollapseTerrain(posx + 1, posy, Map2D);
+            if (posx > 0)
+                CollapseTerrain(posx - 1, posy, Map2D);
+            if (posy < TerrainSize - 1)
+                CollapseTerrain(posx, posy + 1, Map2D);
+            if (posy > 0)
+                CollapseTerrain(posx, posy - 1, Map2D);
+        }
 
     }
     private void InitTerrain()
@@ -77,10 +162,15 @@ public class SceneSimulator : MonoBehaviour {
         tiles[16].setParams(DirtGrassRight, new int[4] { Dirt, DirtVGrass, Grass, DirtVGrass });
         tiles[17].setParams(DirtGrassDownRight, new int[4] { Dirt, Dirt, GrassVDirt, DirtVGrass });
 
-        GroundTiles.ResizeBounds();
-
-        int x = Random.Range(0,TerrainSize);
-        int y = Random.Range(0, TerrainSize);
+        WFCTile[,] terrainMap = new WFCTile[TerrainSize, TerrainSize];
+        for (int x = 0; x < TerrainSize; x++) {
+            for (int y = 0; y < TerrainSize; y++) {
+                terrainMap[x, y].setParams(null, new int[4] {Empty, Empty, Empty, Empty });
+            }
+        }
+        int StartingX = Random.Range(0,TerrainSize - 1);
+        int StartingY = Random.Range(0, TerrainSize - 1);
+        CollapseTerrain(StartingX, StartingY, terrainMap);
     }
 
     // Start is called before the first frame update

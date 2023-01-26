@@ -230,7 +230,8 @@ MonoBehaviour:
   DirtGrassUpRight: {fileID: 11400000, guid: a0bcfc6b1e3e3df498c1008fedd58d52, type: 2}
   DirtGrassRight: {fileID: 11400000, guid: aa7a27427fbce3041aefbb56fcbd7cda, type: 2}
   DirtGrassDownRight: {fileID: 11400000, guid: 76bf6240c0b6b754eac628e9626127a8, type: 2}
-  GroundTiles: {fileID: 1659723895}
+  TerrainSize: 16
+  GroundTileMap: {fileID: 1659723895}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,14 +581,14 @@ Tilemap:
   m_Origin: {x: 0, y: 0, z: 0}
   m_Size: {x: 0, y: 0, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
-  m_TileOrientation: 6
+  m_TileOrientation: 0
   m_TileOrientationMatrix:
-    e00: 64
+    e00: 1
     e01: 0
     e02: 0
     e03: 0
     e10: 0
-    e11: 64
+    e11: 1
     e12: 0
     e13: 0
     e20: 0
