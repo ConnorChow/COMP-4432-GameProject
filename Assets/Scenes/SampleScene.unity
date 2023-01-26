@@ -193,7 +193,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 59897776}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.0351348, y: -3.0776238, z: 1.013503}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -212,6 +212,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22b4d8bdcda90e6468f3a0fc7368fea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DirtFull: {fileID: 11400000, guid: 64a5060cba08cd84b8279da4e99c99c5, type: 2}
+  GrassFull: {fileID: 11400000, guid: 67c716cae01e9dd4f960cec723ef2368, type: 2}
+  GrassDirtDown: {fileID: 11400000, guid: d7cc10d419bd94741aa8687ed1d14dd9, type: 2}
+  GrassDirtDownLeft: {fileID: 11400000, guid: 076f276ceea834e45b47f72caa4cf24f, type: 2}
+  GrassDirtLeft: {fileID: 11400000, guid: a6721e7c20299914c9774e7ed23e814d, type: 2}
+  GrassDirtUpLeft: {fileID: 11400000, guid: 77eaeffdb8e7b784aaa0ec41a91bbacb, type: 2}
+  GrassDirtUp: {fileID: 11400000, guid: ce6bc2cbaef32134eb813257265d4a56, type: 2}
+  GrassDirtUpRight: {fileID: 11400000, guid: 1a17045f4c893ad4584374ce01bba1d7, type: 2}
+  GrassDirtRight: {fileID: 11400000, guid: abfbea621be082440928a7239668400c, type: 2}
+  GrassDirtDownRight: {fileID: 11400000, guid: 380ccdfba8710f44ea530fe2202ddcc9, type: 2}
+  DirtGrassDown: {fileID: 11400000, guid: 444c2f9ed1f4ba14c84264d7bba19ef7, type: 2}
+  DirtGrassDownLeft: {fileID: 11400000, guid: dd4bbc82bce2db64688a30aa08e4c94f, type: 2}
+  DirtGrassLeft: {fileID: 11400000, guid: 0c8795144079d9b41a560f4ca6ee3198, type: 2}
+  DirtGrassUpLeft: {fileID: 11400000, guid: a5c69a09c40eb9d499eef0b469a88e3b, type: 2}
+  DirtGrassUp: {fileID: 11400000, guid: d7cc10d419bd94741aa8687ed1d14dd9, type: 2}
+  DirtGrassUpRight: {fileID: 11400000, guid: a0bcfc6b1e3e3df498c1008fedd58d52, type: 2}
+  DirtGrassRight: {fileID: 11400000, guid: aa7a27427fbce3041aefbb56fcbd7cda, type: 2}
+  DirtGrassDownRight: {fileID: 11400000, guid: 76bf6240c0b6b754eac628e9626127a8, type: 2}
+  GroundTiles: {fileID: 1659723895}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,14 +580,14 @@ Tilemap:
   m_Origin: {x: 0, y: 0, z: 0}
   m_Size: {x: 0, y: 0, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
-  m_TileOrientation: 0
+  m_TileOrientation: 6
   m_TileOrientationMatrix:
-    e00: 1
+    e00: 64
     e01: 0
     e02: 0
     e03: 0
     e10: 0
-    e11: 1
+    e11: 64
     e12: 0
     e13: 0
     e20: 0
