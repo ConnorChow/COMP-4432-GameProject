@@ -27,6 +27,10 @@ public struct WFCTile
     }
 }
 
+public struct Navigation {
+    int Traversability;
+}
+
 public class SceneSimulator : MonoBehaviour {
     //Socketing info
     static int Empty = -1;
@@ -40,6 +44,11 @@ public class SceneSimulator : MonoBehaviour {
     static int right = 2;
     static int up = 1;
     static int down = 3;
+
+    //Navigational Info
+    static int passable = 0;
+    static int avoid = 1;
+    static int obstacle = 2;
 
     WFCTile[] tiles = new WFCTile[18];
 
@@ -107,17 +116,16 @@ public class SceneSimulator : MonoBehaviour {
             for (int type = 0; type < tiles.Length; type++)
             {
                 if (Map2D[posx, posy].GetSockets()[left] == tiles[type].GetSockets()[left] || Map2D[posx, posy].GetSockets()[left] == Empty)
-                { }
-                else { continue; }
+                { } else { continue; }
                 if (Map2D[posx, posy].GetSockets()[right] == tiles[type].GetSockets()[right] || Map2D[posx, posy].GetSockets()[right] == Empty)
-                { }
-                else { continue; }
+                { } else { continue; }
                 if (Map2D[posx, posy].GetSockets()[up] == tiles[type].GetSockets()[up] || Map2D[posx, posy].GetSockets()[up] == Empty)
-                { }
-                else { continue; }
+                { } else { continue; }
                 if (Map2D[posx, posy].GetSockets()[down] == tiles[type].GetSockets()[down] || Map2D[posx, posy].GetSockets()[down] == Empty)
-                { }
-                else { continue; }
+                { } else { continue; }
+
+                if (type <= 1 && Random.Range(0, 10) < 2)
+                    continue;
 
                 TileOptions[count] = type;
                 count++;
@@ -156,11 +164,13 @@ public class SceneSimulator : MonoBehaviour {
         tiles[10].setParams(DirtGrassDown, new int[4] { GrassVDirt, Dirt, GrassVDirt, Grass });
         tiles[11].setParams(DirtGrassDownLeft, new int[4] { GrassVDirt, Dirt, Dirt, GrassVDirt });
         tiles[12].setParams(DirtGrassLeft, new int[4] { Grass, GrassVDirt, Dirt, GrassVDirt });
-        tiles[13].setParams(DirtGrassUpLeft, new int[4] { DirtVGrass, DirtVGrass, Dirt, Dirt });
+        tiles[13].setParams(DirtGrassUpLeft, new int[4] { DirtVGrass, GrassVDirt, Dirt, Dirt });
         tiles[14].setParams(DirtGrassUp, new int[4] { DirtVGrass, Grass, DirtVGrass, Dirt });
         tiles[15].setParams(DirtGrassUpRight, new int[4] { Dirt, DirtVGrass, DirtVGrass, Dirt });
         tiles[16].setParams(DirtGrassRight, new int[4] { Dirt, DirtVGrass, Grass, DirtVGrass });
         tiles[17].setParams(DirtGrassDownRight, new int[4] { Dirt, Dirt, GrassVDirt, DirtVGrass });
+
+        Random.InitState((int)Time.time);
 
         WFCTile[,] terrainMap = new WFCTile[TerrainSize, TerrainSize];
         for (int x = 0; x < TerrainSize; x++) {
@@ -170,7 +180,7 @@ public class SceneSimulator : MonoBehaviour {
         }
         int StartingX = Random.Range(0,TerrainSize - 1);
         int StartingY = Random.Range(0, TerrainSize - 1);
-        CollapseTerrain(StartingX, StartingY, terrainMap);
+        CollapseTerrain(0, 0, terrainMap);
     }
 
     // Start is called before the first frame update

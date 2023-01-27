@@ -214,7 +214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DirtFull: {fileID: 11400000, guid: 64a5060cba08cd84b8279da4e99c99c5, type: 2}
   GrassFull: {fileID: 11400000, guid: 67c716cae01e9dd4f960cec723ef2368, type: 2}
-  GrassDirtDown: {fileID: 11400000, guid: d7cc10d419bd94741aa8687ed1d14dd9, type: 2}
+  GrassDirtDown: {fileID: 11400000, guid: a7a0aa9d6dcdc3042af632c155930c6a, type: 2}
   GrassDirtDownLeft: {fileID: 11400000, guid: 076f276ceea834e45b47f72caa4cf24f, type: 2}
   GrassDirtLeft: {fileID: 11400000, guid: a6721e7c20299914c9774e7ed23e814d, type: 2}
   GrassDirtUpLeft: {fileID: 11400000, guid: 77eaeffdb8e7b784aaa0ec41a91bbacb, type: 2}
@@ -230,7 +230,7 @@ MonoBehaviour:
   DirtGrassUpRight: {fileID: 11400000, guid: a0bcfc6b1e3e3df498c1008fedd58d52, type: 2}
   DirtGrassRight: {fileID: 11400000, guid: aa7a27427fbce3041aefbb56fcbd7cda, type: 2}
   DirtGrassDownRight: {fileID: 11400000, guid: 76bf6240c0b6b754eac628e9626127a8, type: 2}
-  TerrainSize: 16
+  TerrainSize: 64
   GroundTileMap: {fileID: 1659723895}
 --- !u!1 &519420028
 GameObject:
@@ -491,7 +491,7 @@ GameObject:
   - component: {fileID: 1659723895}
   - component: {fileID: 1659723894}
   m_Layer: 0
-  m_Name: Tilemap
+  m_Name: GroundTiles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
