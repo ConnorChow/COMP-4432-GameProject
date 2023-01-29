@@ -76,10 +76,12 @@ public class SceneSimulator : MonoBehaviour {
 
     [Header("Tile Maps")]
     public int TerrainSize = 16;
+    WFCTile[,] Map2D;
+    bool[,] Explored;
     public Tilemap GroundTileMap;
 
-    private void CollapseTerrain(int posx, int posy, WFCTile[,] Map2D) {
-        if (Map2D[posx, posy].GetTile() == null && posx < TerrainSize && posy < TerrainSize)
+    private void CollapseTerrain(int posx, int posy) {
+        if (posx < TerrainSize && posy < TerrainSize)
         {
             int[] TileOptions = new int[18];
             int count = 0;
@@ -135,15 +137,25 @@ public class SceneSimulator : MonoBehaviour {
             Map2D[posx, posy] = tiles[TileOptions[RandomFittingTile]];
 
             GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize/2), posy - (TerrainSize/2), 0), Map2D[posx, posy].GetTile());
+            Explored[posx, posy] = true;
 
-            if (posx < TerrainSize - 1)
-                CollapseTerrain(posx + 1, posy, Map2D);
+            /*if (posx < TerrainSize - 1)
+            {
+                CollapseTerrain(posx + 1, posy);
+            }
             if (posx > 0)
-                CollapseTerrain(posx - 1, posy, Map2D);
+            {
+                CollapseTerrain(posx - 1, posy);
+            }
             if (posy < TerrainSize - 1)
-                CollapseTerrain(posx, posy + 1, Map2D);
+            {
+                CollapseTerrain(posx, posy + 1);
+
+            }
             if (posy > 0)
-                CollapseTerrain(posx, posy - 1, Map2D);
+            {
+                CollapseTerrain(posx, posy - 1);
+            }*/
         }
 
     }
@@ -172,15 +184,21 @@ public class SceneSimulator : MonoBehaviour {
 
         Random.InitState((int)Time.time);
 
-        WFCTile[,] terrainMap = new WFCTile[TerrainSize, TerrainSize];
+        Map2D = new WFCTile[TerrainSize, TerrainSize];
+        Explored = new bool[TerrainSize, TerrainSize];
         for (int x = 0; x < TerrainSize; x++) {
             for (int y = 0; y < TerrainSize; y++) {
-                terrainMap[x, y].setParams(null, new int[4] {Empty, Empty, Empty, Empty });
+                Map2D[x, y].setParams(null, new int[4] { Empty, Empty, Empty, Empty });
             }
         }
-        int StartingX = Random.Range(0,TerrainSize - 1);
-        int StartingY = Random.Range(0, TerrainSize - 1);
-        CollapseTerrain(0, 0, terrainMap);
+        for (int x = 0; x < TerrainSize; x++)
+        {
+            for (int y = 0; y < TerrainSize; y++)
+            {
+                CollapseTerrain(x, y);
+            }
+        }
+        //CollapseTerrain(0, 0);
     }
 
     // Start is called before the first frame update
