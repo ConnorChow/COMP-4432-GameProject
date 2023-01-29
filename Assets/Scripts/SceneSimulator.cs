@@ -77,7 +77,6 @@ public class SceneSimulator : MonoBehaviour {
     [Header("Tile Maps")]
     public int TerrainSize = 16;
     WFCTile[,] Map2D;
-    bool[,] Explored;
     public Tilemap GroundTileMap;
 
     private void CollapseTerrain(int posx, int posy) {
@@ -126,7 +125,7 @@ public class SceneSimulator : MonoBehaviour {
                 if (Map2D[posx, posy].GetSockets()[down] == tiles[type].GetSockets()[down] || Map2D[posx, posy].GetSockets()[down] == Empty)
                 { } else { continue; }
 
-                if (type <= 1 && Random.Range(0, 10) < 2)
+                if (type <= 1 && Random.Range(0, 10) < 1)
                     continue;
 
                 TileOptions[count] = type;
@@ -137,7 +136,6 @@ public class SceneSimulator : MonoBehaviour {
             Map2D[posx, posy] = tiles[TileOptions[RandomFittingTile]];
 
             GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize/2), posy - (TerrainSize/2), 0), Map2D[posx, posy].GetTile());
-            Explored[posx, posy] = true;
 
             /*if (posx < TerrainSize - 1)
             {
@@ -185,7 +183,7 @@ public class SceneSimulator : MonoBehaviour {
         Random.InitState((int)Time.time);
 
         Map2D = new WFCTile[TerrainSize, TerrainSize];
-        Explored = new bool[TerrainSize, TerrainSize];
+
         for (int x = 0; x < TerrainSize; x++) {
             for (int y = 0; y < TerrainSize; y++) {
                 Map2D[x, y].setParams(null, new int[4] { Empty, Empty, Empty, Empty });
