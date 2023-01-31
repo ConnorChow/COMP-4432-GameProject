@@ -179,6 +179,7 @@ GameObject:
   m_Component:
   - component: {fileID: 59897777}
   - component: {fileID: 59897778}
+  - component: {fileID: 59897779}
   m_Layer: 0
   m_Name: SceneSimulator
   m_TagString: Untagged
@@ -231,7 +232,49 @@ MonoBehaviour:
   DirtGrassUpRight: {fileID: 11400000, guid: a0bcfc6b1e3e3df498c1008fedd58d52, type: 2}
   DirtGrassRight: {fileID: 11400000, guid: aa7a27427fbce3041aefbb56fcbd7cda, type: 2}
   DirtGrassDownRight: {fileID: 11400000, guid: 76bf6240c0b6b754eac628e9626127a8, type: 2}
+  TerrainSize: 512
   GroundTileMap: {fileID: 1659723895}
+--- !u!114 &59897779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59897776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51354237d34a6574a9fee5aceb2041f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BerryBushPicked1: {fileID: 11400000, guid: 842edab7f0a11a944a60b9bc6e95843a, type: 2}
+  BerryBushPicked2: {fileID: 11400000, guid: 26cb051e418763a45957863dd188da90, type: 2}
+  BerryBushPicked3: {fileID: 11400000, guid: a444b9fb52001994c99b6c5da73737d6, type: 2}
+  BerryBushPicked4: {fileID: 11400000, guid: 028268929430f684e9b07b0d54b97a8c, type: 2}
+  BigBerryBushPickedUpperLeft: {fileID: 11400000, guid: 969a427846b746d4c96cb7e9572529d0, type: 2}
+  BigBerryBushPickedUpperRight: {fileID: 11400000, guid: fcf6ea365b1e6a145b0a9bdd27c05377, type: 2}
+  BigBerryBushPickedLowerRight: {fileID: 11400000, guid: 1eb1f0ccdf827f24aade5d0dbe133ed1, type: 2}
+  BigBerryBushPickedLowerLeft: {fileID: 11400000, guid: a98849ab39d68ba4c933a3aaf7b5516f, type: 2}
+  BerryBush1: {fileID: 11400000, guid: 29531a581abeeb3498a44d81900dac1b, type: 2}
+  BerryBush2: {fileID: 11400000, guid: 50ec943541eea254ba76aa1a44b8d80b, type: 2}
+  BerryBush3: {fileID: 11400000, guid: 7bd865888433ab7488e7973e603a211b, type: 2}
+  BerryBush4: {fileID: 11400000, guid: bf19869771248fd4eab504454e6f7f7b, type: 2}
+  BigBerryBushUpperLeft: {fileID: 11400000, guid: fd1a3ff98279ee04b8091d5067f60ead, type: 2}
+  BigBerryBushUpperRight: {fileID: 11400000, guid: e2f17627041d6ee428271fc91ac60d4b, type: 2}
+  BigBerryBushLowerRight: {fileID: 11400000, guid: a5c70990be70c2a4fa011c3298e24d99, type: 2}
+  BigBerryBushLowerLeft: {fileID: 11400000, guid: a5c70990be70c2a4fa011c3298e24d99, type: 2}
+  Rock1: {fileID: 11400000, guid: 5ec1aa2bf4d3793468e169495a84f09f, type: 2}
+  Rock2: {fileID: 11400000, guid: 2ee25690a3095ae459c5a0c66ae9a37b, type: 2}
+  Rock3: {fileID: 11400000, guid: e20036b6866e2de40bb4812fe95f5731, type: 2}
+  Rock4: {fileID: 11400000, guid: e7e3f2df28d4d994a9ca49d83243f4e6, type: 2}
+  Rock5: {fileID: 11400000, guid: 4668ad296e9ede747a6e6876df0b4a8a, type: 2}
+  Rock6: {fileID: 11400000, guid: c073102123906324a84db66dd9ce86a1, type: 2}
+  Rock7: {fileID: 11400000, guid: 9b19150f77a81594fbd702192ca24f68, type: 2}
+  Rock8: {fileID: 11400000, guid: e8c368f2ae19b6a49ae5bf13e6319431, type: 2}
+  Rock9: {fileID: 11400000, guid: 509ba6a900c19594ea33a0de2998c44e, type: 2}
+  BigRockLeft: {fileID: 11400000, guid: 3d270834cfeeec24ba8eaef4c4c471a2, type: 2}
+  BigRockRight: {fileID: 11400000, guid: a6f1f8693e7186240b090bf96d5cbf37, type: 2}
+  TerrainSize: 1024
+  FoliageTiles: {fileID: 538702242}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
