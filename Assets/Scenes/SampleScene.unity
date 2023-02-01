@@ -273,12 +273,11 @@ MonoBehaviour:
   Rock9: {fileID: 11400000, guid: 509ba6a900c19594ea33a0de2998c44e, type: 2}
   BigRockLeft: {fileID: 11400000, guid: 3d270834cfeeec24ba8eaef4c4c471a2, type: 2}
   BigRockRight: {fileID: 11400000, guid: a6f1f8693e7186240b090bf96d5cbf37, type: 2}
-  BushesQty: 0
-  RocksQty: 0
-  clumpSize: 0
-  foliageSpacing: 0
-  FoliageTiles: {fileID: 538702242}
-  TerrainScript: {fileID: 59897778}
+  ClumpQty: 512
+  clumpSize: 15
+  foliageSpacing: 5
+  FoliageTilemap: {fileID: 538702242}
+  LandScapeSimulator: {fileID: 59897778}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -429,7 +428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ComponentVersion: 1
-  m_AssetsPPU: 32
+  m_AssetsPPU: 64
   m_RefResolutionX: 1920
   m_RefResolutionY: 1080
   m_CropFrame: 0
@@ -452,7 +451,7 @@ GameObject:
   - component: {fileID: 538702242}
   - component: {fileID: 538702241}
   m_Layer: 0
-  m_Name: Foliage
+  m_Name: FoliageTiles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -513,7 +512,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16

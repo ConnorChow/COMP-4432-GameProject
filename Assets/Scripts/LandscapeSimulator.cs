@@ -30,7 +30,7 @@ public struct WFCTile {
 }
 
 public struct Navigation {
-    int Traversability;
+    public int Traversability;
 }
 
 public class LandscapeSimulator : MonoBehaviour {
@@ -79,12 +79,13 @@ public class LandscapeSimulator : MonoBehaviour {
     [Header("Tile Maps")]
     public int TerrainSize = 16;
 
-    WFCTile[] Map2D;
+    public WFCTile[] Map2D;
+    public Navigation[] NavComponent;
     public Tilemap GroundTileMap;
 
     private void CollapseTerrain(int posx, int posy) {
         if (posx < TerrainSize && posy < TerrainSize) {
-            int[] TileOptions = new int[18];
+            int[] TileOptions = new int[22];
             int count = 0;
             //get tiles around inst
             if (posx > 0)
@@ -130,14 +131,18 @@ public class LandscapeSimulator : MonoBehaviour {
                 { }
                 else { continue; }
 
-                if (type <= 1 && UnityEngine.Random.Range(0, 10) < 1)
-                    continue;
+                if (type == 0) {
+                    TileOptions[count] = type;
+                    count++;
+                    TileOptions[count] = type;
+                    count++;
+                }
 
                 TileOptions[count] = type;
                 count++;
             }
             //set tile and socket
-            int RandomFittingTile = UnityEngine.Random.Range(0, count - 1);
+            int RandomFittingTile = UnityEngine.Random.Range(0, count);
             Map2D[posx * TerrainSize + posy] = tiles[TileOptions[RandomFittingTile]];
 
             GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize / 2), posy - (TerrainSize / 2), 0), Map2D[posx * TerrainSize + posy].GetTile());
@@ -169,10 +174,12 @@ public class LandscapeSimulator : MonoBehaviour {
         tiles[17].SetParams(DirtGrassDownRight, new int[4] { Dirt, Dirt, GrassVDirt, DirtVGrass });
 
         Map2D = new WFCTile[TerrainSize * TerrainSize];
+        NavComponent = new Navigation[TerrainSize * TerrainSize];
 
         for (int x = 0; x < TerrainSize; x++) {
             for (int y = 0; y < TerrainSize; y++) {
                 Map2D[x * TerrainSize + y].SetParams(null, new int[4] { Empty, Empty, Empty, Empty });
+                NavComponent[x * TerrainSize + y].Traversability = passable;
             }
         }
         for (int x = 0; x < TerrainSize; x++) {
