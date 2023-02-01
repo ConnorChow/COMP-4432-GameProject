@@ -91,9 +91,17 @@ public class LandscapeSimulator : MonoBehaviour {
     [Header("Tile Maps")]
     public int TerrainSize = 16;
 
+    public WFCTile[] Map2D;
+    public Navigation[] NavComponent;
+    public BurnComponent[] BurnData;
+
+    public Tilemap GroundTileMap;
+    public Tilemap FireGrid;
+
     [Header("Simulation")]
     public static float FireDamagePerSecond = 6.0f;
     public static float CellHealth = 50.0f;
+    public AnimatedTile FireSprite;
 
     BurnComponent FlammableTile = new BurnComponent
     {
@@ -107,11 +115,6 @@ public class LandscapeSimulator : MonoBehaviour {
         Health = 0,
         TimeToLive = 0
     };
-
-public WFCTile[] Map2D;
-    public Navigation[] NavComponent;
-    public BurnComponent[] BurnData;
-    public Tilemap GroundTileMap;
 
     private void CollapseTerrain(int posx, int posy) {
         if (posx < TerrainSize && posy < TerrainSize) {

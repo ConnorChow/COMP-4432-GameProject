@@ -235,6 +235,8 @@ MonoBehaviour:
   DirtGrassDownRight: {fileID: 11400000, guid: 76bf6240c0b6b754eac628e9626127a8, type: 2}
   TerrainSize: 512
   GroundTileMap: {fileID: 1659723895}
+  FireGrid: {fileID: 783363315}
+  FireSprite: {fileID: 0}
 --- !u!114 &59897779
 MonoBehaviour:
   m_ObjectHideFlags: 0
