@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 using Unity.Jobs;
 using Unity.Collections;
 using System;
+using Unity.Mathematics;
 
 public struct WFCTile {
     Tile tile;
@@ -33,6 +34,12 @@ public struct Navigation {
     public int Traversability;
 }
 
+public struct BurnComponent {
+    public int BurnState;
+    public float Health;
+    public int TimeToLive;
+}
+
 public class LandscapeSimulator : MonoBehaviour {
     //Socketing info
     static int Empty = -1;
@@ -51,6 +58,11 @@ public class LandscapeSimulator : MonoBehaviour {
     static int passable = 0;
     static int avoid = 1;
     static int obstacle = 2;
+
+    //Burn States
+    static int Normal = 0;
+    static int Burning = 1;
+    static int Burned = 2;
 
     WFCTile[] tiles = new WFCTile[18];
 
@@ -79,8 +91,26 @@ public class LandscapeSimulator : MonoBehaviour {
     [Header("Tile Maps")]
     public int TerrainSize = 16;
 
-    public WFCTile[] Map2D;
+    [Header("Simulation")]
+    public static float FireDamagePerSecond = 6.0f;
+    public static float CellHealth = 50.0f;
+
+    BurnComponent FlammableTile = new BurnComponent
+    {
+        BurnState = Normal,
+        Health = CellHealth,
+        TimeToLive = 0
+    };
+    BurnComponent SafeTile = new BurnComponent
+    {
+        BurnState = Burned,
+        Health = 0,
+        TimeToLive = 0
+    };
+
+public WFCTile[] Map2D;
     public Navigation[] NavComponent;
+    public BurnComponent[] BurnData;
     public Tilemap GroundTileMap;
 
     private void CollapseTerrain(int posx, int posy) {
@@ -142,8 +172,14 @@ public class LandscapeSimulator : MonoBehaviour {
                 count++;
             }
             //set tile and socket
-            int RandomFittingTile = UnityEngine.Random.Range(0, count);
-            Map2D[posx * TerrainSize + posy] = tiles[TileOptions[RandomFittingTile]];
+            int RandomFittingIndex = UnityEngine.Random.Range(0, count);
+            int SelectedIndex = TileOptions[RandomFittingIndex];
+            Map2D[posx * TerrainSize + posy] = tiles[SelectedIndex];
+            if (SelectedIndex == 0) {
+                BurnData[posx * TerrainSize + posy] = SafeTile;
+            } else {
+                BurnData[posx * TerrainSize + posy] = FlammableTile;
+            }
 
             GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize / 2), posy - (TerrainSize / 2), 0), Map2D[posx * TerrainSize + posy].GetTile());
         }
@@ -175,6 +211,7 @@ public class LandscapeSimulator : MonoBehaviour {
 
         Map2D = new WFCTile[TerrainSize * TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
+        BurnData = new BurnComponent[TerrainSize * TerrainSize];
 
         for (int x = 0; x < TerrainSize; x++) {
             for (int y = 0; y < TerrainSize; y++) {
@@ -192,6 +229,6 @@ public class LandscapeSimulator : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        
+        float Elapsed = Time.deltaTime;
     }
 }
