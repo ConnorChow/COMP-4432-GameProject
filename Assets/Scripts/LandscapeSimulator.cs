@@ -6,26 +6,23 @@ using Unity.Jobs;
 using Unity.Collections;
 using System;
 using Unity.Mathematics;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public struct WFCTile {
     Tile tile;
     int[] sockets;
-    public WFCTile SetParams(Tile t, int[] s)
-    {
+    public WFCTile SetParams(Tile t, int[] s) {
         this.tile = t;
         this.sockets = s;
         return this;
     }
-    public Tile GetTile()
-    {
+    public Tile GetTile() {
         return tile;
     }
-    public int[] GetSockets()
-    {
+    public int[] GetSockets() {
         return sockets;
     }
-    public void SetSockets(int direction, int SocketType)
-    {
+    public void SetSockets(int direction, int SocketType) {
         this.sockets[direction] = SocketType;
     }
 }
@@ -99,22 +96,18 @@ public class LandscapeSimulator : MonoBehaviour {
     public Tilemap FireGrid;
 
     [Header("Simulation")]
-    public static float FireDamagePerSecond = 6.0f;
-    public static float CellHealth = 50.0f;
+    public float FireDamagePerSecond = 6.0f;
+    public float NormalHealth = 50.0f;
+    public float BurningHealth = 90.0f;
+    public int FireLife = 10;
     public AnimatedTile FireSprite;
+    public Tile BurnedTile;
 
-    BurnComponent FlammableTile = new BurnComponent
-    {
-        BurnState = Normal,
-        Health = CellHealth,
-        TimeToLive = 0
-    };
-    BurnComponent SafeTile = new BurnComponent
-    {
-        BurnState = Burned,
-        Health = 0,
-        TimeToLive = 0
-    };
+    BurnComponent FlammableTile;
+    BurnComponent SafeTile;
+
+    public int[] BurnQueue;
+    public int BurningEntities = 0;
 
     private void CollapseTerrain(int posx, int posy) {
         if (posx < TerrainSize && posy < TerrainSize) {
@@ -178,6 +171,7 @@ public class LandscapeSimulator : MonoBehaviour {
             int RandomFittingIndex = UnityEngine.Random.Range(0, count);
             int SelectedIndex = TileOptions[RandomFittingIndex];
             Map2D[posx * TerrainSize + posy] = tiles[SelectedIndex];
+
             if (SelectedIndex == 0) {
                 BurnData[posx * TerrainSize + posy] = SafeTile;
             } else {
@@ -187,6 +181,55 @@ public class LandscapeSimulator : MonoBehaviour {
             GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize / 2), posy - (TerrainSize / 2), 0), Map2D[posx * TerrainSize + posy].GetTile());
         }
 
+    }
+
+    private int GetY(int index)
+    {
+        return index % TerrainSize;
+    }
+    private int GetX(int index)
+    {
+        return (index - GetY(index)) / TerrainSize;
+    }
+
+    private int GetIndex(int x, int y) {
+        return x * TerrainSize + y;
+    }
+    private void BurnCell(int CurrentIndex, int ttl) {
+        if (BurnData[CurrentIndex].BurnState == Normal) {
+
+            BurnData[CurrentIndex] = new BurnComponent {
+                BurnState = Burning,
+                Health = BurningHealth,
+                TimeToLive = ttl
+            };
+            FireGrid.SetTile(new Vector3Int(
+                GetX(CurrentIndex) - (TerrainSize/2),
+                GetY(CurrentIndex) - (TerrainSize/2), 0),
+                FireSprite);
+            BurnQueue[BurningEntities] = CurrentIndex;
+            BurningEntities += 1;
+        }
+    }
+    private void FinishBurnCell(int CurrentIndex) {
+        if (BurnData[CurrentIndex].BurnState == Burning) {
+
+            BurnData[CurrentIndex] = new BurnComponent {
+                BurnState = Burned,
+                Health = 0,
+                TimeToLive = 0
+            };
+            FireGrid.SetTile(new Vector3Int(
+                GetX(CurrentIndex) - (TerrainSize / 2),
+                GetY(CurrentIndex) - (TerrainSize / 2), 0),
+                null);
+            GroundTileMap.SetTile(new Vector3Int(
+                GetX(CurrentIndex) - (TerrainSize / 2),
+                GetY(CurrentIndex) - (TerrainSize / 2), 0),
+                BurnedTile);
+            BurningEntities -= 1;
+            BurnQueue[CurrentIndex] = BurnQueue[BurningEntities];
+        }
     }
 
     // Start is called before the first frame update
@@ -212,9 +255,21 @@ public class LandscapeSimulator : MonoBehaviour {
         tiles[16].SetParams(DirtGrassRight, new int[4] { Dirt, DirtVGrass, Grass, DirtVGrass });
         tiles[17].SetParams(DirtGrassDownRight, new int[4] { Dirt, Dirt, GrassVDirt, DirtVGrass });
 
+        FlammableTile = new BurnComponent {
+            BurnState = Normal,
+            Health = NormalHealth,
+            TimeToLive = 0
+        };
+        SafeTile = new BurnComponent {
+            BurnState = Burned,
+            Health = 0,
+            TimeToLive = 0
+        };
+
         Map2D = new WFCTile[TerrainSize * TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
         BurnData = new BurnComponent[TerrainSize * TerrainSize];
+        BurnQueue = new int[TerrainSize * TerrainSize];
 
         for (int x = 0; x < TerrainSize; x++) {
             for (int y = 0; y < TerrainSize; y++) {
@@ -227,11 +282,69 @@ public class LandscapeSimulator : MonoBehaviour {
                 CollapseTerrain(x, y);
             }
         }
+
+        BurnCell(GetIndex(TerrainSize/2, TerrainSize/2), FireLife);
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         float Elapsed = Time.deltaTime;
+        int index;
+        int LeftNeighbor;
+        int RightNeighbor;
+        int UpNeighbor;
+        int DownNeighbor;
+
+        int[] CellsToRemove = new int[TerrainSize];
+        int PullCount = 0;
+        for (int i = 0; i < BurningEntities; i++) {
+            index = BurnQueue[i];
+            BurnData[index].Health -= FireDamagePerSecond * Elapsed;
+            if (BurnData[index].Health < 0) {
+                CellsToRemove[PullCount] = index;
+                PullCount++;
+            }
+            if (BurnData[index].TimeToLive > 0) {
+                LeftNeighbor = GetIndex(GetX(index) - 1, GetY(index));
+                if (BurnData[LeftNeighbor].BurnState == Normal && GetX(index) > 0)
+                {
+                    BurnData[LeftNeighbor].Health -= FireDamagePerSecond * Elapsed;
+                    if (BurnData[LeftNeighbor].Health < 0) {
+                        BurnCell(LeftNeighbor, BurnData[index].TimeToLive - 1);
+                    }
+                }
+                RightNeighbor = GetIndex(GetX(index) + 1, GetY(index));
+                if (BurnData[RightNeighbor].BurnState == Normal && GetX(index) < TerrainSize - 1)
+                {
+                    BurnData[RightNeighbor].Health -= FireDamagePerSecond * Elapsed;
+                    if (BurnData[RightNeighbor].Health < 0)
+                    {
+                        BurnCell(RightNeighbor, BurnData[index].TimeToLive - 1);
+                    }
+                }
+                UpNeighbor = GetIndex(GetX(index), GetY(index) + 1);
+                if (BurnData[UpNeighbor].BurnState == Normal && GetY(index) < TerrainSize - 1)
+                {
+                    BurnData[UpNeighbor].Health -= FireDamagePerSecond * Elapsed;
+                    if (BurnData[UpNeighbor].Health < 0)
+                    {
+                        BurnCell(UpNeighbor, BurnData[index].TimeToLive - 1);
+                    }
+                }
+                DownNeighbor = GetIndex(GetX(index), GetY(index) - 1);
+                if (BurnData[DownNeighbor].BurnState == Normal && GetY(index) > 0)
+                {
+                    BurnData[DownNeighbor].Health -= FireDamagePerSecond * Elapsed;
+                    if (BurnData[DownNeighbor].Health < 0)
+                    {
+                        BurnCell(DownNeighbor, BurnData[index].TimeToLive - 1);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < PullCount; i++) {
+            FinishBurnCell(CellsToRemove[i]);
+        }
+        PullCount = 0;
     }
 }
