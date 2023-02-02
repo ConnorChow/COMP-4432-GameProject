@@ -239,7 +239,7 @@ MonoBehaviour:
   FireDamagePerSecond: 1
   NormalHealth: 2
   BurningHealth: 3
-  FireLife: 10
+  FireLife: 5
   FireSprite: {fileID: 11400000, guid: 724fe61ae589e2d47b9bde4b36b8e45d, type: 2}
   BurnedTile: {fileID: 11400000, guid: a51afebbaf991274dbe74188699f3aad, type: 2}
   BurnQueue: 

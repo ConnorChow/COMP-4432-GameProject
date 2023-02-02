@@ -197,12 +197,11 @@ public class LandscapeSimulator : MonoBehaviour {
             BurningEntities += 1;
         }
     }
-    private void FinishBurnCell(int CurrentIndex) {
+    private void FinishBurnCell(int CurrentIndex, int QueueIndex) {
         if (BurnData[CurrentIndex].BurnState == Burning) {
             
             BurningEntities -= 1;
-            BurnQueue[CurrentIndex] = BurnQueue[BurningEntities];
-            BurnQueue[BurningEntities] = 0;
+            BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
 
             BurnData[CurrentIndex] = new BurnComponent {
                 BurnState = Burned,
@@ -285,17 +284,19 @@ public class LandscapeSimulator : MonoBehaviour {
         int DownNeighbor;
 
         int[] CellsToRemove = new int[TerrainSize];
+        int[] IndexToRemove = new int[TerrainSize];
         int PullCount = 0;
-
+        //Debug.Log("Queue Size: " + BurningEntities);
         for (int i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
-
+            BurnData[index].Health -= FireDamagePerSecond * Elapsed;
+            Debug.Log(BurnData[index].BurnState);
             if (BurnData[index].Health <= 0.0f) {
                 CellsToRemove[PullCount] = index;
+                IndexToRemove[PullCount] = i;
                 PullCount++;
                 continue;
             } else if (BurnData[index].TimeToLive > 0) {
-                BurnData[index].Health -= FireDamagePerSecond * Elapsed;
                 LeftNeighbor = GetIndex(GetX(index) - 1, GetY(index));
                 if (BurnData[LeftNeighbor].BurnState == Normal && GetX(index) > 0) {
                     BurnData[LeftNeighbor].Health -= FireDamagePerSecond * Elapsed;
@@ -326,9 +327,8 @@ public class LandscapeSimulator : MonoBehaviour {
                 }
             }
         }
-        Debug.Log("Pull Count: " + PullCount);
         for (int i = 0; i < PullCount; i++) {
-            FinishBurnCell(CellsToRemove[i]);
+            FinishBurnCell(CellsToRemove[i], IndexToRemove[i]);
         }
     }
 }
