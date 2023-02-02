@@ -114,29 +114,25 @@ public class LandscapeSimulator : MonoBehaviour {
             int[] TileOptions = new int[22];
             int count = 0;
             //get tiles around inst
-            if (posx > 0)
-            {
+            if (posx > 0) {
                 Map2D[posx * TerrainSize + posy].SetSockets(
                     left,
                     Map2D[(posx - 1) * TerrainSize + posy].GetSockets()[right]
                 );
             }
-            if (posx < TerrainSize - 1)
-            {
+            if (posx < TerrainSize - 1) {
                 Map2D[posx * TerrainSize + posy].SetSockets(
                     right,
                     Map2D[(posx + 1) * TerrainSize + posy].GetSockets()[left]
                 );
             }
-            if (posy < TerrainSize - 1)
-            {
+            if (posy < TerrainSize - 1) {
                 Map2D[posx * TerrainSize + posy].SetSockets(
                     up,
                     Map2D[posx * TerrainSize + posy + 1].GetSockets()[down]
                 );
             }
-            if (posy > 0)
-            {
+            if (posy > 0) {
                 Map2D[posx * TerrainSize + posy].SetSockets(
                     down,
                     Map2D[posx * TerrainSize + posy - 1].GetSockets()[up]
@@ -144,18 +140,10 @@ public class LandscapeSimulator : MonoBehaviour {
             }
             //find tiletype matching socket
             for (int type = 0; type < tiles.Length; type++) {
-                if (Map2D[posx * TerrainSize + posy].GetSockets()[left] == tiles[type].GetSockets()[left] || Map2D[posx * TerrainSize + posy].GetSockets()[left] == Empty)
-                { }
-                else { continue; }
-                if (Map2D[posx * TerrainSize + posy].GetSockets()[right] == tiles[type].GetSockets()[right] || Map2D[posx * TerrainSize + posy].GetSockets()[right] == Empty)
-                { }
-                else { continue; }
-                if (Map2D[posx * TerrainSize + posy].GetSockets()[up] == tiles[type].GetSockets()[up] || Map2D[posx * TerrainSize + posy].GetSockets()[up] == Empty)
-                { }
-                else { continue; }
-                if (Map2D[posx * TerrainSize + posy].GetSockets()[down] == tiles[type].GetSockets()[down] || Map2D[posx * TerrainSize + posy].GetSockets()[down] == Empty)
-                { }
-                else { continue; }
+                if (Map2D[posx * TerrainSize + posy].GetSockets()[left] == tiles[type].GetSockets()[left] || Map2D[posx * TerrainSize + posy].GetSockets()[left] == Empty) { } else { continue; }
+                if (Map2D[posx * TerrainSize + posy].GetSockets()[right] == tiles[type].GetSockets()[right] || Map2D[posx * TerrainSize + posy].GetSockets()[right] == Empty) { } else { continue; }
+                if (Map2D[posx * TerrainSize + posy].GetSockets()[up] == tiles[type].GetSockets()[up] || Map2D[posx * TerrainSize + posy].GetSockets()[up] == Empty) { } else { continue; }
+                if (Map2D[posx * TerrainSize + posy].GetSockets()[down] == tiles[type].GetSockets()[down] || Map2D[posx * TerrainSize + posy].GetSockets()[down] == Empty) { } else { continue; }
 
                 if (type == 0) {
                     TileOptions[count] = type;
@@ -183,12 +171,10 @@ public class LandscapeSimulator : MonoBehaviour {
 
     }
 
-    private int GetY(int index)
-    {
+    private int GetY(int index) {
         return index % TerrainSize;
     }
-    private int GetX(int index)
-    {
+    private int GetX(int index) {
         return (index - GetY(index)) / TerrainSize;
     }
 
@@ -204,8 +190,8 @@ public class LandscapeSimulator : MonoBehaviour {
                 TimeToLive = ttl
             };
             FireGrid.SetTile(new Vector3Int(
-                GetX(CurrentIndex) - (TerrainSize/2),
-                GetY(CurrentIndex) - (TerrainSize/2), 0),
+                GetX(CurrentIndex) - (TerrainSize / 2),
+                GetY(CurrentIndex) - (TerrainSize / 2), 0),
                 FireSprite);
             BurnQueue[BurningEntities] = CurrentIndex;
             BurningEntities += 1;
@@ -213,12 +199,17 @@ public class LandscapeSimulator : MonoBehaviour {
     }
     private void FinishBurnCell(int CurrentIndex) {
         if (BurnData[CurrentIndex].BurnState == Burning) {
+            
+            BurningEntities -= 1;
+            BurnQueue[CurrentIndex] = BurnQueue[BurningEntities];
+            BurnQueue[BurningEntities] = 0;
 
             BurnData[CurrentIndex] = new BurnComponent {
                 BurnState = Burned,
                 Health = 0,
                 TimeToLive = 0
             };
+
             FireGrid.SetTile(new Vector3Int(
                 GetX(CurrentIndex) - (TerrainSize / 2),
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
@@ -227,8 +218,6 @@ public class LandscapeSimulator : MonoBehaviour {
                 GetX(CurrentIndex) - (TerrainSize / 2),
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
                 BurnedTile);
-            BurningEntities -= 1;
-            BurnQueue[CurrentIndex] = BurnQueue[BurningEntities];
         }
     }
 
@@ -283,7 +272,7 @@ public class LandscapeSimulator : MonoBehaviour {
             }
         }
 
-        BurnCell(GetIndex(TerrainSize/2, TerrainSize/2), FireLife);
+        BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
     }
 
     // Update is called once per frame
@@ -297,54 +286,49 @@ public class LandscapeSimulator : MonoBehaviour {
 
         int[] CellsToRemove = new int[TerrainSize];
         int PullCount = 0;
+
         for (int i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
-            BurnData[index].Health -= FireDamagePerSecond * Elapsed;
-            if (BurnData[index].Health < 0) {
+
+            if (BurnData[index].Health <= 0.0f) {
                 CellsToRemove[PullCount] = index;
                 PullCount++;
-            }
-            if (BurnData[index].TimeToLive > 0) {
+                continue;
+            } else if (BurnData[index].TimeToLive > 0) {
+                BurnData[index].Health -= FireDamagePerSecond * Elapsed;
                 LeftNeighbor = GetIndex(GetX(index) - 1, GetY(index));
-                if (BurnData[LeftNeighbor].BurnState == Normal && GetX(index) > 0)
-                {
+                if (BurnData[LeftNeighbor].BurnState == Normal && GetX(index) > 0) {
                     BurnData[LeftNeighbor].Health -= FireDamagePerSecond * Elapsed;
                     if (BurnData[LeftNeighbor].Health < 0) {
                         BurnCell(LeftNeighbor, BurnData[index].TimeToLive - 1);
                     }
                 }
                 RightNeighbor = GetIndex(GetX(index) + 1, GetY(index));
-                if (BurnData[RightNeighbor].BurnState == Normal && GetX(index) < TerrainSize - 1)
-                {
+                if (BurnData[RightNeighbor].BurnState == Normal && GetX(index) < TerrainSize - 1) {
                     BurnData[RightNeighbor].Health -= FireDamagePerSecond * Elapsed;
-                    if (BurnData[RightNeighbor].Health < 0)
-                    {
+                    if (BurnData[RightNeighbor].Health < 0) {
                         BurnCell(RightNeighbor, BurnData[index].TimeToLive - 1);
                     }
                 }
                 UpNeighbor = GetIndex(GetX(index), GetY(index) + 1);
-                if (BurnData[UpNeighbor].BurnState == Normal && GetY(index) < TerrainSize - 1)
-                {
+                if (BurnData[UpNeighbor].BurnState == Normal && GetY(index) < TerrainSize - 1) {
                     BurnData[UpNeighbor].Health -= FireDamagePerSecond * Elapsed;
-                    if (BurnData[UpNeighbor].Health < 0)
-                    {
+                    if (BurnData[UpNeighbor].Health < 0) {
                         BurnCell(UpNeighbor, BurnData[index].TimeToLive - 1);
                     }
                 }
                 DownNeighbor = GetIndex(GetX(index), GetY(index) - 1);
-                if (BurnData[DownNeighbor].BurnState == Normal && GetY(index) > 0)
-                {
+                if (BurnData[DownNeighbor].BurnState == Normal && GetY(index) > 0) {
                     BurnData[DownNeighbor].Health -= FireDamagePerSecond * Elapsed;
-                    if (BurnData[DownNeighbor].Health < 0)
-                    {
+                    if (BurnData[DownNeighbor].Health < 0) {
                         BurnCell(DownNeighbor, BurnData[index].TimeToLive - 1);
                     }
                 }
             }
         }
+        Debug.Log("Pull Count: " + PullCount);
         for (int i = 0; i < PullCount; i++) {
             FinishBurnCell(CellsToRemove[i]);
         }
-        PullCount = 0;
     }
 }

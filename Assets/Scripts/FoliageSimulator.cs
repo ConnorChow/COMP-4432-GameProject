@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public struct Harvestable
-{
+public struct Harvestable {
     public int resourceType;
     public int resourceCount;
     public int x;
@@ -77,18 +76,16 @@ public class FoliageSimulator : MonoBehaviour {
         int IndexY = y + LandScapeSimulator.TerrainSize / 2;
         int CurrentIndex = StartIndex + TimeToLive - 1;
         if (TimeToLive > 0 && LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability == passable) {
-            Harvestable h = new Harvestable
-            {
-                resourceType= type,
-                resourceCount= Random.Range(2,5),
-                x= x,
-                y= y
+            Harvestable h = new Harvestable {
+                resourceType = type,
+                resourceCount = Random.Range(2, 5),
+                x = x,
+                y = y
             };
 
             harvestables[CurrentIndex] = h;
 
-            switch (type)
-            {
+            switch (type) {
                 case rock:
                     FoliageTilemap.SetTile(new Vector3Int(x, y, 0), Rocks[Random.Range(0, 9)]);
                     LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability = obstacle;
@@ -100,7 +97,7 @@ public class FoliageSimulator : MonoBehaviour {
             }
             int NextX;
             int NextY;
-            if (Random.Range(0,2) > 0) {
+            if (Random.Range(0, 2) > 0) {
                 NextX = x + Random.Range(1, foliageSpacing);
             } else {
                 NextX = x - Random.Range(1, foliageSpacing);
@@ -177,12 +174,11 @@ public class FoliageSimulator : MonoBehaviour {
         ClumpCount *= ClumpCount;
         harvestables = new Harvestable[ClumpCount * clumpSize];
         int flipFlop = 0;
-        int ClumpSpacing = LandScapeSimulator.TerrainSize/BoundsXY;
+        int ClumpSpacing = LandScapeSimulator.TerrainSize / BoundsXY;
         for (int x = 0; x < BoundsXY; x++) {
             for (int y = 0; y < BoundsXY; y++) {
-                GenerateClump((x * ClumpSpacing) - (LandScapeSimulator.TerrainSize/2), (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2), clumpSize, (x * BoundsXY + y) * clumpSize, flipFlop);
-                if (Random.Range(0, 2) > 0)
-                {
+                GenerateClump((x * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2), (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2), clumpSize, (x * BoundsXY + y) * clumpSize, flipFlop);
+                if (Random.Range(0, 2) > 0) {
                     if (flipFlop != rock) flipFlop = rock;
                     else flipFlop = berries;
                 }
@@ -192,6 +188,6 @@ public class FoliageSimulator : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        
+
     }
 }
