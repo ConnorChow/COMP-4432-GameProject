@@ -183,7 +183,6 @@ public class LandscapeSimulator : MonoBehaviour {
     }
     private void BurnCell(int CurrentIndex, int ttl) {
         if (BurnData[CurrentIndex].BurnState == Normal) {
-
             BurnData[CurrentIndex] = new BurnComponent {
                 BurnState = Burning,
                 Health = BurningHealth,
@@ -285,12 +284,17 @@ public class LandscapeSimulator : MonoBehaviour {
 
         int[] CellsToRemove = new int[TerrainSize];
         int[] IndexToRemove = new int[TerrainSize];
+
+        int[] CellsToAdd = new int[TerrainSize];
+        int[] NewTTL = new int[TerrainSize];
+
         int PullCount = 0;
-        //Debug.Log("Queue Size: " + BurningEntities);
+        int PushCount = 0;
+        Debug.Log("Queue Size: " + BurningEntities);
         for (int i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
-            Debug.Log(BurnData[index].BurnState);
+            //Debug.Log(i);
             if (BurnData[index].Health <= 0.0f) {
                 CellsToRemove[PullCount] = index;
                 IndexToRemove[PullCount] = i;
@@ -301,33 +305,46 @@ public class LandscapeSimulator : MonoBehaviour {
                 if (BurnData[LeftNeighbor].BurnState == Normal && GetX(index) > 0) {
                     BurnData[LeftNeighbor].Health -= FireDamagePerSecond * Elapsed;
                     if (BurnData[LeftNeighbor].Health < 0) {
-                        BurnCell(LeftNeighbor, BurnData[index].TimeToLive - 1);
+                        CellsToAdd[PushCount] = LeftNeighbor;
+                        NewTTL[PushCount] = BurnData[index].TimeToLive - 1;
+                        PushCount++;
                     }
                 }
                 RightNeighbor = GetIndex(GetX(index) + 1, GetY(index));
                 if (BurnData[RightNeighbor].BurnState == Normal && GetX(index) < TerrainSize - 1) {
                     BurnData[RightNeighbor].Health -= FireDamagePerSecond * Elapsed;
                     if (BurnData[RightNeighbor].Health < 0) {
-                        BurnCell(RightNeighbor, BurnData[index].TimeToLive - 1);
+                        CellsToAdd[PushCount] = RightNeighbor;
+                        NewTTL[PushCount] = BurnData[index].TimeToLive - 1;
+                        PushCount++;
                     }
                 }
                 UpNeighbor = GetIndex(GetX(index), GetY(index) + 1);
                 if (BurnData[UpNeighbor].BurnState == Normal && GetY(index) < TerrainSize - 1) {
                     BurnData[UpNeighbor].Health -= FireDamagePerSecond * Elapsed;
                     if (BurnData[UpNeighbor].Health < 0) {
-                        BurnCell(UpNeighbor, BurnData[index].TimeToLive - 1);
+                        CellsToAdd[PushCount] = UpNeighbor;
+                        NewTTL[PushCount] = BurnData[index].TimeToLive - 1;
+                        PushCount++;
                     }
                 }
                 DownNeighbor = GetIndex(GetX(index), GetY(index) - 1);
                 if (BurnData[DownNeighbor].BurnState == Normal && GetY(index) > 0) {
                     BurnData[DownNeighbor].Health -= FireDamagePerSecond * Elapsed;
                     if (BurnData[DownNeighbor].Health < 0) {
-                        BurnCell(DownNeighbor, BurnData[index].TimeToLive - 1);
+                        CellsToAdd[PushCount] = DownNeighbor;
+                        NewTTL[PushCount] = BurnData[index].TimeToLive - 1;
+                        PushCount++;
                     }
                 }
             }
         }
+        for (int i = 0; i < PushCount; i++) {
+            BurnCell(CellsToAdd[i], NewTTL[i]);
+        }
+        //Debug.Log(PullCount);
         for (int i = 0; i < PullCount; i++) {
+            //Debug.Log(IndexToRemove[i]);
             FinishBurnCell(CellsToRemove[i], IndexToRemove[i]);
         }
     }
