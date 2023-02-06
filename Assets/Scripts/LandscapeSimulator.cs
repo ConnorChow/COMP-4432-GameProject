@@ -275,12 +275,13 @@ public class LandscapeSimulator : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        float Elapsed = Time.deltaTime;
         int index;
         int LeftNeighbor;
         int RightNeighbor;
         int UpNeighbor;
         int DownNeighbor;
+
+        float Elapsed = Time.deltaTime;
 
         int[] CellsToRemove = new int[TerrainSize];
         int[] IndexToRemove = new int[TerrainSize];
@@ -290,11 +291,11 @@ public class LandscapeSimulator : MonoBehaviour {
 
         int PullCount = 0;
         int PushCount = 0;
-        Debug.Log("Queue Size: " + BurningEntities);
+
         for (int i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
-            //Debug.Log(i);
+
             if (BurnData[index].Health <= 0.0f) {
                 CellsToRemove[PullCount] = index;
                 IndexToRemove[PullCount] = i;
@@ -338,13 +339,16 @@ public class LandscapeSimulator : MonoBehaviour {
                     }
                 }
             }
+            //This else if statement decrements the health of surrounding burning cells
+            //until adding them to the burnqueue at Health <= 0
         }
+        //these cells get added to the queue after the for loop
         for (int i = 0; i < PushCount; i++) {
             BurnCell(CellsToAdd[i], NewTTL[i]);
         }
-        //Debug.Log(PullCount);
+        //these cells have finished burning and get pulled
+        //from the array after iterating on all burning cells
         for (int i = 0; i < PullCount; i++) {
-            //Debug.Log(IndexToRemove[i]);
             FinishBurnCell(CellsToRemove[i], IndexToRemove[i]);
         }
     }

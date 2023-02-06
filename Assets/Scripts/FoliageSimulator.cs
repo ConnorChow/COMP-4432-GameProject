@@ -177,7 +177,10 @@ public class FoliageSimulator : MonoBehaviour {
         int ClumpSpacing = LandScapeSimulator.TerrainSize / BoundsXY;
         for (int x = 0; x < BoundsXY; x++) {
             for (int y = 0; y < BoundsXY; y++) {
-                GenerateClump((x * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2), (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2), clumpSize, (x * BoundsXY + y) * clumpSize, flipFlop);
+                GenerateClump(
+                    (x * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
+                    (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
+                    clumpSize, (x * BoundsXY + y) * clumpSize, flipFlop);
                 if (Random.Range(0, 2) > 0) {
                     if (flipFlop != rock) flipFlop = rock;
                     else flipFlop = berries;
