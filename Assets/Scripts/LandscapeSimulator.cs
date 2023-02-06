@@ -154,6 +154,8 @@ public class LandscapeSimulator : MonoBehaviour {
                     count++;
                     TileOptions[count] = type;
                     count++;
+                    TileOptions[count] = type;
+                    count++;
                 }
 
                 TileOptions[count] = type;
@@ -220,7 +222,7 @@ public class LandscapeSimulator : MonoBehaviour {
             GroundTileMap.SetTile(new Vector3Int(
                 GetX(CurrentIndex) - (TerrainSize / 2),
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
-                BurnedTile);
+                DirtFull);
             
             BurningEntities -= 1;
             BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
