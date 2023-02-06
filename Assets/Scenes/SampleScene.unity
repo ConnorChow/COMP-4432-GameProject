@@ -243,9 +243,9 @@ MonoBehaviour:
   FlammableVariance:
     fakeValue: 0.1
   BurningHealth:
-    fakeValue: 2.25
+    fakeValue: 3
   FireLife:
-    fakeValue: 24
+    fakeValue: 64
   FireSprite: {fileID: 11400000, guid: 724fe61ae589e2d47b9bde4b36b8e45d, type: 2}
   BurnedTile: {fileID: 11400000, guid: a51afebbaf991274dbe74188699f3aad, type: 2}
   BurnQueue: 
@@ -364,10 +364,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 519420032}
+  m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
@@ -505,8 +504,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 450110241}
-  m_RootOrder: -1
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &519420033
 MonoBehaviour:
