@@ -98,6 +98,7 @@ public class LandscapeSimulator : MonoBehaviour {
     [Header("Simulation")]
     public float FireDamagePerSecond = 6.0f;
     public float NormalHealth = 50.0f;
+    public float FlammableVariance = 0.1f;
     public float BurningHealth = 90.0f;
     public int FireLife = 10;
     public AnimatedTile FireSprite;
@@ -164,7 +165,7 @@ public class LandscapeSimulator : MonoBehaviour {
                 BurnData[posx * TerrainSize + posy] = SafeTile;
             } else {
                 BurnData[posx * TerrainSize + posy] = FlammableTile;
-                BurnData[posx * TerrainSize + posy].Health += UnityEngine.Random.Range(-(NormalHealth * 0.25f), NormalHealth * 0.25f);
+                BurnData[posx * TerrainSize + posy].Health += UnityEngine.Random.Range(-FlammableVariance, FlammableVariance);
             }
 
             GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize / 2), posy - (TerrainSize / 2), 0), Map2D[posx * TerrainSize + posy].GetTile());
@@ -221,6 +222,9 @@ public class LandscapeSimulator : MonoBehaviour {
             BurningEntities -= 1;
             BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
         }
+    }
+    public void NeutralizeTile(int index) {
+        BurnData[index] = SafeTile;
     }
 
     // Start is called before the first frame update
