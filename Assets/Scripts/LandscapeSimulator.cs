@@ -203,8 +203,6 @@ public class LandscapeSimulator : MonoBehaviour {
         if (BurnData[BurnQueue[QueueIndex]].BurnState == Burning) {
             int CurrentIndex = BurnQueue[QueueIndex];
 
-            //Debug.Log("Removing " + CurrentIndex);
-
             BurnData[CurrentIndex] = new BurnComponent {
                 BurnState = Burned,
                 Health = 0,
@@ -222,8 +220,6 @@ public class LandscapeSimulator : MonoBehaviour {
             
             BurningEntities -= 1;
             BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
-
-            //Debug.Log("Queue Size: " + BurningEntities);
         }
     }
 
@@ -304,7 +300,7 @@ public class LandscapeSimulator : MonoBehaviour {
         for (int i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
-            Debug.Log(index + " Burning State: " + BurnData[index].BurnState);
+
             if (BurnData[index].Health <= 0.0f) {
                 IndexToRemove = i;
                 PullCount++;
