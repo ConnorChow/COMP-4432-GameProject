@@ -182,25 +182,27 @@ public class LandscapeSimulator : MonoBehaviour {
         return x * TerrainSize + y;
     }
     private void BurnCell(int CurrentIndex, int ttl) {
-        if (BurnData[CurrentIndex].BurnState == Normal) {
+        if (BurnData[CurrentIndex].BurnState == Normal && BurningEntities < TerrainSize) {
             BurnData[CurrentIndex] = new BurnComponent {
                 BurnState = Burning,
                 Health = BurningHealth,
                 TimeToLive = ttl
             };
+
             FireGrid.SetTile(new Vector3Int(
                 GetX(CurrentIndex) - (TerrainSize / 2),
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
                 FireSprite);
+
             BurnQueue[BurningEntities] = CurrentIndex;
             BurningEntities += 1;
         }
     }
-    private void FinishBurnCell(int CurrentIndex, int QueueIndex) {
-        if (BurnData[CurrentIndex].BurnState == Burning) {
-            
-            BurningEntities -= 1;
-            BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
+    private void FinishBurnCell(int QueueIndex) {
+        if (BurnData[BurnQueue[QueueIndex]].BurnState == Burning) {
+            int CurrentIndex = BurnQueue[QueueIndex];
+
+            //Debug.Log("Removing " + CurrentIndex);
 
             BurnData[CurrentIndex] = new BurnComponent {
                 BurnState = Burned,
@@ -216,6 +218,11 @@ public class LandscapeSimulator : MonoBehaviour {
                 GetX(CurrentIndex) - (TerrainSize / 2),
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
                 BurnedTile);
+            
+            BurningEntities -= 1;
+            BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
+
+            //Debug.Log("Queue Size: " + BurningEntities);
         }
     }
 
@@ -256,7 +263,7 @@ public class LandscapeSimulator : MonoBehaviour {
         Map2D = new WFCTile[TerrainSize * TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
         BurnData = new BurnComponent[TerrainSize * TerrainSize];
-        BurnQueue = new int[TerrainSize * TerrainSize];
+        BurnQueue = new int[TerrainSize];
 
         for (int x = 0; x < TerrainSize; x++) {
             for (int y = 0; y < TerrainSize; y++) {
@@ -282,12 +289,13 @@ public class LandscapeSimulator : MonoBehaviour {
         int DownNeighbor;
 
         float Elapsed = Time.deltaTime;
-
-        int[] CellsToRemove = new int[TerrainSize];
-        int[] IndexToRemove = new int[TerrainSize];
+        int IndexToRemove = 0;// = new int[TerrainSize];
 
         int[] CellsToAdd = new int[TerrainSize];
         int[] NewTTL = new int[TerrainSize];
+
+        int CellAdd = 0;
+        int ttl = 0;
 
         int PullCount = 0;
         int PushCount = 0;
@@ -295,10 +303,9 @@ public class LandscapeSimulator : MonoBehaviour {
         for (int i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
-
+            Debug.Log(index + " Burning State: " + BurnData[index].BurnState);
             if (BurnData[index].Health <= 0.0f) {
-                CellsToRemove[PullCount] = index;
-                IndexToRemove[PullCount] = i;
+                IndexToRemove = i;
                 PullCount++;
                 continue;
             } else if (BurnData[index].TimeToLive > 0) {
@@ -308,6 +315,8 @@ public class LandscapeSimulator : MonoBehaviour {
                     if (BurnData[LeftNeighbor].Health < 0) {
                         CellsToAdd[PushCount] = LeftNeighbor;
                         NewTTL[PushCount] = BurnData[index].TimeToLive - 1;
+                        CellAdd= LeftNeighbor;
+                        ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
                     }
                 }
@@ -317,6 +326,8 @@ public class LandscapeSimulator : MonoBehaviour {
                     if (BurnData[RightNeighbor].Health < 0) {
                         CellsToAdd[PushCount] = RightNeighbor;
                         NewTTL[PushCount] = BurnData[index].TimeToLive - 1;
+                        CellAdd = RightNeighbor;
+                        ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
                     }
                 }
@@ -326,6 +337,8 @@ public class LandscapeSimulator : MonoBehaviour {
                     if (BurnData[UpNeighbor].Health < 0) {
                         CellsToAdd[PushCount] = UpNeighbor;
                         NewTTL[PushCount] = BurnData[index].TimeToLive - 1;
+                        CellAdd = UpNeighbor;
+                        ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
                     }
                 }
@@ -335,6 +348,8 @@ public class LandscapeSimulator : MonoBehaviour {
                     if (BurnData[DownNeighbor].Health < 0) {
                         CellsToAdd[PushCount] = DownNeighbor;
                         NewTTL[PushCount] = BurnData[index].TimeToLive - 1;
+                        CellAdd = DownNeighbor;
+                        ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
                     }
                 }
@@ -343,13 +358,21 @@ public class LandscapeSimulator : MonoBehaviour {
             //until adding them to the burnqueue at Health <= 0
         }
         //these cells get added to the queue after the for loop
-        for (int i = 0; i < PushCount; i++) {
+        /*for (int i = 0; i < PushCount; i++) {
             BurnCell(CellsToAdd[i], NewTTL[i]);
         }
         //these cells have finished burning and get pulled
         //from the array after iterating on all burning cells
+        /*int decrement = 0;
         for (int i = 0; i < PullCount; i++) {
-            FinishBurnCell(CellsToRemove[i], IndexToRemove[i]);
+            FinishBurnCell(IndexToRemove[i] - decrement);
+            decrement++;
+        }*/
+        if (PushCount > 0) {
+            BurnCell(CellAdd, ttl);
+        }
+        if (PullCount > 0) {
+            FinishBurnCell(IndexToRemove);
         }
     }
 }

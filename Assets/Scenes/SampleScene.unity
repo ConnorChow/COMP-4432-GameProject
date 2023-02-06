@@ -237,9 +237,9 @@ MonoBehaviour:
   GroundTileMap: {fileID: 1659723895}
   FireGrid: {fileID: 783363315}
   FireDamagePerSecond: 1
-  NormalHealth: 4
-  BurningHealth: 5
-  FireLife: 5
+  NormalHealth: 3
+  BurningHealth: 3.25
+  FireLife: 6
   FireSprite: {fileID: 11400000, guid: 724fe61ae589e2d47b9bde4b36b8e45d, type: 2}
   BurnedTile: {fileID: 11400000, guid: a51afebbaf991274dbe74188699f3aad, type: 2}
   BurnQueue: 
@@ -396,7 +396,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 8.4375
+  orthographic size: 8.3125
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -409,7 +409,7 @@ Camera:
   m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 0
+  m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &519420032
@@ -440,7 +440,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ComponentVersion: 1
-  m_AssetsPPU: 64
+  m_AssetsPPU: 32
   m_RefResolutionX: 1920
   m_RefResolutionY: 1080
   m_CropFrame: 0
