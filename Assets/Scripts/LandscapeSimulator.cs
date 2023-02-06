@@ -164,6 +164,7 @@ public class LandscapeSimulator : MonoBehaviour {
                 BurnData[posx * TerrainSize + posy] = SafeTile;
             } else {
                 BurnData[posx * TerrainSize + posy] = FlammableTile;
+                BurnData[posx * TerrainSize + posy].Health += UnityEngine.Random.Range(-(NormalHealth * 0.25f), NormalHealth * 0.25f);
             }
 
             GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize / 2), posy - (TerrainSize / 2), 0), Map2D[posx * TerrainSize + posy].GetTile());
