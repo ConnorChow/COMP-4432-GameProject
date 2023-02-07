@@ -13,23 +13,19 @@ public class PlayerCharacter : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        StartCoroutine(GetText());
+        StartCoroutine(GetAssetBundle());
         rb = GetComponent<Rigidbody2D>();
     }
 
-    IEnumerator GetText() {
-        UnityWebRequest www = UnityWebRequest.Get("http://www.my-server.com");
+    IEnumerator GetAssetBundle() {
+        UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle("http://www.my-server.com");
         yield return www.Send();
  
         if(www.isNetworkError) {
             Debug.Log(www.error);
         }
         else {
-            // Show results as text
-            Debug.Log(www.downloadHandler.text);
- 
-            // Or retrieve results as binary data
-            byte[] results = www.downloadHandler.data;
+            AssetBundle bundle = ((DownloadHandlerAssetBundle)www.downloadHandler).assetBundle;
         }
     }
 
