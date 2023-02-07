@@ -19,6 +19,7 @@ public class PlayerCharacter : MonoBehaviour {
 
     IEnumerator GetAssetBundle() {
         UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle("http://www.my-server.com");
+        www.downloadHandler = new DownloadHandlerBuffer();
         yield return www.Send();
  
         if(www.isNetworkError) {
