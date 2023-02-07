@@ -1,15 +1,31 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class PlayerCharacter : MonoBehaviour {
+public class Player : NetworkBehaviour {
 
     public float PlayerSpeed = 2.5f;
 
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
 
-    public Camera playerCam;
+    //public Camera playerCam;
+
+
+    void HandleMovement()
+    {
+        // check if not local player
+        if (!isLocalPlayer) { return; }
+
+        // handle player movement
+        float MoveX = Input.GetAxisRaw("Horizontal");
+        float MoveY = Input.GetAxisRaw("Vertical");
+
+        rb.velocity = new Vector2(MoveX, MoveY) * PlayerSpeed;
+
+        //playerCam.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
+    }
 
     // Start is called before the first frame update
     void Start() {
@@ -32,11 +48,6 @@ public class PlayerCharacter : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        float MoveX = Input.GetAxisRaw("Horizontal");
-        float MoveY = Input.GetAxisRaw("Vertical");
-
-        rb.velocity = new Vector2(MoveX, MoveY) * PlayerSpeed;
-
-        playerCam.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
+        HandleMovement();
     }
 }
