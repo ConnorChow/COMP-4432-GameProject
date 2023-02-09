@@ -12,6 +12,12 @@ public struct BushBerriesComponent : ECS_Component {
     public ProtectedInt32 Countdown;
     public Vector2Int Tile;
 }
+
+public struct BushTilingComponent : ECS_Component {
+    public ProtectedInt32 Entity;
+    public Vector2Int Tile;
+}
+
 public class BushEntityManagement : ECS_EntityComponentManagement {
     private FoliageSimulator FoliageSystem;
     public BushEntityManagement(int MaxEntities, FoliageSimulator CFS) : base(MaxEntities) {
@@ -22,15 +28,29 @@ public class BushEntityManagement : ECS_EntityComponentManagement {
         if (ActiveEntities <= MaxEntities) {
             int ComponentIndex = indexQueue[entityQueue[ActiveEntities - 1]];
             FoliageSystem.BushBerriesData[ComponentIndex] = NewBerriesData;
+            FoliageSystem.BushTilingData.Add(new BushTilingComponent {
+                Entity = ComponentIndex,
+                Tile = NewBerriesData.Tile
+            });
         }
     }
     new public void RemoveEntity(int entity) {
         int Passable = 0;
         if (ActiveEntities > 0) {
             int RemovedIndex = indexQueue[entity];
-            FoliageSystem.FoliageTilemap.SetTile(new Vector3Int(FoliageSystem.BushBerriesData[RemovedIndex].Tile.x, FoliageSystem.BushBerriesData[RemovedIndex].Tile.y, 0), null);
+
+            FoliageSystem.FoliageTilemap.SetTile(
+                new Vector3Int(FoliageSystem.BushBerriesData[RemovedIndex].Tile.x - (FoliageSystem.LandScapeSimulator.TerrainSize / 2),
+                FoliageSystem.BushBerriesData[RemovedIndex].Tile.y - (FoliageSystem.LandScapeSimulator.TerrainSize/2),
+                0), null);
+
             int index = FoliageSystem.BushBerriesData[RemovedIndex].Tile.x * FoliageSystem.LandScapeSimulator.TerrainSize + FoliageSystem.BushBerriesData[RemovedIndex].Tile.y;
             FoliageSystem.LandScapeSimulator.NavComponent[index].Traversability = Passable;
+
+            FoliageSystem.BushTilingData.Remove(new BushTilingComponent {
+                Entity = RemovedIndex,
+                Tile = FoliageSystem.BushBerriesData[RemovedIndex].Tile
+            }); ;
 
             FoliageSystem.BushBerriesData[RemovedIndex] = FoliageSystem.BushBerriesData[ActiveEntities - 1];
         }
@@ -96,6 +116,7 @@ public class FoliageSimulator : MonoBehaviour {
 
     public ProtectedInt32 MaxBushInstances = 2048;
     public BushBerriesComponent[] BushBerriesData;
+    public HashSet<BushTilingComponent> BushTilingData = new HashSet<BushTilingComponent>();
     public BushEntityManagement FoliageData;
 
     [Header("Referenced Scripts")]

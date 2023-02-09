@@ -113,6 +113,8 @@ public class LandscapeSimulator : MonoBehaviour {
     public ProtectedInt32[] BurnQueue;
     public ProtectedInt32 BurningEntities = 0;
 
+    public FoliageSimulator FoliageSystem;
+
     private void CollapseTerrain(int posx, int posy) {
         if (posx < TerrainSize && posy < TerrainSize) {
             int[] TileOptions = new int[22];
@@ -224,6 +226,15 @@ public class LandscapeSimulator : MonoBehaviour {
                 GetX(CurrentIndex) - (TerrainSize / 2),
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
                 DirtFull);
+
+            BushTilingComponent BushDetector;
+            
+            if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(CurrentIndex), GetY(CurrentIndex)) }, out BushDetector)) {
+                Debug.Log("Removing Bush: " + BushDetector.Entity);
+                FoliageSystem.FoliageData.RemoveEntity(BushDetector.Entity);
+            } else {
+                Debug.Log("NOT Removing Bush: " + BushDetector.Entity);
+            }
             
             BurningEntities -= 1;
             BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
@@ -278,6 +289,7 @@ public class LandscapeSimulator : MonoBehaviour {
                 NavComponent[x * TerrainSize + y].Traversability = passable;
             }
         }
+
         for (int x = 0; x < TerrainSize; x++) {
             for (int y = 0; y < TerrainSize; y++) {
                 CollapseTerrain(x, y);
