@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,6 +9,12 @@ public struct Harvestable {
     public int resourceCount;
     public int x;
     public int y;
+}
+
+public struct BushBerriesComponent : ECS_Component {
+    public int Berries;
+    public int Countdown;
+    public Vector2Int Tile;
 }
 
 public class FoliageSimulator : MonoBehaviour {
@@ -67,6 +74,9 @@ public class FoliageSimulator : MonoBehaviour {
     public Tilemap FoliageTilemap;
 
     Harvestable[] harvestables;
+
+    public int BushInstances = 2048;
+    public ECS_EntityComponentManagement BushEntityManager = new ECS_EntityComponentManagement(2048);
 
     [Header("Referenced Scripts")]
     public LandscapeSimulator LandScapeSimulator;
