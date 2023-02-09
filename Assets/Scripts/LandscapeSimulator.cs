@@ -31,7 +31,7 @@ public struct WFCTile {
 }
 
 public struct Navigation {
-    public int Traversability;
+    public ProtectedInt32 Traversability;
 }
 
 public struct BurnComponent {
@@ -110,8 +110,8 @@ public class LandscapeSimulator : MonoBehaviour {
     BurnComponent FlammableTile;
     BurnComponent SafeTile;
 
-    public int[] BurnQueue;
-    public int BurningEntities = 0;
+    public ProtectedInt32[] BurnQueue;
+    public ProtectedInt32 BurningEntities = 0;
 
     private void CollapseTerrain(int posx, int posy) {
         if (posx < TerrainSize && posy < TerrainSize) {
@@ -190,10 +190,11 @@ public class LandscapeSimulator : MonoBehaviour {
     }
     private void BurnCell(int CurrentIndex, ProtectedInt32 ttl) {
         if (BurnData[CurrentIndex].BurnState == Normal && BurningEntities < TerrainSize) {
+            
             BurnData[CurrentIndex] = new BurnComponent {
-                BurnState = new ProtectedInt32(Burning),
+                BurnState = Burning,
                 Health = BurningHealth,
-                TimeToLive = new ProtectedInt32(ttl)
+                TimeToLive = ttl
             };
 
             FireGrid.SetTile(new Vector3Int(
@@ -269,7 +270,7 @@ public class LandscapeSimulator : MonoBehaviour {
         Map2D = new WFCTile[TerrainSize * TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
         BurnData = new BurnComponent[TerrainSize * TerrainSize];
-        BurnQueue = new int[TerrainSize];
+        BurnQueue = new ProtectedInt32[TerrainSize];
 
         for (int x = 0; x < TerrainSize; x++) {
             for (int y = 0; y < TerrainSize; y++) {
@@ -288,17 +289,14 @@ public class LandscapeSimulator : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        int index;
-        int LeftNeighbor;
-        int RightNeighbor;
-        int UpNeighbor;
-        int DownNeighbor;
+        ProtectedInt32 index;
+        ProtectedInt32 LeftNeighbor;
+        ProtectedInt32 RightNeighbor;
+        ProtectedInt32 UpNeighbor;
+        ProtectedInt32 DownNeighbor;
 
         float Elapsed = Time.deltaTime;
-        ProtectedInt32 IndexToRemove = 0;// = new int[TerrainSize];
-
-        int[] CellsToAdd = new int[TerrainSize];
-        int[] NewTTL = new int[TerrainSize];
+        ProtectedInt32 IndexToRemove = 0;
 
         ProtectedInt32 CellAdd = 0;
         ProtectedInt32 ttl = 0;
@@ -319,7 +317,6 @@ public class LandscapeSimulator : MonoBehaviour {
                 if (BurnData[LeftNeighbor].BurnState == Normal && GetX(index) > 0) {
                     BurnData[LeftNeighbor].Health -= FireDamagePerSecond * Elapsed;
                     if (BurnData[LeftNeighbor].Health < 0) {
-                        CellsToAdd[PushCount] = LeftNeighbor;
                         CellAdd= LeftNeighbor;
                         ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
@@ -329,7 +326,6 @@ public class LandscapeSimulator : MonoBehaviour {
                 if (BurnData[RightNeighbor].BurnState == Normal && GetX(index) < TerrainSize - 1) {
                     BurnData[RightNeighbor].Health -= FireDamagePerSecond * Elapsed;
                     if (BurnData[RightNeighbor].Health < 0) {
-                        CellsToAdd[PushCount] = RightNeighbor;
                         CellAdd = RightNeighbor;
                         ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;

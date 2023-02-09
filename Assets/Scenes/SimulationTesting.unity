@@ -289,10 +289,15 @@ MonoBehaviour:
   Rock9: {fileID: 11400000, guid: 509ba6a900c19594ea33a0de2998c44e, type: 2}
   BigRockLeft: {fileID: 11400000, guid: 3d270834cfeeec24ba8eaef4c4c471a2, type: 2}
   BigRockRight: {fileID: 11400000, guid: a6f1f8693e7186240b090bf96d5cbf37, type: 2}
-  ClumpQty: 750
-  clumpSize: 10
-  foliageSpacing: 5
+  ClumpQty:
+    fakeValue: 750
+  ClumpSize:
+    fakeValue: 10
+  foliageSpacing:
+    fakeValue: 5
   FoliageTilemap: {fileID: 538702242}
+  MaxBushInstances:
+    fakeValue: 8192
   LandScapeSimulator: {fileID: 59897778}
 --- !u!1 &538702239
 GameObject:

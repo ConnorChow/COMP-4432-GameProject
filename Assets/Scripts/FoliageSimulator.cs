@@ -4,17 +4,38 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public struct Harvestable {
-    public int resourceType;
-    public int resourceCount;
-    public int x;
-    public int y;
-}
+using OPS.AntiCheat;
+using OPS.AntiCheat.Field;
 
 public struct BushBerriesComponent : ECS_Component {
-    public int Berries;
-    public int Countdown;
+    public ProtectedInt32 BerryCount;
+    public ProtectedInt32 Countdown;
     public Vector2Int Tile;
+}
+public class BushEntityManagement : ECS_EntityComponentManagement {
+    private FoliageSimulator FoliageSystem;
+    public BushEntityManagement(int MaxEntities, FoliageSimulator CFS) : base(MaxEntities) {
+        FoliageSystem = CFS;
+    }
+    public void AddEntity(BushBerriesComponent NewBerriesData) {
+        base.AddEntity();
+        if (ActiveEntities <= MaxEntities) {
+            int ComponentIndex = indexQueue[entityQueue[ActiveEntities - 1]];
+            FoliageSystem.BushBerriesData[ComponentIndex] = NewBerriesData;
+        }
+    }
+    new public void RemoveEntity(int entity) {
+        int Passable = 0;
+        if (ActiveEntities > 0) {
+            int RemovedIndex = indexQueue[entity];
+            FoliageSystem.FoliageTilemap.SetTile(new Vector3Int(FoliageSystem.BushBerriesData[RemovedIndex].Tile.x, FoliageSystem.BushBerriesData[RemovedIndex].Tile.y, 0), null);
+            int index = FoliageSystem.BushBerriesData[RemovedIndex].Tile.x * FoliageSystem.LandScapeSimulator.TerrainSize + FoliageSystem.BushBerriesData[RemovedIndex].Tile.y;
+            FoliageSystem.LandScapeSimulator.NavComponent[index].Traversability = Passable;
+
+            FoliageSystem.BushBerriesData[RemovedIndex] = FoliageSystem.BushBerriesData[ActiveEntities - 1];
+        }
+        base.RemoveEntity(entity);
+    }
 }
 
 public class FoliageSimulator : MonoBehaviour {
@@ -22,9 +43,9 @@ public class FoliageSimulator : MonoBehaviour {
     const int berries = 1;
 
     //Navigational Info
-    static int passable = 0;
-    static int avoid = 1;
-    static int obstacle = 2;
+    static ProtectedInt32 passable = 0;
+    static ProtectedInt32 avoid = 1;
+    static ProtectedInt32 obstacle = 2;
 
     [Header("Picked Bushes")]
     public Tile BerryBushPicked1;
@@ -68,32 +89,23 @@ public class FoliageSimulator : MonoBehaviour {
 
     [Header("Foliage Tilemap")]
     //public static int TerrainSize;
-    public int ClumpQty;
-    public int clumpSize;
-    public int foliageSpacing;
+    public ProtectedInt32 ClumpQty;
+    public ProtectedInt32 ClumpSize;
+    public ProtectedInt32 foliageSpacing;
     public Tilemap FoliageTilemap;
 
-    Harvestable[] harvestables;
-
-    public int BushInstances = 2048;
-    public ECS_EntityComponentManagement BushEntityManager = new ECS_EntityComponentManagement(2048);
+    public ProtectedInt32 MaxBushInstances = 2048;
+    public BushBerriesComponent[] BushBerriesData;
+    public BushEntityManagement FoliageData;
 
     [Header("Referenced Scripts")]
     public LandscapeSimulator LandScapeSimulator;
 
-    private void GenerateClump(int x, int y, int TimeToLive, int StartIndex, int type) {
+    private void GenerateClump(int x, int y, int TimeToLive, int type) {
         int IndexX = x + LandScapeSimulator.TerrainSize / 2;
         int IndexY = y + LandScapeSimulator.TerrainSize / 2;
-        int CurrentIndex = StartIndex + TimeToLive - 1;
-        if (TimeToLive > 0 && LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability == passable) {
-            Harvestable h = new Harvestable {
-                resourceType = type,
-                resourceCount = Random.Range(2, 5),
-                x = x,
-                y = y
-            };
 
-            harvestables[CurrentIndex] = h;
+        if (TimeToLive > 0 && LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability == passable) {
 
             switch (type) {
                 case rock:
@@ -104,6 +116,12 @@ public class FoliageSimulator : MonoBehaviour {
                 case berries:
                     FoliageTilemap.SetTile(new Vector3Int(x, y, 0), FreshBerryBushes[Random.Range(0, 4)]);
                     LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability = avoid;
+                    BushBerriesComponent newBerryData = new BushBerriesComponent {
+                        BerryCount = Random.Range(2, 5),
+                        Countdown = 0,
+                        Tile = new Vector2Int(IndexX, IndexY)
+                    };
+                    FoliageData.AddEntity(newBerryData);
                     break;
             }
             int NextX;
@@ -127,7 +145,7 @@ public class FoliageSimulator : MonoBehaviour {
             if (y > LandScapeSimulator.TerrainSize / 2 - foliageSpacing)
                 NextY = y - Random.Range(1, foliageSpacing);
 
-            GenerateClump(NextX, NextY, TimeToLive - 1, StartIndex, type);
+            GenerateClump(NextX, NextY, TimeToLive - 1, type);
         } else if (LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability != passable) {
             int NextX = x;
             int NextY = y;
@@ -149,7 +167,7 @@ public class FoliageSimulator : MonoBehaviour {
                 NextY = y + 1;
             if (y > LandScapeSimulator.TerrainSize / 2 - 2)
                 NextY = y - 1;
-            GenerateClump(NextX, NextY, TimeToLive, StartIndex, type);
+            GenerateClump(NextX, NextY, TimeToLive, type);
         }
     }
 
@@ -180,18 +198,22 @@ public class FoliageSimulator : MonoBehaviour {
             Rock9
         };
 
-        int ClumpCount = (int)Mathf.Floor(Mathf.Sqrt(ClumpQty));
-        int BoundsXY = ClumpCount;
-        ClumpCount *= ClumpCount;
-        harvestables = new Harvestable[ClumpCount * clumpSize];
-        int flipFlop = 0;
-        int ClumpSpacing = LandScapeSimulator.TerrainSize / BoundsXY;
-        for (int x = 0; x < BoundsXY; x++) {
-            for (int y = 0; y < BoundsXY; y++) {
+        FoliageData = new BushEntityManagement(MaxBushInstances, this);
+        BushBerriesData = new BushBerriesComponent[MaxBushInstances];
+        if (ClumpQty * ClumpSize > MaxBushInstances) {
+            ClumpQty = (MaxBushInstances - (MaxBushInstances % ClumpSize)) / ClumpSize;
+        }
+        ClumpQty = (int)Mathf.Floor(Mathf.Sqrt(ClumpQty));
+        ProtectedInt32 AxisBounds = ClumpQty;
+        ClumpQty *= ClumpQty;
+        ProtectedInt32 ClumpSpacing = LandScapeSimulator.TerrainSize / AxisBounds;
+        ProtectedInt32 flipFlop = 0;
+        for (int x = 0; x < AxisBounds; x++) {
+            for (int y = 0; y < AxisBounds; y++) {
                 GenerateClump(
                     (x * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
                     (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
-                    clumpSize, (x * BoundsXY + y) * clumpSize, flipFlop);
+                    ClumpSize, flipFlop);
                 if (Random.Range(0, 2) > 0) {
                     if (flipFlop != rock) flipFlop = rock;
                     else flipFlop = berries;

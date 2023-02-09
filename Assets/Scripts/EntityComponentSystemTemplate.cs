@@ -3,38 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ECS_Component {
-
-}
-
-public struct ECS_ComponentModifier {
-    public int entity;
-    public int index;
-}
+using OPS.AntiCheat;
+using OPS.AntiCheat.Field;
+public interface ECS_Component {}
 
 public class ECS_EntityComponentManagement {
-    public int MaxEntities = 100;
-    public int ActiveEntities = 0;
-    public int[] entityQueue;
-    public int[] indexQueue;
-    Stack<int> DeadEntities= new Stack<int>();
+    protected ProtectedInt32 MaxEntities = 100;
+    protected ProtectedInt32 ActiveEntities = 0;
+    public ProtectedInt32[] entityQueue;
+    protected ProtectedInt32[] indexQueue;
+    protected Stack<ProtectedInt32> DeadEntities= new Stack<ProtectedInt32>();
     public ECS_EntityComponentManagement(int MaxEntities) {
         this.MaxEntities = MaxEntities;
-        this.entityQueue = new int[MaxEntities];
-        this.indexQueue = new int[MaxEntities];
+        entityQueue = new ProtectedInt32[MaxEntities];
+        indexQueue = new ProtectedInt32[MaxEntities];
         for (int i = 0; i < this.MaxEntities; i++) {
-            this.DeadEntities.Push(i);
+            DeadEntities.Push(i);
         }
     }
-    public void AddEntity() {
+    protected void AddEntity() {
         if (ActiveEntities < MaxEntities) {
-            int newEntity = this.DeadEntities.Pop();
+            int newEntity = DeadEntities.Pop();
             entityQueue[ActiveEntities] = newEntity;
             indexQueue[newEntity] = ActiveEntities;
             ActiveEntities++;
         }
     }
-    public void RemoveEntity(int entity) {
+    protected void RemoveEntity(int entity) {
         if (ActiveEntities > 0) {
             DeadEntities.Push(entity);
             ActiveEntities--;
@@ -46,10 +41,4 @@ public class ECS_EntityComponentManagement {
     public int GetComponentIndex(int entity) {
         return indexQueue[entity];
     }
-}
-public class ECS_ComponentSystem {
-    int[] entityArray;
-    int[] indexArray;
-
-
 }
