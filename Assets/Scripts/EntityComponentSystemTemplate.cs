@@ -12,18 +12,18 @@ public class ECS_EntityComponentManagement {
     protected ProtectedInt32 ActiveEntities = 0;
     public ProtectedInt32[] entityQueue;
     protected ProtectedInt32[] indexQueue;
-    protected Stack<ProtectedInt32> DeadEntities= new Stack<ProtectedInt32>();
+    protected Queue<ProtectedInt32> DeadEntities= new Queue<ProtectedInt32>();
     public ECS_EntityComponentManagement(int MaxEntities) {
         this.MaxEntities = MaxEntities;
         entityQueue = new ProtectedInt32[MaxEntities];
         indexQueue = new ProtectedInt32[MaxEntities];
         for (int i = 0; i < this.MaxEntities; i++) {
-            DeadEntities.Push(i);
+            DeadEntities.Enqueue(i);
         }
     }
     protected void AddEntity() {
         if (ActiveEntities < MaxEntities) {
-            int newEntity = DeadEntities.Pop();
+            int newEntity = DeadEntities.Dequeue();
             entityQueue[ActiveEntities] = newEntity;
             indexQueue[newEntity] = ActiveEntities;
             ActiveEntities++;
@@ -31,7 +31,7 @@ public class ECS_EntityComponentManagement {
     }
     protected void RemoveEntity(int entity) {
         if (ActiveEntities > 0) {
-            DeadEntities.Push(entity);
+            DeadEntities.Enqueue(entity);
             ActiveEntities--;
             int RemovedIndex = indexQueue[entity];
             indexQueue[entity] = indexQueue[ActiveEntities];

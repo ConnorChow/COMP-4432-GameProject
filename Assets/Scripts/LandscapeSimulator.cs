@@ -227,13 +227,11 @@ public class LandscapeSimulator : MonoBehaviour {
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
                 DirtFull);
 
-            BushTilingComponent BushDetector;
+            int DetectedBushEntity;
             
-            if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(CurrentIndex), GetY(CurrentIndex)) }, out BushDetector)) {
-                Debug.Log("Removing Bush: " + BushDetector.Entity);
-                FoliageSystem.FoliageData.RemoveEntity(BushDetector.Entity);
-            } else {
-                Debug.Log("NOT Removing Bush: " + BushDetector.Entity);
+            if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(CurrentIndex), GetY(CurrentIndex)) }, out DetectedBushEntity)) {
+                Debug.Log("Removing Bush: " + DetectedBushEntity);
+                FoliageSystem.FoliageData.RemoveEntity(DetectedBushEntity);
             }
             
             BurningEntities -= 1;
@@ -242,6 +240,10 @@ public class LandscapeSimulator : MonoBehaviour {
     }
     public void NeutralizeTile(int index) {
         BurnData[index] = SafeTile;
+    }
+
+    public void FlammefyTile(int index) {
+        BurnData[index] = FlammableTile;
     }
 
     // Start is called before the first frame update

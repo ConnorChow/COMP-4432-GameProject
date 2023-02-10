@@ -10,12 +10,11 @@ using OPS.AntiCheat.Field;
 public struct BushBerriesComponent : ECS_Component {
     public ProtectedInt32 BerryCount;
     public ProtectedInt32 Countdown;
-    public Vector2Int Tile;
+    public ProtectedVector2Int Tile;
 }
 
 public struct BushTilingComponent : ECS_Component {
-    public ProtectedInt32 Entity;
-    public Vector2Int Tile;
+    public ProtectedVector2Int Tile;
 }
 
 public class BushEntityManagement : ECS_EntityComponentManagement {
@@ -24,14 +23,11 @@ public class BushEntityManagement : ECS_EntityComponentManagement {
         FoliageSystem = CFS;
     }
     public void AddEntity(BushBerriesComponent NewBerriesData) {
-        base.AddEntity();
+        AddEntity();
         if (ActiveEntities <= MaxEntities) {
             int ComponentIndex = indexQueue[entityQueue[ActiveEntities - 1]];
             FoliageSystem.BushBerriesData[ComponentIndex] = NewBerriesData;
-            FoliageSystem.BushTilingData.Add(new BushTilingComponent {
-                Entity = ComponentIndex,
-                Tile = NewBerriesData.Tile
-            });
+            FoliageSystem.BushTilingData.Add(new BushTilingComponent { Tile = NewBerriesData.Tile }, ComponentIndex);
         }
     }
     new public void RemoveEntity(int entity) {
@@ -48,7 +44,6 @@ public class BushEntityManagement : ECS_EntityComponentManagement {
             FoliageSystem.LandScapeSimulator.NavComponent[index].Traversability = Passable;
 
             FoliageSystem.BushTilingData.Remove(new BushTilingComponent {
-                Entity = RemovedIndex,
                 Tile = FoliageSystem.BushBerriesData[RemovedIndex].Tile
             }); ;
 
@@ -116,7 +111,7 @@ public class FoliageSimulator : MonoBehaviour {
 
     public ProtectedInt32 MaxBushInstances = 2048;
     public BushBerriesComponent[] BushBerriesData;
-    public HashSet<BushTilingComponent> BushTilingData = new HashSet<BushTilingComponent>();
+    public Dictionary<BushTilingComponent, int> BushTilingData = new Dictionary<BushTilingComponent, int>();
     public BushEntityManagement FoliageData;
 
     [Header("Referenced Scripts")]
@@ -137,6 +132,7 @@ public class FoliageSimulator : MonoBehaviour {
                 case berries:
                     FoliageTilemap.SetTile(new Vector3Int(x, y, 0), FreshBerryBushes[Random.Range(0, 4)]);
                     LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability = avoid;
+                    LandScapeSimulator.FlammefyTile(IndexX * LandScapeSimulator.TerrainSize + IndexY);
                     BushBerriesComponent newBerryData = new BushBerriesComponent {
                         BerryCount = Random.Range(2, 5),
                         Countdown = 0,
