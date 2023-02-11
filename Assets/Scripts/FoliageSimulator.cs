@@ -10,11 +10,11 @@ using OPS.AntiCheat.Field;
 public struct BushBerriesComponent : ECS_Component {
     public ProtectedInt32 BerryCount;
     public ProtectedInt32 Countdown;
-    public ProtectedVector2Int Tile;
+    public Vector2Int Tile;
 }
 
 public struct BushTilingComponent : ECS_Component {
-    public ProtectedVector2Int Tile;
+    public Vector2Int Tile;
 }
 
 public class BushEntityManagement : ECS_EntityComponentManagement {
