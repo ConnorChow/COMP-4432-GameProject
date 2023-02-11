@@ -22,7 +22,7 @@ public class CreateAssetBundles : MonoBehaviour
     public class LoadFromFileExample : MonoBehaviour {
     IEnumerator InstantiateObject()
 {
-    string url = "file:///" + Application.dataPath + "/AssetBundles/" + assetBundleName;        
+    string url = "file:///" + Application.dataPath + "/AssetBundles/" + "Boss";        
     var request 
         = UnityEngine.Networking.UnityWebRequestAssetBundle.GetAssetBundle(url, 0);
     yield return request.Send();
