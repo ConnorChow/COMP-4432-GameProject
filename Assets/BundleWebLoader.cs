@@ -1,28 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
-using System.IO;
 
-public class CreateAssetBundles : MonoBehaviour
+public class BundleWebLoader : MonoBehaviour
 {
-    [MenuItem("Assets/Build AssetBundles")]
-    static void BuildAllAssetBundles()
-    {
-        string assetBundleDirectory = "Assets/AssetBundles";
-        if(!Directory.Exists(assetBundleDirectory))
-        {
-            Directory.CreateDirectory(assetBundleDirectory);
-        }
-        BuildPipeline.BuildAssetBundles(assetBundleDirectory, 
-                                        BuildAssetBundleOptions.None, 
-                                        BuildTarget.StandaloneWindows);
-    }
-
-    public class LoadFromFileExample : MonoBehaviour {
+    public string bundleUrl = "http://localhost/Assets/Characters";
+    public string assetName = "BundledObject";
+    
     IEnumerator InstantiateObject()
 {
-    string url = "file:///" + Application.dataPath + "/Characters/" + "Boss" + "Player" + "Goblin" + "Wizard";        
+    string url = "file:///" + Application.dataPath + "/Characters/" + "Player" + "Boss";        
     var request 
         = UnityEngine.Networking.UnityWebRequestAssetBundle.GetAssetBundle(url, 0);
     yield return request.Send();
@@ -46,6 +33,11 @@ public class CreateAssetBundles : MonoBehaviour
     Instantiate(demonwalk);
     Instantiate(demonattack);
     Instantiate(demonview);
-        }   
+}
+
+    // Update is called once per frame
+    void Update()
+    {
+        
     }
 }

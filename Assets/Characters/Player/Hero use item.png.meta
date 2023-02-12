@@ -1,5 +1,7 @@
 fileFormatVersion: 2
-guid: c332e54fd4027544681e5ab67a428a18
+guid: cf0561e5b59adc74cb02be06d15c002a
+labels:
+- AssetBundle
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -132,5 +134,5 @@ TextureImporter:
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
-  assetBundleName: boss
+  assetBundleName: player
   assetBundleVariant: 
