@@ -14,7 +14,7 @@ public class CreateAssetBundles : MonoBehaviour
         {
             Directory.CreateDirectory(assetBundleDirectory);
         }
-        BuildPipeline.BuildAssetBundles("Assets/Characters", BuildAssetBundleOptions.None, 
+        BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, 
                                                              BuildTarget.StandaloneWindows);
     }
 
