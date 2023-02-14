@@ -230,7 +230,6 @@ public class LandscapeSimulator : MonoBehaviour {
             int DetectedBushEntity;
             
             if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(CurrentIndex), GetY(CurrentIndex)) }, out DetectedBushEntity)) {
-                Debug.Log("Removing Bush: " + DetectedBushEntity);
                 FoliageSystem.FoliageData.RemoveEntity(DetectedBushEntity);
             }
             
