@@ -6,6 +6,12 @@ using UnityEngine.Networking;
 
 public class Player : NetworkBehaviour {
 
+    // Sync Variable from Server to Client
+    [SyncVar(hook = nameof(helloChange))]
+    public int helloCount = 0;
+
+    [SyncVar] public int playerHealth = 10;
+
     public float PlayerSpeed = 2.5f;
 
     public Rigidbody2D rb;
@@ -49,5 +55,42 @@ public class Player : NetworkBehaviour {
     // Update is called once per frame
     void Update() {
         HandleMovement();
+
+
+        // Testing Client to Server Commands
+        if(isLocalPlayer && Input.GetKeyDown(KeyCode.X))
+        {
+            Debug.Log("Sending Hola to Server");
+            HelloServer();
+        }
     }
+
+    // Client to Server Commands
+    [Command]
+    void HelloServer()
+    {
+        Debug.Log("Received Hello from Client");
+        ReplyHello();
+        helloCount += 1;
+    }
+
+    void ReplyHello()
+    {
+        Debug.Log("Received Hello from Server");
+    }
+
+    void helloChange(int oldCount, int newCount)
+    {
+        Debug.Log($"Old Count: {oldCount} Hellos, New Count: {newCount} Hellos");
+    }
+
+    // Server to Client Commands
+    [ClientRpc]
+    void TooHigh()
+    {
+        Debug.Log("Too High");
+    }
+
+    
+
 }

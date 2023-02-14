@@ -313,8 +313,10 @@ MonoBehaviour:
     fakeValue: 64
   FireSprite: {fileID: 11400000, guid: 724fe61ae589e2d47b9bde4b36b8e45d, type: 2}
   BurnedTile: {fileID: 11400000, guid: a51afebbaf991274dbe74188699f3aad, type: 2}
-  BurnQueue: 
-  BurningEntities: 0
+  BurnQueue: []
+  BurningEntities:
+    fakeValue: 0
+  FoliageSystem: {fileID: 0}
 --- !u!114 &59897779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -354,10 +356,15 @@ MonoBehaviour:
   Rock9: {fileID: 11400000, guid: 509ba6a900c19594ea33a0de2998c44e, type: 2}
   BigRockLeft: {fileID: 11400000, guid: 3d270834cfeeec24ba8eaef4c4c471a2, type: 2}
   BigRockRight: {fileID: 11400000, guid: a6f1f8693e7186240b090bf96d5cbf37, type: 2}
-  ClumpQty: 750
-  clumpSize: 10
-  foliageSpacing: 5
+  ClumpQty:
+    fakeValue: 0
+  ClumpSize:
+    fakeValue: 0
+  foliageSpacing:
+    fakeValue: 0
   FoliageTilemap: {fileID: 538702242}
+  MaxBushInstances:
+    fakeValue: 2048
   LandScapeSimulator: {fileID: 59897778}
 --- !u!1 &538702239
 GameObject:
