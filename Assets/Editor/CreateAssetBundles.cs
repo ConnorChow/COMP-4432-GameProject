@@ -26,16 +26,17 @@ public class CreateAssetBundles : MonoBehaviour
         = UnityEngine.Networking.UnityWebRequestAssetBundle.GetAssetBundle(url, 0);
     yield return request.Send();
 
-    AssetBundle bundle = UnityEngine.Networking.DownloadHandlerAssetBundle.GetContent(request);
-    GameObject Hero = bundle.LoadAsset<GameObject>("Hero");
-    GameObject HeroWalk = bundle.LoadAsset<GameObject>("Hero walk");
-    GameObject HeroUseItem = bundle.LoadAsset<GameObject>("Hero use item");
-    GameObject HeroPlayer2 = bundle.LoadAsset<GameObject>("Hero Player 2");
-    GameObject HeroPlayer2UseItem = bundle.LoadAsset<GameObject>("Hero Player 2 use item");
-    GameObject HeroPlayer2walk = bundle.LoadAsset<GameObject>("Hero Player 2 walk");
-    GameObject demonwalk = bundle.LoadAsset<GameObject>("Demon topdown walk");
-    GameObject demonattack = bundle.LoadAsset<GameObject>("Demon topdown attack");
-    GameObject demonview = bundle.LoadAsset<GameObject>("Demon topdown view");
+    AssetBundle Player = UnityEngine.Networking.DownloadHandlerAssetBundle.GetContent(request);
+    AssetBundle Boss = UnityEngine.Networking.DownloadHandlerAssetBundle.GetContent(request);
+    GameObject Hero = Player.LoadAsset<GameObject>("Hero");
+    GameObject HeroWalk = Player.LoadAsset<GameObject>("Hero walk");
+    GameObject HeroUseItem = Player.LoadAsset<GameObject>("Hero use item");
+    GameObject HeroPlayer2 = Player.LoadAsset<GameObject>("Hero Player 2");
+    GameObject HeroPlayer2UseItem = Player.LoadAsset<GameObject>("Hero Player 2 use item");
+    GameObject HeroPlayer2walk = Player.LoadAsset<GameObject>("Hero Player 2 walk");
+    GameObject demonwalk = Boss.LoadAsset<GameObject>("Demon topdown walk");
+    GameObject demonattack = Boss.LoadAsset<GameObject>("Demon topdown attack");
+    GameObject demonview = Boss.LoadAsset<GameObject>("Demon topdown view");
     Instantiate(Hero);
     Instantiate(HeroWalk);
     Instantiate(HeroUseItem);
