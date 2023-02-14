@@ -6,7 +6,7 @@ using System.IO;
 
 public class CreateAssetBundles : MonoBehaviour
 {
-    [MenuItem("Assets/Build AssetBundles")]
+    [MenuItem("Assets/Build Characters")]
     static void BuildAllAssetBundles()
     {
         string assetBundleDirectory = "Assets/Characters";
@@ -48,9 +48,9 @@ public class CreateAssetBundles : MonoBehaviour
     Instantiate(demonattack);
     Instantiate(demonview);
 
-    AssetBundle Characters = AssetBundle.LoadFromFile("Assets/Characters");
+    AssetBundle Characters = AssetBundle.LoadFromFile("Assets/Manifest");
     
-    AssetBundleManifest CharactersManifest = Characters.LoadAsset<AssetBundleManifest>("CharactersManifest");
+    AssetBundleManifest CharactersManifest = Characters.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
 
     string[] dependencies = CharactersManifest.GetAllDependencies("Characters"); //Pass the name of the bundle you want the dependencies for.
 

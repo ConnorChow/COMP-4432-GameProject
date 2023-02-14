@@ -2,6 +2,7 @@ fileFormatVersion: 2
 guid: 412d618892d94854a955b46a51384461
 labels:
 - AssetBundle
+- Characters
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
