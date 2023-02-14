@@ -37,6 +37,7 @@ public class CreateAssetBundles : MonoBehaviour
     GameObject demonwalk = Boss.LoadAsset<GameObject>("Demon topdown walk");
     GameObject demonattack = Boss.LoadAsset<GameObject>("Demon topdown attack");
     GameObject demonview = Boss.LoadAsset<GameObject>("Demon topdown view");
+
     Instantiate(Hero);
     Instantiate(HeroWalk);
     Instantiate(HeroUseItem);
@@ -46,6 +47,17 @@ public class CreateAssetBundles : MonoBehaviour
     Instantiate(demonwalk);
     Instantiate(demonattack);
     Instantiate(demonview);
-        }   
+
+    AssetBundle Characters = AssetBundle.LoadFromFile("Assets/Characters");
+    
+    AssetBundleManifest CharactersManifest = Characters.LoadAsset<AssetBundleManifest>("CharactersManifest");
+
+    string[] dependencies = CharactersManifest.GetAllDependencies("Characters"); //Pass the name of the bundle you want the dependencies for.
+
+    foreach(string dependency in dependencies)
+    {
+            AssetBundle.LoadFromFile(Path.Combine("Assets/Characters", dependency));
+            }
+        } 
     }
 }
