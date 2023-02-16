@@ -60,8 +60,13 @@ public class Player : NetworkBehaviour {
         // Testing Client to Server Commands
         if(isLocalPlayer && Input.GetKeyDown(KeyCode.X))
         {
-            Debug.Log("Sending Hola to Server");
+            Debug.Log("Sending Hello to Server");
             HelloServer();
+        }
+
+        if (transform.position.y > 4)
+        {
+            TooHigh();
         }
     }
 
@@ -74,11 +79,6 @@ public class Player : NetworkBehaviour {
         helloCount += 1;
     }
 
-    void ReplyHello()
-    {
-        Debug.Log("Received Hello from Server");
-    }
-
     void helloChange(int oldCount, int newCount)
     {
         Debug.Log($"Old Count: {oldCount} Hellos, New Count: {newCount} Hellos");
@@ -86,9 +86,14 @@ public class Player : NetworkBehaviour {
 
     // Server to Client Commands
     [ClientRpc]
+    void ReplyHello()
+    {
+        Debug.Log("Received Hello from Server");
+    }
+
     void TooHigh()
     {
-        Debug.Log("Too High");
+        Debug.Log($"Player is too high. Y Position: {transform.position.y}");
     }
 
     
