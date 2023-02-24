@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Arrow : MonoBehaviour
 {
     public Enemy enemyHealth;
     public int damage = 2;
