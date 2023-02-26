@@ -95,8 +95,7 @@ public class LandscapeSimulator : MonoBehaviour {
     public Navigation[] NavComponent;
     public BurnComponent[] BurnData;
 
-    public Tilemap GroundTileMap;
-    public Tilemap FireGrid;
+    [SerializeField] private Tilemap GroundTileMap, FireGrid;
 
     [Header("Simulation")]
     public ProtectedFloat FireDamagePerSecond = 1.0f;
@@ -207,6 +206,9 @@ public class LandscapeSimulator : MonoBehaviour {
             BurnQueue[BurningEntities] = CurrentIndex;
             BurningEntities += 1;
         }
+    }
+    private void BurnCellFromV2(Vector2 burnCoordinates) {
+        Vector2Int tileLoc = new Vector2Int((int)Math.Round(burnCoordinates.x) - (TerrainSize/2), (int)Math.Round(burnCoordinates.y) - (TerrainSize / 2));
     }
     private void FinishBurnCell(int QueueIndex) {
         if (BurnData[BurnQueue[QueueIndex]].BurnState == Burning) {
