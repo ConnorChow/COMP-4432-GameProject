@@ -95,7 +95,7 @@ public class LandscapeSimulator : MonoBehaviour {
     public Navigation[] NavComponent;
     public BurnComponent[] BurnData;
 
-    [SerializeField] private Tilemap GroundTileMap, FireGrid;
+    public Tilemap GroundTileMap, FireGrid;
 
     [Header("Simulation")]
     public ProtectedFloat FireDamagePerSecond = 1.0f;
