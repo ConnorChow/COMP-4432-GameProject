@@ -10,6 +10,7 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 using OPS.AntiCheat;
 using OPS.AntiCheat.Field;
+using System.IO;
 
 public struct WFCTile {
     Tile tile;
@@ -179,6 +180,10 @@ public class LandscapeSimulator : MonoBehaviour {
 
     }
 
+    private void LoadTileFromLSD(int posx, int posy) {
+        GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize / 2), posy - (TerrainSize / 2), 0), Map2D[posx * TerrainSize + posy].GetTile());
+    }
+
     private int GetY(int index) {
         return index % TerrainSize;
     }
@@ -280,26 +285,37 @@ public class LandscapeSimulator : MonoBehaviour {
             Health = 0,
             TimeToLive = 0
         };
-
-        Map2D = new WFCTile[TerrainSize * TerrainSize];
-        NavComponent = new Navigation[TerrainSize * TerrainSize];
-        BurnData = new BurnComponent[TerrainSize * TerrainSize];
-        BurnQueue = new ProtectedInt32[TerrainSize];
-
-        for (int x = 0; x < TerrainSize; x++) {
-            for (int y = 0; y < TerrainSize; y++) {
-                Map2D[x * TerrainSize + y].SetParams(null, new int[4] { Empty, Empty, Empty, Empty });
-                NavComponent[x * TerrainSize + y].Traversability = passable;
+        //Try to load player environment, otherwise generate a new one and save it
+        lsd = new LandscapeSaveData(this);
+        if (LoadEnvironment()) {
+            Map2D = lsd.Map2D;
+            BurnData = lsd.BurnData;
+            for (int x = 0; x < TerrainSize; x++) {
+                for (int y = 0; y < TerrainSize; y++) {
+                    LoadTileFromLSD(x, y);
+                }
             }
-        }
+        } else {
+            Map2D = new WFCTile[TerrainSize * TerrainSize];
+            NavComponent = new Navigation[TerrainSize * TerrainSize];
+            BurnData = new BurnComponent[TerrainSize * TerrainSize];
+            BurnQueue = new ProtectedInt32[TerrainSize];
 
-        for (int x = 0; x < TerrainSize; x++) {
-            for (int y = 0; y < TerrainSize; y++) {
-                CollapseTerrain(x, y);
+            for (int x = 0; x < TerrainSize; x++) {
+                for (int y = 0; y < TerrainSize; y++) {
+                    Map2D[x * TerrainSize + y].SetParams(null, new int[4] { Empty, Empty, Empty, Empty });
+                    NavComponent[x * TerrainSize + y].Traversability = passable;
+                }
             }
-        }
 
-        BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
+            for (int x = 0; x < TerrainSize; x++) {
+                for (int y = 0; y < TerrainSize; y++) {
+                    CollapseTerrain(x, y);
+                }
+            }
+            SaveEnvironment();
+            BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
+        }
     }
 
     // Update is called once per frame
@@ -376,5 +392,43 @@ public class LandscapeSimulator : MonoBehaviour {
         if (PullCount > 0) {
             FinishBurnCell(IndexToRemove);
         }
+    }
+
+    //*************************Save Data**************************\\
+    private bool initiateSave = true;
+    [SerializeField] private LandscapeSaveData lsd; //lsd for Landscape-Save-Data
+
+    //Write to Player JSON file
+    public void SaveEnvironment() {
+        lsd = new LandscapeSaveData(this);
+        string EnvData = JsonUtility.ToJson(lsd);
+        File.WriteAllText(Application.persistentDataPath + "/LandscapeData.json", EnvData);
+    }
+
+    //We load save data from JSON if it exists, otherwise delete it
+    public bool LoadEnvironment() {
+        if (File.Exists(File.ReadAllText(Application.persistentDataPath + "/LandscapeData.json"))) {
+            lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData.json"));
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+
+//************Save Data*************//
+[System.Serializable]
+public class LandscapeSaveData {
+
+    public int TerrainSize;
+
+    //Landscape Components
+    public WFCTile[] Map2D;
+    public BurnComponent[] BurnData;
+
+    public LandscapeSaveData(LandscapeSimulator ls) {
+        this.Map2D= ls.Map2D;
+        this.BurnData = ls.BurnData;
     }
 }

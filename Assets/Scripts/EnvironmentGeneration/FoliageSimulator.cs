@@ -128,6 +128,8 @@ public class FoliageSimulator : MonoBehaviour {
                     FoliageTilemap.SetTile(new Vector3Int(x, y, 0), Rocks[Random.Range(0, 9)]);
                     LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability = obstacle;
                     LandScapeSimulator.NeutralizeTile(IndexX * LandScapeSimulator.TerrainSize + IndexY);
+                    //Add new Tiling component at index = -1.... must be accounted for when used to find index in Burn simulation
+                    BushTilingData.Add(new BushTilingComponent { Tile = new Vector2Int(IndexX, IndexY) }, -1);
                     break;
                 case berries:
                     FoliageTilemap.SetTile(new Vector3Int(x, y, 0), FreshBerryBushes[Random.Range(0, 4)]);
