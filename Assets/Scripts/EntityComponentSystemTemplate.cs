@@ -41,4 +41,8 @@ public class ECS_EntityComponentManagement {
     public int GetComponentIndex(int entity) {
         return indexQueue[entity];
     }
+
+    public int GetActiveEntities() {
+        return ActiveEntities;
+    }
 }

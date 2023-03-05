@@ -236,6 +236,7 @@ MonoBehaviour:
   TerrainSize: 512
   GroundTileMap: {fileID: 1659723895}
   FireGrid: {fileID: 783363315}
+  tryLoadMap: 1
   FireDamagePerSecond:
     fakeValue: 1
   NormalHealth:
@@ -252,6 +253,12 @@ MonoBehaviour:
   BurningEntities:
     fakeValue: 0
   FoliageSystem: {fileID: 59897779}
+  lsd:
+    terrainSize: 0
+    map2DIndex: 
+    BurnState: 
+    Health: []
+    TimeToLive: 
 --- !u!114 &59897779
 MonoBehaviour:
   m_ObjectHideFlags: 0

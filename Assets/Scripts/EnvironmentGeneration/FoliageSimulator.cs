@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 
 using OPS.AntiCheat;
 using OPS.AntiCheat.Field;
+using System.Linq;
+using System.IO;
 
 public struct BushBerriesComponent : ECS_Component {
     public ProtectedInt32 BerryCount;
@@ -112,6 +114,7 @@ public class FoliageSimulator : MonoBehaviour {
     public ProtectedInt32 MaxBushInstances = 2048;
     public BushBerriesComponent[] BushBerriesData;
     public Dictionary<BushTilingComponent, int> BushTilingData = new Dictionary<BushTilingComponent, int>();
+    public HashSet<Vector2Int> RockTilingData = new HashSet<Vector2Int>();
     public BushEntityManagement FoliageData;
 
     [Header("Referenced Scripts")]
@@ -128,8 +131,8 @@ public class FoliageSimulator : MonoBehaviour {
                     FoliageTilemap.SetTile(new Vector3Int(x, y, 0), Rocks[Random.Range(0, 9)]);
                     LandScapeSimulator.NavComponent[IndexX * LandScapeSimulator.TerrainSize + IndexY].Traversability = obstacle;
                     LandScapeSimulator.NeutralizeTile(IndexX * LandScapeSimulator.TerrainSize + IndexY);
-                    //Add new Tiling component at index = -1.... must be accounted for when used to find index in Burn simulation
-                    BushTilingData.Add(new BushTilingComponent { Tile = new Vector2Int(IndexX, IndexY) }, -1);
+                    //Add new Rock Location for save data
+                    RockTilingData.Add(new Vector2Int(IndexX, IndexY));
                     break;
                 case berries:
                     FoliageTilemap.SetTile(new Vector3Int(x, y, 0), FreshBerryBushes[Random.Range(0, 4)]);
@@ -190,6 +193,8 @@ public class FoliageSimulator : MonoBehaviour {
         }
     }
 
+    private bool tryLoad;
+
     // Start is called before the first frame update
     void Start() {
         PickedBerryBushes = new Tile[4] {
@@ -219,30 +224,125 @@ public class FoliageSimulator : MonoBehaviour {
 
         FoliageData = new BushEntityManagement(MaxBushInstances, this);
         BushBerriesData = new BushBerriesComponent[MaxBushInstances];
-        if (ClumpQty * ClumpSize > MaxBushInstances) {
-            ClumpQty = (MaxBushInstances - (MaxBushInstances % ClumpSize)) / ClumpSize;
-        }
-        ClumpQty = (int)Mathf.Floor(Mathf.Sqrt(ClumpQty));
-        ProtectedInt32 AxisBounds = ClumpQty;
-        ClumpQty *= ClumpQty;
-        ProtectedInt32 ClumpSpacing = LandScapeSimulator.TerrainSize / AxisBounds;
-        ProtectedInt32 flipFlop = 0;
-        for (int x = 0; x < AxisBounds; x++) {
-            for (int y = 0; y < AxisBounds; y++) {
-                GenerateClump(
-                    (x * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
-                    (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
-                    ClumpSize, flipFlop);
-                if (Random.Range(0, 2) > 0) {
-                    if (flipFlop != rock) flipFlop = rock;
-                    else flipFlop = berries;
+
+        tryLoad = LandScapeSimulator.tryLoadMap;
+        //If we don't want to load and/or a load file does not exist, generate new foliage
+        if (tryLoad && LoadData()) {
+            Debug.Log("Loading Saved Foliage");
+        } else {
+            Debug.Log("Generating new Foliage");
+            if (ClumpQty * ClumpSize > MaxBushInstances) {
+                ClumpQty = (MaxBushInstances - (MaxBushInstances % ClumpSize)) / ClumpSize;
+            }
+            ClumpQty = (int)Mathf.Floor(Mathf.Sqrt(ClumpQty));
+            ProtectedInt32 AxisBounds = ClumpQty;
+            ClumpQty *= ClumpQty;
+            ProtectedInt32 ClumpSpacing = LandScapeSimulator.TerrainSize / AxisBounds;
+            ProtectedInt32 flipFlop = 0;
+            for (int x = 0; x < AxisBounds; x++) {
+                for (int y = 0; y < AxisBounds; y++) {
+                    GenerateClump(
+                        (x * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
+                        (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
+                        ClumpSize, flipFlop);
+                    if (Random.Range(0, 2) > 0) {
+                        if (flipFlop != rock) flipFlop = rock;
+                        else flipFlop = berries;
+                    }
                 }
             }
+            SaveData();
         }
     }
 
     // Update is called once per frame
     void Update() {
 
+    }
+
+    public void SaveData() {
+        FoliageSaveData fsd = new FoliageSaveData(this);
+
+        string data = JsonUtility.ToJson(fsd);
+
+        File.WriteAllText(Application.persistentDataPath + "/FoliageData.json", data);
+    }
+
+    public bool LoadData() {
+        if (File.Exists(Application.persistentDataPath + "/FoliageData.json")) {
+            FoliageSaveData fsd = new FoliageSaveData();
+            string data = File.ReadAllText(Application.persistentDataPath + "/FoliageData.json");
+            fsd = JsonUtility.FromJson<FoliageSaveData>(data);
+
+            //fill all data values
+            Debug.Log(fsd.BerryCount.Length);
+            for (int i = 0; i < fsd.BerryCount.Length; i++) {
+                Vector2Int tile = new Vector2Int(fsd.BerryTilesX[i], fsd.BerryTilesY[i]);
+
+                FoliageTilemap.SetTile(new Vector3Int(tile.x - LandScapeSimulator.TerrainSize / 2, tile.y - LandScapeSimulator.TerrainSize / 2, 0), FreshBerryBushes[Random.Range(0, 4)]);
+                LandScapeSimulator.NavComponent[tile.x * LandScapeSimulator.TerrainSize + tile.y].Traversability = avoid;
+                LandScapeSimulator.FlammefyTile(tile.x * LandScapeSimulator.TerrainSize + tile.y);
+
+                FoliageData.AddEntity(new BushBerriesComponent {
+                    BerryCount = fsd.BerryCount[i],
+                    Countdown = fsd.BerryCount[i],
+                    Tile = tile
+                });
+                Debug.Log("Load Bush " + i);
+            }
+
+            for (int i = 0; i < fsd.RockTilesX.Length; i++) {
+                Vector2Int tile = new Vector2Int(fsd.RockTilesX[i], fsd.RockTilesY[i]);
+
+                FoliageTilemap.SetTile(new Vector3Int(tile.x - LandScapeSimulator.TerrainSize / 2, tile.y - LandScapeSimulator.TerrainSize / 2, 0), Rocks[Random.Range(0, 9)]);
+                
+                LandScapeSimulator.NavComponent[tile.x * LandScapeSimulator.TerrainSize + tile.y].Traversability = obstacle;
+                LandScapeSimulator.NeutralizeTile(tile.x * LandScapeSimulator.TerrainSize + tile.y);
+                RockTilingData.Add(new Vector2Int(tile.x, tile.y));
+                Debug.Log("Load Rock " + i);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+[System.Serializable]
+public class FoliageSaveData {
+    public int[] BerryCount;
+    public int[] Countdown;
+    public int[] BerryTilesX;
+    public int[] BerryTilesY;
+
+    public int[] RockTilesX;
+    public int[] RockTilesY;
+
+    public FoliageSaveData() { }
+    public FoliageSaveData(FoliageSimulator fs) {
+        BushBerriesComponent[] bushes = fs.BushBerriesData;
+
+        int bushArrayLength = fs.BushTilingData.Count;
+
+        BerryCount= new int[bushArrayLength];
+        Countdown= new int[bushArrayLength];
+        BerryTilesX = new int[bushArrayLength];
+        BerryTilesY = new int[bushArrayLength];
+
+        for (int i = 0; i < bushArrayLength; i++) {
+            BerryCount[i] = bushes[i].BerryCount;
+            Countdown[i] = bushes[i].Countdown;
+            BerryTilesX[i] = bushes[i].Tile.x;
+            BerryTilesY[i] = bushes[i].Tile.y;
+        }
+
+        HashSet<Vector2Int> rockEntities = fs.RockTilingData;
+        RockTilesX = new int[rockEntities.Count];
+        RockTilesY = new int[rockEntities.Count];
+
+        for (int i = 0; i < RockTilesX.Length; i++) {
+            RockTilesX[i] = rockEntities.ElementAt(i).x;
+            RockTilesY[i] = rockEntities.ElementAt(i).y;
+        }
     }
 }

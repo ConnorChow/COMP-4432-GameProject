@@ -98,6 +98,8 @@ public class LandscapeSimulator : MonoBehaviour {
 
     public Tilemap GroundTileMap, FireGrid;
 
+    public bool tryLoadMap = false;
+
     [Header("Simulation")]
     public ProtectedFloat FireDamagePerSecond = 1.0f;
     public ProtectedFloat NormalHealth = 2.0f;
@@ -234,10 +236,11 @@ public class LandscapeSimulator : MonoBehaviour {
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
                 DirtFull);
 
-            int DetectedBushEntity;
+            int detectedBushEntity = -1;
             
-            if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(CurrentIndex), GetY(CurrentIndex)) }, out DetectedBushEntity)) {
-                FoliageSystem.FoliageData.RemoveEntity(DetectedBushEntity);
+            if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(CurrentIndex), GetY(CurrentIndex)) }, out detectedBushEntity)) {
+                if (detectedBushEntity > -1)
+                    FoliageSystem.FoliageData.RemoveEntity(detectedBushEntity);
             }
             
             BurningEntities -= 1;
@@ -285,21 +288,36 @@ public class LandscapeSimulator : MonoBehaviour {
             Health = 0,
             TimeToLive = 0
         };
+
+        BurnQueue = new ProtectedInt32[TerrainSize];
+
         //Try to load player environment, otherwise generate a new one and save it
-        lsd = new LandscapeSaveData(this);
-        if (LoadEnvironment()) {
-            Map2D = lsd.Map2D;
-            BurnData = lsd.BurnData;
+        if (LoadEnvironment() && tryLoadMap) {
+            Debug.Log("Loading from save");
+            TerrainSize = lsd.terrainSize;
+            Map2D = new WFCTile[lsd.map2DIndex.Length];
+            NavComponent = new Navigation[lsd.map2DIndex.Length];
+            BurnData = new BurnComponent[lsd.map2DIndex.Length];
+            for (int i = 0; i < Map2D.Length; i++) {
+                Map2D[i] = tiles[lsd.map2DIndex[i]];
+                NavComponent[i].Traversability = passable;
+                BurnData[i] = new BurnComponent {
+                    BurnState = lsd.BurnState[i],
+                    Health = lsd.Health[i],
+                    TimeToLive = lsd.TimeToLive[i]
+                };
+            }
             for (int x = 0; x < TerrainSize; x++) {
                 for (int y = 0; y < TerrainSize; y++) {
                     LoadTileFromLSD(x, y);
                 }
             }
+            BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
         } else {
+            Debug.Log("Generating New");
             Map2D = new WFCTile[TerrainSize * TerrainSize];
             NavComponent = new Navigation[TerrainSize * TerrainSize];
             BurnData = new BurnComponent[TerrainSize * TerrainSize];
-            BurnQueue = new ProtectedInt32[TerrainSize];
 
             for (int x = 0; x < TerrainSize; x++) {
                 for (int y = 0; y < TerrainSize; y++) {
@@ -313,8 +331,8 @@ public class LandscapeSimulator : MonoBehaviour {
                     CollapseTerrain(x, y);
                 }
             }
-            SaveEnvironment();
             BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
+            SaveEnvironment();
         }
     }
 
@@ -395,8 +413,7 @@ public class LandscapeSimulator : MonoBehaviour {
     }
 
     //*************************Save Data**************************\\
-    private bool initiateSave = true;
-    [SerializeField] private LandscapeSaveData lsd; //lsd for Landscape-Save-Data
+    [SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
 
     //Write to Player JSON file
     public void SaveEnvironment() {
@@ -407,7 +424,7 @@ public class LandscapeSimulator : MonoBehaviour {
 
     //We load save data from JSON if it exists, otherwise delete it
     public bool LoadEnvironment() {
-        if (File.Exists(File.ReadAllText(Application.persistentDataPath + "/LandscapeData.json"))) {
+        if (File.Exists(Application.persistentDataPath + "/LandscapeData.json")) {
             lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData.json"));
             return true;
         } else {
@@ -421,14 +438,66 @@ public class LandscapeSimulator : MonoBehaviour {
 [System.Serializable]
 public class LandscapeSaveData {
 
-    public int TerrainSize;
+    public int terrainSize;
 
     //Landscape Components
-    public WFCTile[] Map2D;
-    public BurnComponent[] BurnData;
+    public int[] map2DIndex;
+
+    public int[] BurnState;
+    public float[] Health;
+    public int[] TimeToLive;
 
     public LandscapeSaveData(LandscapeSimulator ls) {
-        this.Map2D= ls.Map2D;
-        this.BurnData = ls.BurnData;
+        terrainSize = ls.TerrainSize;
+        int counter = 0;
+        map2DIndex= new int[ls.TerrainSize * ls.TerrainSize];
+        foreach (var i in ls.Map2D) {
+            if (i.GetTile() == ls.DirtFull) {
+                map2DIndex[counter] = 0;
+            } else if (i.GetTile() == ls.GrassFull) { 
+                map2DIndex[counter] = 1;
+            } else if (i.GetTile() == ls.GrassDirtDown) {
+                map2DIndex[counter] = 2;
+            } else if (i.GetTile() == ls.GrassDirtDownLeft) {
+                map2DIndex[counter] = 3;
+            } else if (i.GetTile() == ls.GrassDirtLeft) {
+                map2DIndex[counter] = 4;
+            } else if (i.GetTile() == ls.GrassDirtUpLeft) {
+                map2DIndex[counter] = 5;
+            } else if (i.GetTile() == ls.GrassDirtUp) {
+                map2DIndex[counter] = 6;
+            } else if (i.GetTile() == ls.GrassDirtUpRight) {
+                map2DIndex[counter] = 7;
+            } else if (i.GetTile() == ls.GrassDirtRight) {
+                map2DIndex[counter] = 8;
+            } else if (i.GetTile() == ls.GrassDirtDownRight) {
+                map2DIndex[counter] = 9;
+            } else if (i.GetTile() == ls.DirtGrassDown) {
+                map2DIndex[counter] = 10;
+            } else if (i.GetTile() == ls.DirtGrassDownLeft) {
+                map2DIndex[counter] = 11;
+            } else if (i.GetTile() == ls.DirtGrassLeft) {
+                map2DIndex[counter] = 12;
+            } else if (i.GetTile() == ls.DirtGrassUpLeft) {
+                map2DIndex[counter] = 13;
+            } else if (i.GetTile() == ls.DirtGrassUp) {
+                map2DIndex[counter] = 14;
+            } else if (i.GetTile() == ls.DirtGrassUpRight) {
+                map2DIndex[counter] = 15;
+            } else if (i.GetTile() == ls.DirtGrassRight) {
+                map2DIndex[counter] = 16;
+            } else if (i.GetTile() == ls.DirtGrassDownRight) {
+                map2DIndex[counter] = 17;
+            }
+            counter++;
+        }
+        BurnState = new int[ls.BurnData.Length];
+        Health = new float[ls.BurnData.Length];
+        TimeToLive = new int[ls.BurnData.Length];
+        for (int i = 0; i < BurnState.Length; i++) {
+            BurnState[i] = ls.BurnData[i].BurnState;
+            Health[i] = ls.BurnData[i].Health;
+            TimeToLive[i] = ls.BurnData[i].TimeToLive;
+        }
     }
 }
