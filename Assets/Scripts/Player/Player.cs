@@ -27,6 +27,10 @@ public class Player : NetworkBehaviour {
     public Camera playerCamera;
     public Weapon weapon;
 
+    // Player Skin
+    public SpriteRenderer spriteRenderer;
+    public Sprite newSprite;
+
     public ProtectedBool isCheater = false;
 
 
@@ -39,6 +43,7 @@ public class Player : NetworkBehaviour {
     void Start() {
         health = maxHealth;
 
+        if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
 
         //StartCoroutine(GetAssetBundle());
         rb = GetComponent<Rigidbody2D>();
