@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
+using UnityEngine.UIElements;
 
 public class Player : NetworkBehaviour {
 
@@ -21,6 +22,7 @@ public class Player : NetworkBehaviour {
     // Player Movement
     private Vector2 moveDirection;
     private Vector2 mousePosition;
+    //private Transform aimTransform;
     public Rigidbody2D rb;
     public Camera playerCamera;
     public Weapon weapon;
@@ -28,6 +30,10 @@ public class Player : NetworkBehaviour {
     public ProtectedBool isCheater = false;
 
 
+    private void Awake()
+    {
+        //aimTransform.transform.Find("Aim");
+    }
 
     // Start is called before the first frame update
     void Start() {
@@ -54,9 +60,10 @@ public class Player : NetworkBehaviour {
     // Update is called once per frame
     void Update() {
         HandleMovement();
+        RotateInDirection0fInput();
 
         // Testing Client to Server Commands
-        if(isLocalPlayer && Input.GetKeyDown(KeyCode.X))
+        if (isLocalPlayer && Input.GetKeyDown(KeyCode.X))
         {
             Debug.Log("Sending Hello to Server");
             HelloServer();
@@ -83,20 +90,34 @@ public class Player : NetworkBehaviour {
 
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
 
+        moveDirection = new Vector2(MoveX, MoveY).normalized;
+        mousePosition = playerCamera.ScreenToWorldPoint(Input.mousePosition);
+
+        //if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
+        //{
+        //    Aim();
+        //}
 
         if (Input.GetMouseButtonDown(0))
         {
             weapon.Fire();
         }
-        moveDirection = new Vector2(MoveX, MoveY).normalized;
-        mousePosition = playerCamera.ScreenToWorldPoint(Input.mousePosition);
 
     }
 
-    void Aim()
+    private void RotateInDirection0fInput() {
+        if (rb.velocity != Vector2.zero) {
+            Quaternion targetRotation = Quaternion.LookRotation(transform.forward, moveDirection);
+            Quaternion rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 10);
+            rb.MoveRotation(rotation);
+        }
+    }
+
+    private void Aim()
     {
         Vector2 aimDirection = mousePosition - rb.position;
         float aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg - 90f;
+        //aimTransform.LookAt(mousePosition);
         rb.rotation = aimAngle;
     }
 
