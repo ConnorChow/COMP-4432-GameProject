@@ -16,8 +16,8 @@ public class Player : NetworkBehaviour {
 
     // Player Stats
     public ProtectedInt32 health;
-    public ProtectedInt32 maxHealth = Globals.maxHealth;
-    public ProtectedFloat playerSpeed = Globals.maxSpeed;
+    private ProtectedInt32 maxHealth = Globals.maxHealth;
+    private ProtectedFloat playerSpeed = Globals.maxSpeed;
 
     // Player Movement
     private Vector2 moveDirection;
@@ -46,7 +46,7 @@ public class Player : NetworkBehaviour {
         if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
 
         //StartCoroutine(GetAssetBundle());
-        rb = GetComponent<Rigidbody2D>();
+        //rb = GetComponent<Rigidbody2D>();
     }
 
     //IEnumerator GetAssetBundle() {
@@ -74,7 +74,7 @@ public class Player : NetworkBehaviour {
             HelloServer();
         }
 
-        if (transform.position.y > 4)
+        if (transform.position.y > 4 || transform.position.y > 50 || transform.position.x > 4 || transform.position.x > 50)
         {
             outOfBounds();
         }
@@ -163,7 +163,6 @@ public class Player : NetworkBehaviour {
     }
 
 
-
     // --------------------------
 
 
@@ -174,7 +173,7 @@ public class Player : NetworkBehaviour {
         Debug.Log($"Player is out of bounds. X: {transform.position.x} Y: {transform.position.y}");
 
         // Add player position adjustment
-        //transform.position.Set(newX, newY, 0);
+        transform.position.Set(0, 0, 0);
     }
 
     [TargetRpc]
