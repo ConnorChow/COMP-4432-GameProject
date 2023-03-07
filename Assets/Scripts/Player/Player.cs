@@ -112,8 +112,8 @@ public class Player : NetworkBehaviour {
 
     private void RotateInDirection0fInput() {
         if (rb.velocity != Vector2.zero) {
-            Quaternion targetRotation = Quaternion.LookRotation(transform.forward, moveDirection);
-            Quaternion rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 10);
+            Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
+            Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
             rb.MoveRotation(rotation);
         }
     }
