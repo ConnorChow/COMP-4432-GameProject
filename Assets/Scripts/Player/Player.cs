@@ -18,13 +18,14 @@ public class Player : NetworkBehaviour {
     public ProtectedInt32 health;
     private ProtectedInt32 maxHealth = Globals.maxHealth;
     private ProtectedFloat playerSpeed = Globals.maxSpeed;
+    public ProtectedString playerName;
 
     // Player Movement
     private Vector2 moveDirection;
     private Vector2 mousePosition;
     //private Transform aimTransform;
-    public Rigidbody2D rb;
-    public Camera playerCamera;
+    private Rigidbody2D rb;
+    private Camera playerCamera;
     public Weapon weapon;
 
     // Player Skin
@@ -43,10 +44,12 @@ public class Player : NetworkBehaviour {
     void Start() {
         health = maxHealth;
 
+        // testing skins
         if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
 
         //StartCoroutine(GetAssetBundle());
-        //rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
+        playerCamera = GetComponent<Camera>();
     }
 
     //IEnumerator GetAssetBundle() {
@@ -74,7 +77,7 @@ public class Player : NetworkBehaviour {
             HelloServer();
         }
 
-        if (transform.position.y > 4 || transform.position.y > 50 || transform.position.x > 4 || transform.position.x > 50)
+        if (rb.transform.position.y > 4 || rb.transform.position.y > 50 || rb.transform.position.x > 4 || rb.transform.position.x > 50)
         {
             outOfBounds();
         }
@@ -91,7 +94,7 @@ public class Player : NetworkBehaviour {
         float MoveX = Input.GetAxisRaw("Horizontal");
         float MoveY = Input.GetAxisRaw("Vertical");
 
-        rb.velocity = new Vector2(MoveX, MoveY) * playerSpeed;
+        rb.velocity = new Vector2(MoveX, MoveY).normalized * playerSpeed;
 
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
 
@@ -111,6 +114,9 @@ public class Player : NetworkBehaviour {
     }
 
     private void RotateInDirection0fInput() {
+        // check if not local player
+        if (!isLocalPlayer) { return; }
+
         if (rb.velocity != Vector2.zero) {
             Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
             Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
@@ -155,6 +161,11 @@ public class Player : NetworkBehaviour {
         Debug.Log($"Old Count: {oldCount} Hellos, New Count: {newCount} Hellos");
     }
 
+    public void setPlayerName(String name)
+    {
+        playerName = name;
+    }
+
     // Server to Client Commands
     [ClientRpc]
     void ReplyHello()
@@ -170,10 +181,11 @@ public class Player : NetworkBehaviour {
     [TargetRpc]
     void outOfBounds()
     {
-        Debug.Log($"Player is out of bounds. X: {transform.position.x} Y: {transform.position.y}");
+        Debug.Log($"Player is out of bounds. X: {rb.transform.position.x} Y: {rb.transform.position.y}");
 
         // Add player position adjustment
-        transform.position.Set(0, 0, 0);
+        Debug.Log($"Moving player back to 0,0");
+        rb.transform.position.Set(0, 0, 0);
     }
 
     [TargetRpc]
