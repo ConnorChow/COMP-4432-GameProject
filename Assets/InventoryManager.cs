@@ -5,7 +5,7 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
     public GameObject slotPrefab;
-    public List<InventorySlot> InventorySlots = new List<InventorySlot>(12);
+    public List<InventorySlot> InventorySlots = new List<InventorySlot>(14);
 
     private void OnEnable()
     {
@@ -19,11 +19,14 @@ public class InventoryManager : MonoBehaviour
 
     void ResetInventory()
     {
+        if (InventorySlots != null)
+        {
         foreach(Transform childTransform in transform)
         {
             Destroy(childTransform.gameObject);
         }
-        InventorySlots = new List<InventorySlot>(12);
+        InventorySlots = new List<InventorySlot>(14);
+        }
     }
 
     void DrawInventory(List<InventoryItem> inventory)
@@ -35,10 +38,13 @@ public class InventoryManager : MonoBehaviour
             CreateInventory();
         }
 
+    if (InventorySlots != null && InventorySlots.Count > 0)
+    {
         for (int i=0; i< inventory.Count;i++)
         {
             InventorySlots[i].DrawSlot(inventory[i]);
         }
+    }
     }
 
     void CreateInventory()
