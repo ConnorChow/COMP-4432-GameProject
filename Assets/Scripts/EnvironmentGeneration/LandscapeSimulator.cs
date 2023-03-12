@@ -11,6 +11,7 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 using OPS.AntiCheat;
 using OPS.AntiCheat.Field;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public struct WFCTile {
     Tile tile;
@@ -196,12 +197,18 @@ public class LandscapeSimulator : MonoBehaviour {
     private int GetIndex(int x, int y) {
         return x * TerrainSize + y;
     }
-    private void BurnCell(int CurrentIndex, ProtectedInt32 ttl) {
-        if (BurnData[CurrentIndex].BurnState == Normal && BurningEntities < TerrainSize) {
-            
+    private void BurnCell(int CurrentIndex, int ttl) {
+        if (BurningEntities < TerrainSize) {
+
+            float healthSaved = BurnData[CurrentIndex].Health;
+
+            if (BurnData[CurrentIndex].BurnState == Normal) {
+                healthSaved= BurningHealth;
+            }
+
             BurnData[CurrentIndex] = new BurnComponent {
                 BurnState = Burning,
-                Health = BurningHealth,
+                Health = healthSaved,
                 TimeToLive = ttl
             };
 
@@ -235,6 +242,11 @@ public class LandscapeSimulator : MonoBehaviour {
                 GetX(CurrentIndex) - (TerrainSize / 2),
                 GetY(CurrentIndex) - (TerrainSize / 2), 0),
                 DirtFull);
+            GroundTileMap.SetTile(new Vector3Int(
+                GetX(CurrentIndex) - (TerrainSize / 2),
+                GetY(CurrentIndex) - (TerrainSize / 2), 0),
+                DirtFull);
+            Map2D[CurrentIndex] = tiles[0];
 
             int detectedBushEntity = -1;
             
@@ -303,16 +315,19 @@ public class LandscapeSimulator : MonoBehaviour {
                 NavComponent[i].Traversability = passable;
                 BurnData[i] = new BurnComponent {
                     BurnState = lsd.BurnState[i],
-                    Health = lsd.Health[i],
+                    Health = new ProtectedFloat(lsd.Health[i]),
                     TimeToLive = lsd.TimeToLive[i]
                 };
+                if (BurnData[i].BurnState == Burning) {
+                    BurnCell(i, BurnData[i].TimeToLive);
+                }
             }
             for (int x = 0; x < TerrainSize; x++) {
                 for (int y = 0; y < TerrainSize; y++) {
                     LoadTileFromLSD(x, y);
                 }
             }
-            BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
+            lsd = new LandscapeSaveData(null);
         } else {
             Debug.Log("Generating New");
             Map2D = new WFCTile[TerrainSize * TerrainSize];
@@ -353,9 +368,12 @@ public class LandscapeSimulator : MonoBehaviour {
         ProtectedInt32 PullCount = 0;
         ProtectedInt32 PushCount = 0;
 
+        Debug.Log("Burning: " + BurningEntities);
         for (ProtectedInt32 i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
+
+            Debug.Log("Cell: " + index + "\nState: " + BurnData[index].BurnState + "\nHealth: " + BurnData[index].Health + "\nttl: " + BurnData[index].TimeToLive);
 
             if (BurnData[index].Health <= 0.0f) {
                 IndexToRemove = i;
@@ -410,6 +428,14 @@ public class LandscapeSimulator : MonoBehaviour {
         if (PullCount > 0) {
             FinishBurnCell(IndexToRemove);
         }
+
+        //Quicksave button
+        if (Input.GetKeyDown(KeyCode.F5)) {
+            this.SaveEnvironment();
+            FoliageSystem.SaveData();
+        } else if (Input.GetKeyDown(KeyCode.F9)) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     //*************************Save Data**************************\\
@@ -417,6 +443,7 @@ public class LandscapeSimulator : MonoBehaviour {
 
     //Write to Player JSON file
     public void SaveEnvironment() {
+        Debug.Log("Saving");
         lsd = new LandscapeSaveData(this);
         string EnvData = JsonUtility.ToJson(lsd);
         File.WriteAllText(Application.persistentDataPath + "/LandscapeData.json", EnvData);
@@ -448,56 +475,58 @@ public class LandscapeSaveData {
     public int[] TimeToLive;
 
     public LandscapeSaveData(LandscapeSimulator ls) {
-        terrainSize = ls.TerrainSize;
-        int counter = 0;
-        map2DIndex= new int[ls.TerrainSize * ls.TerrainSize];
-        foreach (var i in ls.Map2D) {
-            if (i.GetTile() == ls.DirtFull) {
-                map2DIndex[counter] = 0;
-            } else if (i.GetTile() == ls.GrassFull) { 
-                map2DIndex[counter] = 1;
-            } else if (i.GetTile() == ls.GrassDirtDown) {
-                map2DIndex[counter] = 2;
-            } else if (i.GetTile() == ls.GrassDirtDownLeft) {
-                map2DIndex[counter] = 3;
-            } else if (i.GetTile() == ls.GrassDirtLeft) {
-                map2DIndex[counter] = 4;
-            } else if (i.GetTile() == ls.GrassDirtUpLeft) {
-                map2DIndex[counter] = 5;
-            } else if (i.GetTile() == ls.GrassDirtUp) {
-                map2DIndex[counter] = 6;
-            } else if (i.GetTile() == ls.GrassDirtUpRight) {
-                map2DIndex[counter] = 7;
-            } else if (i.GetTile() == ls.GrassDirtRight) {
-                map2DIndex[counter] = 8;
-            } else if (i.GetTile() == ls.GrassDirtDownRight) {
-                map2DIndex[counter] = 9;
-            } else if (i.GetTile() == ls.DirtGrassDown) {
-                map2DIndex[counter] = 10;
-            } else if (i.GetTile() == ls.DirtGrassDownLeft) {
-                map2DIndex[counter] = 11;
-            } else if (i.GetTile() == ls.DirtGrassLeft) {
-                map2DIndex[counter] = 12;
-            } else if (i.GetTile() == ls.DirtGrassUpLeft) {
-                map2DIndex[counter] = 13;
-            } else if (i.GetTile() == ls.DirtGrassUp) {
-                map2DIndex[counter] = 14;
-            } else if (i.GetTile() == ls.DirtGrassUpRight) {
-                map2DIndex[counter] = 15;
-            } else if (i.GetTile() == ls.DirtGrassRight) {
-                map2DIndex[counter] = 16;
-            } else if (i.GetTile() == ls.DirtGrassDownRight) {
-                map2DIndex[counter] = 17;
+        if (ls != null) {
+            terrainSize = ls.TerrainSize;
+            int counter = 0;
+            map2DIndex = new int[ls.TerrainSize * ls.TerrainSize];
+            foreach (var i in ls.Map2D) {
+                if (i.GetTile() == ls.DirtFull) {
+                    map2DIndex[counter] = 0;
+                } else if (i.GetTile() == ls.GrassFull) {
+                    map2DIndex[counter] = 1;
+                } else if (i.GetTile() == ls.GrassDirtDown) {
+                    map2DIndex[counter] = 2;
+                } else if (i.GetTile() == ls.GrassDirtDownLeft) {
+                    map2DIndex[counter] = 3;
+                } else if (i.GetTile() == ls.GrassDirtLeft) {
+                    map2DIndex[counter] = 4;
+                } else if (i.GetTile() == ls.GrassDirtUpLeft) {
+                    map2DIndex[counter] = 5;
+                } else if (i.GetTile() == ls.GrassDirtUp) {
+                    map2DIndex[counter] = 6;
+                } else if (i.GetTile() == ls.GrassDirtUpRight) {
+                    map2DIndex[counter] = 7;
+                } else if (i.GetTile() == ls.GrassDirtRight) {
+                    map2DIndex[counter] = 8;
+                } else if (i.GetTile() == ls.GrassDirtDownRight) {
+                    map2DIndex[counter] = 9;
+                } else if (i.GetTile() == ls.DirtGrassDown) {
+                    map2DIndex[counter] = 10;
+                } else if (i.GetTile() == ls.DirtGrassDownLeft) {
+                    map2DIndex[counter] = 11;
+                } else if (i.GetTile() == ls.DirtGrassLeft) {
+                    map2DIndex[counter] = 12;
+                } else if (i.GetTile() == ls.DirtGrassUpLeft) {
+                    map2DIndex[counter] = 13;
+                } else if (i.GetTile() == ls.DirtGrassUp) {
+                    map2DIndex[counter] = 14;
+                } else if (i.GetTile() == ls.DirtGrassUpRight) {
+                    map2DIndex[counter] = 15;
+                } else if (i.GetTile() == ls.DirtGrassRight) {
+                    map2DIndex[counter] = 16;
+                } else if (i.GetTile() == ls.DirtGrassDownRight) {
+                    map2DIndex[counter] = 17;
+                }
+                counter++;
             }
-            counter++;
-        }
-        BurnState = new int[ls.BurnData.Length];
-        Health = new float[ls.BurnData.Length];
-        TimeToLive = new int[ls.BurnData.Length];
-        for (int i = 0; i < BurnState.Length; i++) {
-            BurnState[i] = ls.BurnData[i].BurnState;
-            Health[i] = ls.BurnData[i].Health;
-            TimeToLive[i] = ls.BurnData[i].TimeToLive;
+            BurnState = new int[ls.BurnData.Length];
+            Health = new float[ls.BurnData.Length];
+            TimeToLive = new int[ls.BurnData.Length];
+            for (int i = 0; i < BurnState.Length; i++) {
+                BurnState[i] = ls.BurnData[i].BurnState;
+                Health[i] = ls.BurnData[i].Health;
+                TimeToLive[i] = ls.BurnData[i].TimeToLive;
+            }
         }
     }
 }

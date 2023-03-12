@@ -261,6 +261,8 @@ public class FoliageSimulator : MonoBehaviour {
     }
 
     public void SaveData() {
+        Debug.Log("Saving");
+
         FoliageSaveData fsd = new FoliageSaveData(this);
 
         string data = JsonUtility.ToJson(fsd);
@@ -275,7 +277,6 @@ public class FoliageSimulator : MonoBehaviour {
             fsd = JsonUtility.FromJson<FoliageSaveData>(data);
 
             //fill all data values
-            Debug.Log(fsd.BerryCount.Length);
             for (int i = 0; i < fsd.BerryCount.Length; i++) {
                 Vector2Int tile = new Vector2Int(fsd.BerryTilesX[i], fsd.BerryTilesY[i]);
 
@@ -288,7 +289,7 @@ public class FoliageSimulator : MonoBehaviour {
                     Countdown = fsd.BerryCount[i],
                     Tile = tile
                 });
-                Debug.Log("Load Bush " + i);
+                //Debug.Log("Load Bush " + i);
             }
 
             for (int i = 0; i < fsd.RockTilesX.Length; i++) {
@@ -299,7 +300,7 @@ public class FoliageSimulator : MonoBehaviour {
                 LandScapeSimulator.NavComponent[tile.x * LandScapeSimulator.TerrainSize + tile.y].Traversability = obstacle;
                 LandScapeSimulator.NeutralizeTile(tile.x * LandScapeSimulator.TerrainSize + tile.y);
                 RockTilingData.Add(new Vector2Int(tile.x, tile.y));
-                Debug.Log("Load Rock " + i);
+                //Debug.Log("Load Rock " + i);
             }
             return true;
         } else {
