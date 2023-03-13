@@ -93,15 +93,14 @@ public class LandscapeSimulator : NetworkBehaviour {
     public Tile DirtGrassRight;
     public Tile DirtGrassDownRight;
 
-    [SyncVar]
     [Header("Tile Maps")]
     public int TerrainSize = 16;
 
-    public WFCTile[] Map2D;
-    public Navigation[] NavComponent;
-    public BurnComponent[] BurnData;
+    [SyncVar] public WFCTile[] Map2D;
+    [SyncVar] public Navigation[] NavComponent;
+    [SyncVar] public BurnComponent[] BurnData;
 
-    public Tilemap GroundTileMap, FireGrid;
+    [SyncVar] public Tilemap GroundTileMap, FireGrid;
 
     public bool tryLoadMap = false;
     public ProtectedInt32 saveSlot = -1;
@@ -118,8 +117,8 @@ public class LandscapeSimulator : NetworkBehaviour {
     BurnComponent FlammableTile;
     BurnComponent SafeTile;
 
-    public ProtectedInt32[] BurnQueue;
-    public ProtectedInt32 BurningEntities = 0;
+    [SyncVar] public ProtectedInt32[] BurnQueue;
+    [SyncVar] public ProtectedInt32 BurningEntities = 0;
 
     public FoliageSimulator FoliageSystem;
 
