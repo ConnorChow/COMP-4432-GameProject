@@ -9,17 +9,14 @@ public class Enemy : MonoBehaviour
     [SerializeField] float health, maxHealth = 3f;
 
     [SerializeField] float moveSpeed = 5f;
-    Rigidbody2D rb;
-    Transform target;
-    Vector2 moveDirection;
+    private Rigidbody2D rb;
+    private Transform target;
+    private Vector2 moveDirection;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
-
-
-
 
     private void Start()
     {
@@ -29,23 +26,30 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if(target)
-        {
-        Vector3 direction = (target.position - transform.position).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        rb.rotation = angle;
-        moveDirection = direction;
-        }
+        HandleMovement();
     }
 
     private void FixedUpdate()
     {
-        if(target)
+        
+    }
+
+    void HandleMovement()
+    {
+        if (target)
+        {
+            Vector3 direction = (target.position - transform.position).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            rb.rotation = angle;
+            moveDirection = direction;
+        }
+
+        if (target)
         {
             rb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed;
         }
-    }
 
+    }
 
     public void TakeDamage(float damageAmount)
     {
