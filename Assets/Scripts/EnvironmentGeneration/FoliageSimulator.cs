@@ -193,10 +193,38 @@ public class FoliageSimulator : MonoBehaviour {
         }
     }
 
-    private bool tryLoad;
+    private ProtectedBool tryLoad;
+    public ProtectedInt32 saveSlot = -1;
 
     // Start is called before the first frame update
     void Start() {
+
+        //Load Playerprefs for generating or loading Landscape
+        if (PlayerPrefs.HasKey("loadMap")) {
+            //Try to determine if landscape needs loading
+            switch (PlayerPrefs.GetInt("loadMap")) {
+                //0 represents false
+                case 0: tryLoad = false; break;
+                //1 represents true
+                case 1: tryLoad = true; break;
+            }
+            //Try to load from a slot or generate a new one
+            if (PlayerPrefs.HasKey("loadSlot") && tryLoad) {
+                saveSlot = PlayerPrefs.GetInt("loadSlot");
+            } else {
+                //by default override slot 0 if there is no incoming data
+                PlayerPrefs.SetInt("numSlots", 1);
+                PlayerPrefs.SetInt("loadSlot", 1);
+                //ensure map does not try loading as there definitely does not exist said slot
+                tryLoad = false;
+            }
+        } else {
+            //
+            PlayerPrefs.SetInt("loadMap", 0);
+            tryLoad = false;
+        }
+
+
         PickedBerryBushes = new Tile[4] {
             BerryBushPicked1,
             BerryBushPicked2,
@@ -227,7 +255,7 @@ public class FoliageSimulator : MonoBehaviour {
 
         tryLoad = LandScapeSimulator.tryLoadMap;
         //If we don't want to load and/or a load file does not exist, generate new foliage
-        if (tryLoad && LoadData()) {
+        if (tryLoad && LoadData(saveSlot)) {
             Debug.Log("Loading Saved Foliage");
         } else {
             Debug.Log("Generating new Foliage");
@@ -251,7 +279,7 @@ public class FoliageSimulator : MonoBehaviour {
                     }
                 }
             }
-            SaveData();
+            SaveData(saveSlot);
         }
     }
 
@@ -260,20 +288,20 @@ public class FoliageSimulator : MonoBehaviour {
 
     }
 
-    public void SaveData() {
+    public void SaveData(int slot) {
         Debug.Log("Saving");
 
         FoliageSaveData fsd = new FoliageSaveData(this);
 
         string data = JsonUtility.ToJson(fsd);
 
-        File.WriteAllText(Application.persistentDataPath + "/FoliageData.json", data);
+        File.WriteAllText(Application.persistentDataPath + "/FoliageData" + slot + ".json", data);
     }
 
-    public bool LoadData() {
-        if (File.Exists(Application.persistentDataPath + "/FoliageData.json")) {
+    public bool LoadData(int slot) {
+        if (File.Exists(Application.persistentDataPath + "/FoliageData" + slot + ".json")) {
             FoliageSaveData fsd = new FoliageSaveData();
-            string data = File.ReadAllText(Application.persistentDataPath + "/FoliageData.json");
+            string data = File.ReadAllText(Application.persistentDataPath + "/FoliageData" + slot + ".json");
             fsd = JsonUtility.FromJson<FoliageSaveData>(data);
 
             //fill all data values

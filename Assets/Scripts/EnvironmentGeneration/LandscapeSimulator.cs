@@ -100,6 +100,7 @@ public class LandscapeSimulator : MonoBehaviour {
     public Tilemap GroundTileMap, FireGrid;
 
     public bool tryLoadMap = false;
+    public ProtectedInt32 saveSlot = -1;
 
     [Header("Simulation")]
     public ProtectedFloat FireDamagePerSecond = 1.0f;
@@ -290,6 +291,31 @@ public class LandscapeSimulator : MonoBehaviour {
         tiles[16].SetParams(DirtGrassRight, new int[4] { Dirt, DirtVGrass, Grass, DirtVGrass });
         tiles[17].SetParams(DirtGrassDownRight, new int[4] { Dirt, Dirt, GrassVDirt, DirtVGrass });
 
+        //Load Playerprefs for generating or loading Landscape
+        if (PlayerPrefs.HasKey("loadMap")) {
+            //Try to determine if landscape needs loading
+            switch (PlayerPrefs.GetInt("loadMap")) {
+                //0 represents false
+                case 0: tryLoadMap = false; break;
+                //1 represents true
+                case 1: tryLoadMap = true; break;
+            }
+            //Try to load from a slot or generate a new one
+            if (PlayerPrefs.HasKey("loadSlot") && tryLoadMap) {
+                saveSlot = PlayerPrefs.GetInt("loadSlot");
+            } else {
+                //by default override slot 0 if there is no incoming data
+                PlayerPrefs.SetInt("numSlots", 1);
+                PlayerPrefs.SetInt("loadSlot", 1);
+                //ensure map does not try loading as there definitely does not exist said slot
+                tryLoadMap = false;
+            }
+        } else {
+            //
+            PlayerPrefs.SetInt("loadMap", 0);
+            tryLoadMap= false;
+        }
+
         FlammableTile = new BurnComponent {
             BurnState = Normal,
             Health = NormalHealth,
@@ -304,7 +330,7 @@ public class LandscapeSimulator : MonoBehaviour {
         BurnQueue = new ProtectedInt32[TerrainSize];
 
         //Try to load player environment, otherwise generate a new one and save it
-        if (LoadEnvironment() && tryLoadMap) {
+        if (LoadEnvironment(saveSlot) && tryLoadMap) {
             Debug.Log("Loading from save");
             TerrainSize = lsd.terrainSize;
             Map2D = new WFCTile[lsd.map2DIndex.Length];
@@ -344,12 +370,11 @@ public class LandscapeSimulator : MonoBehaviour {
                 }
             }
             BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
-            SaveEnvironment();
+            SaveEnvironment(saveSlot);
         }
     }
 
     bool loadInFire = true;
-    int fireCounter = 0;
 
     // Update is called once per frame
     void Update() {
@@ -440,8 +465,8 @@ public class LandscapeSimulator : MonoBehaviour {
 
         //Quicksave button
         if (Input.GetKeyDown(KeyCode.F5)) {
-            this.SaveEnvironment();
-            FoliageSystem.SaveData();
+            this.SaveEnvironment(saveSlot);
+            FoliageSystem.SaveData(saveSlot);
         } else if (Input.GetKeyDown(KeyCode.F9)) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
@@ -451,17 +476,17 @@ public class LandscapeSimulator : MonoBehaviour {
     [SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
 
     //Write to Player JSON file
-    public void SaveEnvironment() {
+    public void SaveEnvironment(int slot) {
         Debug.Log("Saving");
         lsd = new LandscapeSaveData(this);
         string EnvData = JsonUtility.ToJson(lsd);
-        File.WriteAllText(Application.persistentDataPath + "/LandscapeData.json", EnvData);
+        File.WriteAllText(Application.persistentDataPath + "/LandscapeData" + slot + ".json", EnvData);
     }
 
     //We load save data from JSON if it exists, otherwise delete it
-    public bool LoadEnvironment() {
-        if (File.Exists(Application.persistentDataPath + "/LandscapeData.json")) {
-            lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData.json"));
+    public bool LoadEnvironment(int slot) {
+        if (File.Exists(Application.persistentDataPath + "/LandscapeData" + slot +".json")) {
+            lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData" + slot +".json"));
             return true;
         } else {
             return false;
