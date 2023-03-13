@@ -58,7 +58,7 @@ public class BushEntityManagement : ECS_EntityComponentManagement {
     }
 }
 
-public class FoliageSimulator : NetworkBehaviour {
+public class FoliageSimulator : MonoBehaviour {
     const int rock = 0;
     const int berries = 1;
 
@@ -106,8 +106,7 @@ public class FoliageSimulator : NetworkBehaviour {
     [Header("Big Rock")]
     public Tile BigRockLeft;
     public Tile BigRockRight;
-    //
-    [SyncVar]
+
     [Header("Foliage Tilemap")]
     //public static int TerrainSize;
     public ProtectedInt32 ClumpQty;

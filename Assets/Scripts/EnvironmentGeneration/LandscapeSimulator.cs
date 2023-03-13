@@ -45,7 +45,7 @@ public struct BurnComponent {
     public ProtectedInt32 TimeToLive;
 }
 
-public class LandscapeSimulator : NetworkBehaviour {
+public class LandscapeSimulator : MonoBehaviour {
     //Socketing info
     static ProtectedInt32 Empty = -1;
     static ProtectedInt32 Grass = 0;
@@ -476,7 +476,7 @@ public class LandscapeSimulator : NetworkBehaviour {
     }
 
     //*************************Save Data**************************\\
-    [SyncVar][SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
+    [SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
 
     //Write to Player JSON file
     public void SaveEnvironment(int slot) {
