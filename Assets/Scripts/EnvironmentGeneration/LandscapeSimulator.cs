@@ -93,7 +93,6 @@ public class LandscapeSimulator : NetworkBehaviour {
     public Tile DirtGrassRight;
     public Tile DirtGrassDownRight;
 
-    [SyncVar]
     [Header("Tile Maps")]
     public int TerrainSize = 16;
 
