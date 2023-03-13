@@ -49,21 +49,8 @@ public class Player : NetworkBehaviour {
 
         //StartCoroutine(GetAssetBundle());
         rb = GetComponentInChildren<Rigidbody2D>();
-        //playerCamera = GetComponentInChildren<Camera>();
+        playerCamera = GetComponentInChildren<Camera>();
     }
-
-    //IEnumerator GetAssetBundle() {
-    //    UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle("http://www.my-server.com");
-    //    www.downloadHandler = new DownloadHandlerBuffer();
-    //    yield return www.Send();
- 
-    //    if(www.isNetworkError) {
-    //        Debug.Log(www.error);
-    //    }
-    //    else {
-    //        AssetBundle bundle = ((DownloadHandlerAssetBundle)www.downloadHandler).assetBundle;
-    //    }
-    //}
 
     // Update is called once per frame
     void Update() {
@@ -81,6 +68,11 @@ public class Player : NetworkBehaviour {
         {
             outOfBounds();
         }
+    }
+
+    private void FixedUpdate()
+    {
+       
     }
 
 
@@ -101,15 +93,15 @@ public class Player : NetworkBehaviour {
         moveDirection = new Vector2(MoveX, MoveY).normalized;
         mousePosition = playerCamera.ScreenToWorldPoint(Input.mousePosition);
 
-        //if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
-        //{
-        //    Aim();
-        //}
+        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
+        {
+            Aim();
 
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    weapon.Fire();
-        //}
+            if (Input.GetMouseButtonDown(0))
+            {
+                weapon.Fire();
+            }
+        }
 
     }
 
@@ -117,7 +109,7 @@ public class Player : NetworkBehaviour {
         // check if not local player
         if (!isLocalPlayer) { return; }
 
-        if (rb.velocity != Vector2.zero) {
+        if (rb.velocity != Vector2.zero && (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))) {
             Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
             Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
             rb.MoveRotation(rotation);
@@ -211,6 +203,25 @@ public class Player : NetworkBehaviour {
         // Raise cheat flag
         isCheater = true;
     }
-    
 
+
+
+
+
+
+
+    // Extra Code
+
+    //IEnumerator GetAssetBundle() {
+    //    UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle("http://www.my-server.com");
+    //    www.downloadHandler = new DownloadHandlerBuffer();
+    //    yield return www.Send();
+
+    //    if(www.isNetworkError) {
+    //        Debug.Log(www.error);
+    //    }
+    //    else {
+    //        AssetBundle bundle = ((DownloadHandlerAssetBundle)www.downloadHandler).assetBundle;
+    //    }
+    //}
 }
