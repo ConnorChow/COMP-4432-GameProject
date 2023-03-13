@@ -41,6 +41,12 @@ public class mNetworkManager : NetworkManager
         Debug.Log("Disconnected from Server");
     }
 
+
+    public void SpawnEnemy(GameObject enemy)
+    {
+        NetworkServer.Spawn(enemy);
+    }
+
     //public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     //{
     //    base.OnServerAddPlayer(conn);

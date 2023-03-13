@@ -14,6 +14,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button hostButton = null;
     [SerializeField] private Button joinButton = null;
 
+
     public void HostLobby() {
         networkManager.StartHost();
         mainMenuPage.SetActive(false);

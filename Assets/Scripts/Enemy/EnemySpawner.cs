@@ -12,16 +12,5 @@ public class EnemySpawner
     {
         //StartCoroutine(SpawnEnemy());
     }
-
-    //private IEnumerator SpawnEnemy()
-    //{
-    //    yield return new WaitForSeconds(frequency);
-
-    //    if (Enemy.enemies.Count < Enemy.maxEnemies)
-    //    {
-    //        NetworkManager.instance.InstantiateEnemy(transform.position);
-    //    }
-    //    StartCoroutine(SpawnEnemy());
-    //}
 }
 

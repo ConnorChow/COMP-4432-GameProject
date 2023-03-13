@@ -23,7 +23,7 @@ public class Player : NetworkBehaviour {
     // Player Movement
     private Vector2 moveDirection;
     private Vector2 mousePosition;
-    //private Transform aimTransform;
+    private Transform aimTransform;
     private Rigidbody2D rb;
     public Camera playerCamera;
     public Weapon weapon;
@@ -70,12 +70,6 @@ public class Player : NetworkBehaviour {
         }
     }
 
-    private void FixedUpdate()
-    {
-       
-    }
-
-
     // Player Functions
     void HandleMovement()
     {
@@ -97,10 +91,11 @@ public class Player : NetworkBehaviour {
         {
             Aim();
 
-            if (Input.GetMouseButtonDown(0))
-            {
-                weapon.Fire();
-            }
+            
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            weapon.Fire();
         }
 
     }
@@ -122,7 +117,7 @@ public class Player : NetworkBehaviour {
     {
         Vector2 aimDirection = mousePosition - rb.position;
         float aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg - 90f;
-        //aimTransform.LookAt(mousePosition);
+        aimTransform.LookAt(mousePosition);
         rb.rotation = aimAngle;
     }
 
@@ -165,6 +160,11 @@ public class Player : NetworkBehaviour {
     void ReplyHello()
     {
         Debug.Log("Received Hello from Server");
+    }
+
+    void SpawnEnemies()
+    {
+
     }
 
 
