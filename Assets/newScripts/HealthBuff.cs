@@ -12,3 +12,4 @@ public class HealthBuff : PowerupEffect
         target.GetComponent<PlayerHealth>().health += amount;
     }
 }
+
