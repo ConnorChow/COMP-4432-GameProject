@@ -109,7 +109,9 @@ public class Player : NetworkBehaviour {
         // check if not local player
         if (!isLocalPlayer) { return; }
 
-        if (rb.velocity != Vector2.zero && (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))) {
+        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E)) { return; }
+
+        if (rb.velocity != Vector2.zero) {
             Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
             Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
             rb.MoveRotation(rotation);
