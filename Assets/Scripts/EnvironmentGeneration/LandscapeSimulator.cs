@@ -318,9 +318,6 @@ public class LandscapeSimulator : MonoBehaviour {
                     Health = new ProtectedFloat(lsd.Health[i]),
                     TimeToLive = lsd.TimeToLive[i]
                 };
-                if (BurnData[i].BurnState == Burning) {
-                    BurnCell(i, BurnData[i].TimeToLive);
-                }
             }
             for (int x = 0; x < TerrainSize; x++) {
                 for (int y = 0; y < TerrainSize; y++) {
@@ -351,8 +348,20 @@ public class LandscapeSimulator : MonoBehaviour {
         }
     }
 
+    bool loadInFire = true;
+    int fireCounter = 0;
+
     // Update is called once per frame
     void Update() {
+        if (loadInFire) {
+            for (int i = 0; i < BurnData.Length; i++) {
+                if (BurnData[i].BurnState == Burning) {
+                    BurnCell(i, BurnData[i].TimeToLive);
+                }
+            }
+            loadInFire = false;
+        }
+
         ProtectedInt32 index;
         ProtectedInt32 LeftNeighbor;
         ProtectedInt32 RightNeighbor;
