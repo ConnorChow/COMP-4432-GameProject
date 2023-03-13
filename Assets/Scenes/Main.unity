@@ -232,7 +232,7 @@ MonoBehaviour:
   TerrainSize: 512
   GroundTileMap: {fileID: 2068422357}
   FireGrid: {fileID: 569049601}
-  tryLoadMap: 0
+  tryLoadMap: 1
   saveSlot:
     fakeValue: -1
   FireDamagePerSecond:

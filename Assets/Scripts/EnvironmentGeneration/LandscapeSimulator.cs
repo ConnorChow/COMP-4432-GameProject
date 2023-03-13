@@ -477,7 +477,7 @@ public class LandscapeSimulator : NetworkBehaviour {
     }
 
     //*************************Save Data**************************\\
-    [SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
+    [SyncVar][SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
 
     //Write to Player JSON file
     public void SaveEnvironment(int slot) {
@@ -512,6 +512,7 @@ public class LandscapeSaveData {
     public float[] Health;
     public int[] TimeToLive;
 
+    public LandscapeSaveData() { }
     public LandscapeSaveData(LandscapeSimulator ls) {
         if (ls != null) {
             terrainSize = ls.TerrainSize;
