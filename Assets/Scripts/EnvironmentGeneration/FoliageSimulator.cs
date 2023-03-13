@@ -58,7 +58,7 @@ public class BushEntityManagement : ECS_EntityComponentManagement {
     }
 }
 
-public class FoliageSimulator : NetworkBehaviour {
+public class FoliageSimulator : MonoBehaviour {
     const int rock = 0;
     const int berries = 1;
 
@@ -106,7 +106,7 @@ public class FoliageSimulator : NetworkBehaviour {
     [Header("Big Rock")]
     public Tile BigRockLeft;
     public Tile BigRockRight;
-    //
+
     [Header("Foliage Tilemap")]
     //public static int TerrainSize;
     public ProtectedInt32 ClumpQty;
@@ -114,11 +114,11 @@ public class FoliageSimulator : NetworkBehaviour {
     public ProtectedInt32 foliageSpacing;
     public Tilemap FoliageTilemap;
 
-    [SyncVar] public ProtectedInt32 MaxBushInstances = 2048;
-    [SyncVar] public BushBerriesComponent[] BushBerriesData;
-    [SyncVar] public Dictionary<BushTilingComponent, int> BushTilingData = new Dictionary<BushTilingComponent, int>();
-    [SyncVar] public HashSet<Vector2Int> RockTilingData = new HashSet<Vector2Int>();
-    [SyncVar] public BushEntityManagement FoliageData;
+    public ProtectedInt32 MaxBushInstances = 2048;
+    public BushBerriesComponent[] BushBerriesData;
+    public Dictionary<BushTilingComponent, int> BushTilingData = new Dictionary<BushTilingComponent, int>();
+    public HashSet<Vector2Int> RockTilingData = new HashSet<Vector2Int>();
+    public BushEntityManagement FoliageData;
 
     [Header("Referenced Scripts")]
     public LandscapeSimulator LandScapeSimulator;

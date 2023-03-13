@@ -45,7 +45,7 @@ public struct BurnComponent {
     public ProtectedInt32 TimeToLive;
 }
 
-public class LandscapeSimulator : NetworkBehaviour {
+public class LandscapeSimulator : MonoBehaviour {
     //Socketing info
     static ProtectedInt32 Empty = -1;
     static ProtectedInt32 Grass = 0;
@@ -96,11 +96,11 @@ public class LandscapeSimulator : NetworkBehaviour {
     [Header("Tile Maps")]
     public int TerrainSize = 16;
 
-    [SyncVar] public WFCTile[] Map2D;
-    [SyncVar] public Navigation[] NavComponent;
-    [SyncVar] public BurnComponent[] BurnData;
+    public WFCTile[] Map2D;
+    public Navigation[] NavComponent;
+    public BurnComponent[] BurnData;
 
-    [SyncVar] public Tilemap GroundTileMap, FireGrid;
+    public Tilemap GroundTileMap, FireGrid;
 
     public bool tryLoadMap = false;
     public ProtectedInt32 saveSlot = -1;
@@ -117,8 +117,8 @@ public class LandscapeSimulator : NetworkBehaviour {
     BurnComponent FlammableTile;
     BurnComponent SafeTile;
 
-    [SyncVar] public ProtectedInt32[] BurnQueue;
-    [SyncVar] public ProtectedInt32 BurningEntities = 0;
+    public ProtectedInt32[] BurnQueue;
+    public ProtectedInt32 BurningEntities = 0;
 
     public FoliageSimulator FoliageSystem;
 
@@ -476,7 +476,7 @@ public class LandscapeSimulator : NetworkBehaviour {
     }
 
     //*************************Save Data**************************\\
-    [SyncVar][SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
+    [SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
 
     //Write to Player JSON file
     public void SaveEnvironment(int slot) {
