@@ -66,7 +66,7 @@ public class Player : NetworkBehaviour {
 
         if (rb.transform.position.y > 4 || rb.transform.position.y > 50 || rb.transform.position.x > 4 || rb.transform.position.x > 50)
         {
-            outOfBounds();
+            //outOfBounds();
         }
     }
 
