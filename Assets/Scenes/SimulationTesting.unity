@@ -237,6 +237,8 @@ MonoBehaviour:
   GroundTileMap: {fileID: 1659723895}
   FireGrid: {fileID: 783363315}
   tryLoadMap: 1
+  saveSlot:
+    fakeValue: -1
   FireDamagePerSecond:
     fakeValue: 1
   NormalHealth:
@@ -308,6 +310,8 @@ MonoBehaviour:
   MaxBushInstances:
     fakeValue: 8192
   LandScapeSimulator: {fileID: 59897778}
+  saveSlot:
+    fakeValue: -1
 --- !u!1 &538702239
 GameObject:
   m_ObjectHideFlags: 0
