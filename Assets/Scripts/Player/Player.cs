@@ -25,7 +25,7 @@ public class Player : NetworkBehaviour {
     private Vector2 mousePosition;
     //private Transform aimTransform;
     private Rigidbody2D rb;
-    private Camera playerCamera;
+    public Camera playerCamera;
     public Weapon weapon;
 
     // Player Skin
@@ -48,8 +48,8 @@ public class Player : NetworkBehaviour {
         if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
 
         //StartCoroutine(GetAssetBundle());
-        rb = GetComponent<Rigidbody2D>();
-        playerCamera = GetComponent<Camera>();
+        rb = GetComponentInChildren<Rigidbody2D>();
+        //playerCamera = GetComponentInChildren<Camera>();
     }
 
     //IEnumerator GetAssetBundle() {
@@ -106,10 +106,10 @@ public class Player : NetworkBehaviour {
         //    Aim();
         //}
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            weapon.Fire();
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    weapon.Fire();
+        //}
 
     }
 
