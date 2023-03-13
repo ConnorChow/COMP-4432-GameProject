@@ -369,7 +369,7 @@ public class LandscapeSimulator : MonoBehaviour {
                     CollapseTerrain(x, y);
                 }
             }
-            BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
+            //BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
             SaveEnvironment(saveSlot);
         }
     }
@@ -402,12 +402,12 @@ public class LandscapeSimulator : MonoBehaviour {
         ProtectedInt32 PullCount = 0;
         ProtectedInt32 PushCount = 0;
 
-        Debug.Log("Burning: " + BurningEntities);
+        //Debug.Log("Burning: " + BurningEntities);
         for (ProtectedInt32 i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
 
-            Debug.Log("Cell: " + index + "\nState: " + BurnData[index].BurnState + "\nHealth: " + BurnData[index].Health + "\nttl: " + BurnData[index].TimeToLive);
+            //Debug.Log("Cell: " + index + "\nState: " + BurnData[index].BurnState + "\nHealth: " + BurnData[index].Health + "\nttl: " + BurnData[index].TimeToLive);
 
             if (BurnData[index].Health <= 0.0f) {
                 IndexToRemove = i;
