@@ -4,6 +4,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+using Mirror;
+using UnityEngine.Networking;
+
 using OPS.AntiCheat;
 using OPS.AntiCheat.Field;
 using System.Linq;
@@ -55,7 +58,7 @@ public class BushEntityManagement : ECS_EntityComponentManagement {
     }
 }
 
-public class FoliageSimulator : MonoBehaviour {
+public class FoliageSimulator : NetworkBehaviour {
     const int rock = 0;
     const int berries = 1;
 
@@ -103,7 +106,8 @@ public class FoliageSimulator : MonoBehaviour {
     [Header("Big Rock")]
     public Tile BigRockLeft;
     public Tile BigRockRight;
-
+    //
+    [SyncVar]
     [Header("Foliage Tilemap")]
     //public static int TerrainSize;
     public ProtectedInt32 ClumpQty;
@@ -219,7 +223,6 @@ public class FoliageSimulator : MonoBehaviour {
                 tryLoad = false;
             }
         } else {
-            //
             PlayerPrefs.SetInt("loadMap", 0);
             tryLoad = false;
         }

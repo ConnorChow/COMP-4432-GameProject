@@ -8,6 +8,9 @@ using System;
 using Unity.Mathematics;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
+using Mirror;
+using UnityEngine.Networking;
+
 using OPS.AntiCheat;
 using OPS.AntiCheat.Field;
 using System.IO;
@@ -42,7 +45,7 @@ public struct BurnComponent {
     public ProtectedInt32 TimeToLive;
 }
 
-public class LandscapeSimulator : MonoBehaviour {
+public class LandscapeSimulator : NetworkBehaviour {
     //Socketing info
     static ProtectedInt32 Empty = -1;
     static ProtectedInt32 Grass = 0;
@@ -90,6 +93,7 @@ public class LandscapeSimulator : MonoBehaviour {
     public Tile DirtGrassRight;
     public Tile DirtGrassDownRight;
 
+    [SyncVar]
     [Header("Tile Maps")]
     public int TerrainSize = 16;
 
