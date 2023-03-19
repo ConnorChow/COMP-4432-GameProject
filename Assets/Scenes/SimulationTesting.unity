@@ -242,6 +242,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2539039039134556, guid: b796a28e8118eb04787ca9084a047f44, type: 3}
+      propertyPath: sceneId
+      value: 364515103
+      objectReference: {fileID: 0}
     - target: {fileID: 6392969219796863526, guid: b796a28e8118eb04787ca9084a047f44, type: 3}
       propertyPath: sceneId
       value: 1455897045
@@ -430,7 +434,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.4609375
+  orthographic size: 8.3125
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
