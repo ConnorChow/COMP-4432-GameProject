@@ -678,7 +678,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrow: {fileID: 1192131430223260642, guid: 679f743853ed64025bc3b76783280523, type: 3}
-  grenade: {fileID: 0}
+  grenade: {fileID: 4213564593925894268, guid: ff04eb73cede94b4a9ecc0eba33ec286, type: 3}
   firePoint: {fileID: 7680544307744532362}
   fireForce: 5
 --- !u!1 &4112943820570070498
@@ -1289,7 +1289,7 @@ GameObject:
   - component: {fileID: 9024947510954523422}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

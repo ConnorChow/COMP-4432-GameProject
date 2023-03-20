@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,8 @@ public class Grenade : MonoBehaviour {
 
     public float speed = 5;
 
+    float timer = 3f;
+
     // Start is called before the first frame update
     void Start() {
         targetPos = GameObject.Find("firePoint").transform.position;
@@ -18,30 +21,42 @@ public class Grenade : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (speed > 0) {
-            speed -= Random.Range(.1f, .25f) * Time.deltaTime;
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-        } else if (speed <= 0) {
-            speed = 0;
-            Explode();
-        }
+        //if (speed > 0) {
+        //    speed -= Random.Range(.1f, .25f) * Time.deltaTime;
+        //    transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        //} else if (speed <= 0) {
+        //    speed = 0;
+        //    Explode();
+        //}
+
+        if (timer > 0) { timer -= Time.deltaTime; } else { Explode(); }
+
     }
 
-    void Explode() {
-        //Get the LandscapeSimulator in the screen
-        LandscapeSimulator landscape = GameObject.Find("SceneSimulator").GetComponent<LandscapeSimulator>();
-        if (landscape != null) {
-            //use the function from LandscapeSimulator.cs that allows it to burn the specific tile the bomb stops at
-            landscape.BurnCellFromV2(new Vector2(transform.position.x, transform.position.y));
-        }
+        
 
+    void Explode() {
+
+        try
+        {
+            //Get the LandscapeSimulator in the screen
+            LandscapeSimulator landscape = GameObject.Find("SceneSimulator").GetComponent<LandscapeSimulator>();
+            if (landscape != null)
+            {
+                //use the function from LandscapeSimulator.cs that allows it to burn the specific tile the bomb stops at
+                landscape.BurnCellFromV2(new Vector2(transform.position.x, transform.position.y));
+            }
+        } catch (Exception e)
+        {
+            Debug.Log(e);
+        }
 
         // Hurt Players and enemies
         
 
 
         //Destroy the object
-        Destroy(gameObject, 5);
+        Destroy(this.gameObject);
     }
 
     //private void OnCollisionEnter2D(Collision2D collision)

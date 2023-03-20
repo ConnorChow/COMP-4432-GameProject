@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 4213564593925894264}
   - component: {fileID: 4213564593925894271}
   - component: {fileID: 4213564593925894270}
-  - component: {fileID: 4213564593925894269}
+  - component: {fileID: -2849972203793041800}
   m_Layer: 0
-  m_Name: Bomb single sprite
+  m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4213564593925894264
 SpriteRenderer:
@@ -76,12 +76,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: f84a133d9005c44f3b0bc4b65c92b992, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 520d5a413de35e04cb7f22407d155a96, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.32, y: 0.32}
+  m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -149,7 +149,7 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.32, y: 0.32}
   m_Direction: 0
---- !u!114 &4213564593925894269
+--- !u!114 &-2849972203793041800
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -158,8 +158,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4213564593925894268}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 591b986b4e69c488fb1ff856073480e3, type: 3}
+  m_Script: {fileID: 11500000, guid: 51d9735f3b21d464b869d7579bb3a51c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   enemyHealth: {fileID: 0}
-  damage: 10
+  player: {fileID: 0}
+  speed: 5

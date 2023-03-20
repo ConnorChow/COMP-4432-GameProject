@@ -22,9 +22,8 @@ public class Weapon : MonoBehaviour
 
     public void FireGrenade()
     {
-        //GameObject projectile =
-            Instantiate(grenade, firePoint.position, firePoint.rotation);
-        //Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
-        //rb.AddForce(firePoint.up * fireForce, ForceMode2D.Impulse);
+        GameObject projectile = Instantiate(grenade, firePoint.position, firePoint.rotation);
+        Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+        rb.AddForce(firePoint.up * fireForce, ForceMode2D.Impulse);
     }
 }
