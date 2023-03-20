@@ -34,7 +34,7 @@ public class Grenade : MonoBehaviour
     //add this to player movement: 
     //public GameObject grenade;
     
-    //if (Input.GetKeyDown(KeyCode.E))
+    //if (Input.GetKeyDown("e"))
     //{
     //Instantiate(grenade, transform.position, Quaternion.identity);    
     //}
