@@ -290,7 +290,7 @@ public class FoliageSimulator : MonoBehaviour {
 
         tryLoad = LandScapeSimulator.tryLoadMap;
         //If we don't want to load and/or a load file does not exist, generate new foliage
-        if (isHosting) {
+        if (true) {
             if (tryLoad && LoadData(saveSlot)) {
                 Debug.Log("Loading Saved Foliage");
             } else {

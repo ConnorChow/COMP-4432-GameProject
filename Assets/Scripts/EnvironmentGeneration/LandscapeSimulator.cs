@@ -332,7 +332,7 @@ public class LandscapeSimulator : MonoBehaviour {
         FetchSlot();
 
         BurnQueue = new ProtectedInt32[TerrainSize];
-        if (isHosting) {
+        if (true) {
             //Try to load player environment, otherwise generate a new one and save it
             if (LoadEnvironment(saveSlot) && tryLoadMap) {
                 Debug.Log("Loading from save");
