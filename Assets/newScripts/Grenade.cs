@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Grenade : MonoBehaviour {
+
+    public Enemy enemyHealth;
+    public Player player;
+
     private Vector2 targetPos;
 
     public float speed = 5;
@@ -30,9 +34,30 @@ public class Grenade : MonoBehaviour {
             //use the function from LandscapeSimulator.cs that allows it to burn the specific tile the bomb stops at
             landscape.BurnCellFromV2(new Vector2(transform.position.x, transform.position.y));
         }
+
+
+        // Hurt Players and enemies
+        
+
+
         //Destroy the object
         Destroy(gameObject, 5);
     }
+
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.tag == "Enemy")
+    //    {
+    //        enemyHealth.TakeDamage(5);
+    //        Destroy(gameObject);
+    //    }
+
+    //    if (collision.gameObject.tag == "Player")
+    //    {
+    //        player.TakeDamage(5);
+    //        Destroy(gameObject);
+    //    }
+    //}
 
 
 

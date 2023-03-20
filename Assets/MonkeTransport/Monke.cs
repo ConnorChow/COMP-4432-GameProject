@@ -84,7 +84,7 @@ public class Monke : Transport
         _keyPair = PublicKeyBox.GenerateKeyPair();
 
         if (showDebugLogs)
-            Debug.Log($"<color=green>MONKE | KEYPAIR GENERATED!</color>");
+            Debug.Log($"<color=green>KEYPAIR GENERATED!</color>");
     }
 
     private void OnServerConnect(int conn)
@@ -116,7 +116,7 @@ public class Monke : Transport
                 _serverSessions.Add(conn, clientPublicKey);
 
                 if (showDebugLogs)
-                    Debug.Log($"<color=green>MONKE | SERVER RECIEVED CLIENT PUBLIC KEY!</color>");
+                    Debug.Log($"<color=green>SERVER RECIEVED CLIENT PUBLIC KEY!</color>");
 
                 OnServerConnected?.Invoke(conn);
                 break;
@@ -130,7 +130,7 @@ public class Monke : Transport
                     OnServerDataReceived?.Invoke(conn, new ArraySegment<byte>(_encryptionBuffer), channel);
 
                     if (showDebugLogs)
-                        Debug.Log($"<color=green>MONKE | SERVER DATA | RAW DATA: " + _readBuffer.Length + " DATA DECRYPTED FROM CONN ID: " + conn + " SIZE: " + _encryptionBuffer.Length + "</color>" +
+                        Debug.Log($"<color=green>SERVER DATA | RAW DATA: " + _readBuffer.Length + " DATA DECRYPTED FROM CONN ID: " + conn + " SIZE: " + _encryptionBuffer.Length + "</color>" +
                         " <color=yellow>DELTA: " + (_readBuffer.Length - _encryptionBuffer.Length) + "</color>");
                 }
                 break;
@@ -174,7 +174,7 @@ public class Monke : Transport
 #endif
 
                 if (showDebugLogs)
-                    Debug.Log($"<color=green>MONKE | CLIENT RECIEVED SERVER PUBLIC KEY!</color>");
+                    Debug.Log($"<color=green>CLIENT RECIEVED SERVER PUBLIC KEY!</color>");
 
                 OnClientConnected?.Invoke();
 
@@ -188,7 +188,7 @@ public class Monke : Transport
 
 
                 if (showDebugLogs)
-                    Debug.Log($"<color=green>MONKE | CLIENT DATA | RAW DATA: " + _readBuffer.Length + " DECRYPTED DATA LENGTH: " + _encryptionBuffer.Length + "</color>" +
+                    Debug.Log($"<color=green>CLIENT DATA | RAW DATA: " + _readBuffer.Length + " DECRYPTED DATA LENGTH: " + _encryptionBuffer.Length + "</color>" +
                         " <color=yellow>DELTA: " + (_readBuffer.Length - _encryptionBuffer.Length) + "</color>");
 
                 break;

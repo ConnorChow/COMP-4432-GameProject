@@ -34,11 +34,6 @@ public class Player : NetworkBehaviour {
     public ProtectedBool isCheater = false;
 
 
-    private void Awake()
-    {
-        //aimTransform.transform.Find("Aim");
-    }
-
     // Start is called before the first frame update
     void Start() {
         health = maxHealth;
@@ -46,7 +41,6 @@ public class Player : NetworkBehaviour {
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
 
-        //StartCoroutine(GetAssetBundle());
         rb = GetComponentInChildren<Rigidbody2D>();
         playerCamera = GetComponentInChildren<Camera>();
     }
@@ -67,7 +61,7 @@ public class Player : NetworkBehaviour {
         {
             if (rb.transform.position.y > 4 || rb.transform.position.y > 50 || rb.transform.position.x > 4 || rb.transform.position.x > 50)
             {
-                //outOfBounds();
+                outOfBounds();
             }
         }
         catch (Exception e)
@@ -90,18 +84,13 @@ public class Player : NetworkBehaviour {
 
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
 
-        moveDirection = new Vector2(MoveX, MoveY).normalized;
-        //mousePosition = playerCamera.ScreenToWorldPoint(Input.mousePosition);
-
         if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
         {
-            Aim();
-
-            
+            weapon.FireGrenade();
         }
         if (Input.GetMouseButtonDown(0))
         {
-            weapon.Fire();
+            weapon.FireArrow();
         }
 
     }
@@ -110,21 +99,23 @@ public class Player : NetworkBehaviour {
         // check if not local player
         if (!isLocalPlayer) { return; }
 
-        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
-        {
+        // Input Based Mouse Rotation
+        //if (Input.GetMouseButtonDown(1))
+        //{
+            // Mouse Based Rotation
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - transform.position);
             Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
             rb.MoveRotation(rotation);
-        }
+        //}
 
-        
-        if (rb.velocity != Vector2.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
-            Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 5);
-            rb.MoveRotation(rotation);
-        }
+        // Movement Based Rotation
+        //if (rb.velocity != Vector2.zero)
+        //{
+        //    Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
+        //    Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 5);
+        //    rb.MoveRotation(rotation);
+        //}
     }
 
     private void Aim()
