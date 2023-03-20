@@ -21,12 +21,12 @@ public class Enemy : MonoBehaviour
     private void Start()
     {
         health = maxHealth;
+        target = GameObject.Find("Player")?.transform;
     }
 
     private void Update()
     {
         HandleMovement();
-        target = GameObject.Find("Player").transform;
     }
 
     private void FixedUpdate()
