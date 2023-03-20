@@ -4448,7 +4448,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1352243656}
   - component: {fileID: 1352243657}
-  - component: {fileID: 1352243658}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
@@ -4524,18 +4523,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1352243658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1352243655}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7109597ea44644cbbbd2f72c0f1faf1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1402440549
 GameObject:
   m_ObjectHideFlags: 0
@@ -5169,6 +5156,7 @@ GameObject:
   - component: {fileID: 1549565552}
   - component: {fileID: 1549565554}
   - component: {fileID: 1549565553}
+  - component: {fileID: 1549565555}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -5244,7 +5232,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7438dd61027c94b0ba567de26e9cca3f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 412d618892d94854a955b46a51384461, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 1
@@ -5367,7 +5355,7 @@ MonoBehaviour:
   sceneId: 3721394091
   _assetId: 0
   serverOnly: 0
-  visible: 0
+  visible: 2
   hasSpawned: 0
 --- !u!114 &1549565553
 MonoBehaviour:
@@ -5376,7 +5364,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1549565543}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c04b447f4b6e48639667fc7ee376004, type: 3}
   m_Name: 
@@ -5391,7 +5379,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1549565543}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dff7caa4db31a4669968e0bc1ebedd87, type: 3}
   m_Name: 
@@ -5410,6 +5398,20 @@ MonoBehaviour:
   newSprite: {fileID: 0}
   isCheater:
     fakeValue: 0
+--- !u!114 &1549565555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1549565543}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bd245dee383b4e37a2d0a56a064d846, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  apiUrl: http://localhost:8080/api/players
+  characterImageDirectory: Characters/Players
 --- !u!1001 &1639310396
 PrefabInstance:
   m_ObjectHideFlags: 0

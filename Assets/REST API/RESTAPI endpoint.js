@@ -1,11 +1,12 @@
-const express = require('express');
-const app = express();
-
-app.get('Asset/Characters/Player', (req, res) => {
-    const Players = ['Hero', 'Hero Player 2', 'Player 2 Knight'];
-    const randomIndex = Math.floor(Math.random() * players.length);
-    const randomPlayers = Players[randomIndex];
-    res.send(randomPlayers);
+app.get('/api/Players', function(req, res) {
+    const fs = require('fs');
+    const path = require('path');
+    const charactersDir = 'Assets/Characters/Players';
+    const characterFiles = fs.readdirSync(charactersDir);
+    const characterNames = characterFiles.filter((file) => {
+        return path.extname(file).toLowerCase() === '.png';
+    }).map((file) => {
+        return path.basename(file, path.extname(file));
+    });
+    res.send(JSON.stringify(characterNames));
 });
-
-app.listen(3000, () => console.log('Server listening on port 3000'));
