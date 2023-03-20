@@ -36,7 +36,7 @@ public class InventoryManager : NetworkBehaviour
 
         for (int i = 0; i < InventorySlots.Capacity; i++)
         {
-            CreateInventory();
+            CreateInventorySlot();
         }
 
     if (InventorySlots != null && InventorySlots.Count > 0)
@@ -48,7 +48,7 @@ public class InventoryManager : NetworkBehaviour
     }
     }
 
-    void CreateInventory()
+    void CreateInventorySlot()
     {
         GameObject newSlot = Instantiate(slotPrefab);
         newSlot.transform.SetParent(transform, false);

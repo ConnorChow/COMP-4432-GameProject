@@ -34,7 +34,7 @@ public class Inventory : NetworkBehaviour
             InventoryItem newItem = new InventoryItem(itemData);
             inventory.Add(newItem);
             itemDictionary.Add(itemData, newItem);
-            Debug.Log($"{item.itemData.displayName} added to the inventory for the first time");
+            Debug.Log($"{itemData.displayName} added to the inventory for the first time");
             OnInventoryChange?.Invoke(inventory);
         }
 
