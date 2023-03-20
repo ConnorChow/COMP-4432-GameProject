@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5041449760989582723}
   - component: {fileID: 2539039039134556}
   - component: {fileID: 782713710364436450}
+  - component: {fileID: 7307318025331115749}
   m_Layer: 0
   m_Name: Sync
   m_TagString: Untagged
@@ -63,6 +64,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  sceneSimulator: {fileID: 6392969219796863546}
+  ground: {fileID: 6392969219289359207}
+  foliage: {fileID: 6392969220262115351}
+  fire: {fileID: 6392969220453121099}
+--- !u!114 &7307318025331115749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756151540257776351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d78941b14506e8a4b8a6ef6c30cfb8af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
   syncMode: 0
   syncInterval: 0.1
   sceneSimulator: {fileID: 6392969219796863546}
@@ -222,7 +242,7 @@ Transform:
   - {fileID: 5041449760989582723}
   - {fileID: 6392969220558079561}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6392969219796863524
 MonoBehaviour:

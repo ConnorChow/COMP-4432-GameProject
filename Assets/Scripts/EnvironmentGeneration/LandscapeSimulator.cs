@@ -225,8 +225,10 @@ public class LandscapeSimulator : MonoBehaviour {
             BurningEntities += 1;
         }
     }
-    private void BurnCellFromV2(Vector2 burnCoordinates) {
-        Vector2Int tileLoc = new Vector2Int((int)Math.Round(burnCoordinates.x) - (TerrainSize/2), (int)Math.Round(burnCoordinates.y) - (TerrainSize / 2));
+    public void BurnCellFromV2(Vector2 burnCoordinates) {
+        Vector2Int tileLoc = new Vector2Int((int)Math.Round(burnCoordinates.x) + (TerrainSize/2), (int)Math.Round(burnCoordinates.y) + (TerrainSize / 2));
+        if (tileLoc.x >= 0 && tileLoc.x < TerrainSize && tileLoc.y >= 0 && tileLoc.y < TerrainSize)
+            BurnCell(tileLoc.x * TerrainSize + tileLoc.y, FireLife);
     }
     private void FinishBurnCell(int QueueIndex) {
         if (BurnData[BurnQueue[QueueIndex]].BurnState == Burning) {

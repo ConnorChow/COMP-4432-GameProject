@@ -13,8 +13,8 @@ public class MainMenuPlayer : MonoBehaviour
 
     private Vector2 mousePosition;
 
-    public GameObject PointA;
-    public GameObject PointB;
+    //public GameObject PointA;
+    //public GameObject PointB;
 
     // Update is called once per frame
     void Update()
@@ -23,7 +23,7 @@ public class MainMenuPlayer : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            weapon.Fire();
+            //weapon.Fire();
         }
     }
 
