@@ -258,6 +258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrow: {fileID: 1192131430223260642, guid: 679f743853ed64025bc3b76783280523, type: 3}
+  grenade: {fileID: 4213564593925894268, guid: ff04eb73cede94b4a9ecc0eba33ec286, type: 3}
   firePoint: {fileID: 7680544307744532362}
   fireForce: 5
 --- !u!1 &5845284469781521412

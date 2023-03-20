@@ -12,7 +12,7 @@ public class Grenade : MonoBehaviour {
 
     public float speed = 5;
 
-    float timer = 3f;
+    float timer = 0.5f;
 
     // Start is called before the first frame update
     void Start() {

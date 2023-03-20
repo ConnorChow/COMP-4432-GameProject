@@ -23,8 +23,14 @@ public class MainMenuPlayer : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            //weapon.Fire();
+            weapon.FireArrow();
         }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            weapon.FireGrenade();
+        }
+
     }
 
     private void RotateInDirection0fInput()
