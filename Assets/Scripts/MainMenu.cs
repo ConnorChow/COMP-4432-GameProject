@@ -18,21 +18,13 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"IP: {IPAddress.Broadcast}");
         joinButton.onClick.AddListener(JoinLobby);
         hostButton.onClick.AddListener(HostLobby);
-    }
-
-    private void Update()
-    {
-        
     }
 
     public void HostLobby() {
         Debug.Log("Hosting...");
         networkManager.StartHost();
-        //networkManager.ServerChangeScene("Main");
-        //mainMenuPage.SetActive(false);
     }
 
     public void JoinLobby()
