@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Grenade : MonoBehaviour
 {
-    private Vector2 targetPos;
+    private Vector3 targetPos;
 
     public float speed = 5;
 
