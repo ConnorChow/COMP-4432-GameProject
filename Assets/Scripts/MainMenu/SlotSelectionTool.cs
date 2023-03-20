@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using TMPro;
 using UnityEngine;
 
 public class SlotSelectionTool : MonoBehaviour {
     [SerializeField] private int slotIndex;
     [SerializeField] private TMP_Text text;
+    public MainMenu mainMenu;
     private bool isEmpty;
     private string slotName;
     // Start is called before the first frame update
@@ -30,6 +32,7 @@ public class SlotSelectionTool : MonoBehaviour {
         Debug.Log("Launching from slot: " + slotIndex);
         if (slotName == "EMPTY") {
             PlayerPrefs.SetInt("loadMap", 0);
+
         } else {
             PlayerPrefs.SetInt("loadMap", 0);
         }

@@ -5,13 +5,27 @@ using Mirror;
 using UnityEngine.SceneManagement;
 using System;
 using System.Linq;
+using System.Net;
 
 public class mNetworkManager : NetworkManager
 {
+    public override void Start()
+    {
+        base.Start();
 
+        Debug.Log($"IP: {IPAddress.Broadcast}");
+    }
+
+    public override void OnStartHost()
+    {
+        //ServerChangeScene("Main");
+        base.OnStartHost();
+        Debug.Log("Server Started");
+    }
 
     public override void OnStartServer()
     {
+        //ServerChangeScene("Main");
         base.OnStartServer();
 
         Debug.Log("Server Started");
