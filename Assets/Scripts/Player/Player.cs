@@ -31,6 +31,10 @@ public class Player : NetworkBehaviour {
     //public SpriteRenderer spriteRenderer;
     //public Sprite newSprite;
 
+    private GameObject playerHUD;
+    private GameObject pauseMenu;
+    private ProtectedBool paused = false;
+
     public ProtectedBool isCheater = false;
 
 
@@ -43,6 +47,9 @@ public class Player : NetworkBehaviour {
 
         rb = GetComponentInChildren<Rigidbody2D>();
         playerCamera = GetComponentInChildren<Camera>();
+
+        playerHUD = GameObject.FindGameObjectWithTag("HUD");
+        pauseMenu = GameObject.FindGameObjectWithTag("Pause");
     }
 
     // Update is called once per frame
@@ -93,6 +100,13 @@ public class Player : NetworkBehaviour {
             weapon.FireArrow();
         }
 
+        // Pausing
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (paused) { Resume(); }
+            if (!paused) { Pause(); }
+        }
+
     }
 
     private void RotateInDirection0fInput() {
@@ -120,6 +134,7 @@ public class Player : NetworkBehaviour {
 
     private void Aim()
     {
+        // Mouse Based Rotation
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - transform.position);
         Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
@@ -135,6 +150,40 @@ public class Player : NetworkBehaviour {
     public void Heal(int amount)
     {
         if (health !>= 0) { health += amount; }
+    }
+
+    public void OnApplicationPause(bool pause)
+    {
+        
+    }
+
+    public void Pause()
+    {
+        if (!paused)
+        {
+            playerHUD.gameObject.SetActive(false);
+            pauseMenu.gameObject.SetActive(true);
+            Debug.Log("Paused");
+            OnApplicationPause(paused);
+        }
+        //else
+        //{
+        //    Resume();
+        //}
+    }
+
+    public void Resume()
+    {
+        if (paused)
+        {
+            pauseMenu.gameObject.SetActive(false);
+            playerHUD.gameObject.SetActive(true);
+            Debug.Log("Resumed");
+        }
+        //else
+        //{
+        //    Pause();
+        //}
     }
 
 

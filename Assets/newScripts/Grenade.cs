@@ -61,7 +61,7 @@ public class Grenade : MonoBehaviour {
 
 
 
-    //add this to player movement: 
+    //add this to player movement: -- Humraj: I added this to the weapon script that connects to the player script.
     //public GameObject grenade;
 
     //if (Input.GetKeyDown("e"))
