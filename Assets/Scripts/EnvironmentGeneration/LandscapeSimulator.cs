@@ -273,6 +273,28 @@ public class LandscapeSimulator : MonoBehaviour {
         BurnData[index] = FlammableTile;
     }
 
+    public ProtectedBool isHosting;
+
+    private void GenerateLandscape() {
+        Map2D = new WFCTile[TerrainSize * TerrainSize];
+        NavComponent = new Navigation[TerrainSize * TerrainSize];
+        BurnData = new BurnComponent[TerrainSize * TerrainSize];
+
+        for (int x = 0; x < TerrainSize; x++) {
+            for (int y = 0; y < TerrainSize; y++) {
+                Map2D[x * TerrainSize + y].SetParams(null, new int[4] { Empty, Empty, Empty, Empty });
+                NavComponent[x * TerrainSize + y].Traversability = passable;
+            }
+        }
+
+        for (int x = 0; x < TerrainSize; x++) {
+            for (int y = 0; y < TerrainSize; y++) {
+                CollapseTerrain(x, y);
+            }
+        }
+        SaveEnvironment(saveSlot);
+    }
+
     // Start is called before the first frame update
     void Start() {
         //[0] = left, [1] = up, [2] = right, [3] = down
@@ -296,31 +318,6 @@ public class LandscapeSimulator : MonoBehaviour {
         tiles[16].SetParams(DirtGrassRight, new int[4] { Dirt, DirtVGrass, Grass, DirtVGrass });
         tiles[17].SetParams(DirtGrassDownRight, new int[4] { Dirt, Dirt, GrassVDirt, DirtVGrass });
 
-        //Load Playerprefs for generating or loading Landscape
-        if (PlayerPrefs.HasKey("loadMap")) {
-            //Try to determine if landscape needs loading
-            switch (PlayerPrefs.GetInt("loadMap")) {
-                //0 represents false
-                case 0: tryLoadMap = false; break;
-                //1 represents true
-                case 1: tryLoadMap = true; break;
-            }
-            //Try to load from a slot or generate a new one
-            if (PlayerPrefs.HasKey("loadSlot") && tryLoadMap) {
-                saveSlot = PlayerPrefs.GetInt("loadSlot");
-            } else {
-                //by default override slot 0 if there is no incoming data
-                PlayerPrefs.SetInt("numSlots", 1);
-                PlayerPrefs.SetInt("loadSlot", 1);
-                //ensure map does not try loading as there definitely does not exist said slot
-                tryLoadMap = false;
-            }
-        } else {
-            //
-            PlayerPrefs.SetInt("loadMap", 0);
-            tryLoadMap= false;
-        }
-
         FlammableTile = new BurnComponent {
             BurnState = Normal,
             Health = NormalHealth,
@@ -332,50 +329,17 @@ public class LandscapeSimulator : MonoBehaviour {
             TimeToLive = 0
         };
 
+        FetchSlot();
+
         BurnQueue = new ProtectedInt32[TerrainSize];
-
-        //Try to load player environment, otherwise generate a new one and save it
-        if (LoadEnvironment(saveSlot) && tryLoadMap) {
-            Debug.Log("Loading from save");
-            TerrainSize = lsd.terrainSize;
-            Map2D = new WFCTile[lsd.map2DIndex.Length];
-            NavComponent = new Navigation[lsd.map2DIndex.Length];
-            BurnData = new BurnComponent[lsd.map2DIndex.Length];
-            for (int i = 0; i < Map2D.Length; i++) {
-                Map2D[i] = tiles[lsd.map2DIndex[i]];
-                NavComponent[i].Traversability = passable;
-                BurnData[i] = new BurnComponent {
-                    BurnState = lsd.BurnState[i],
-                    Health = new ProtectedFloat(lsd.Health[i]),
-                    TimeToLive = lsd.TimeToLive[i]
-                };
+        if (isHosting) {
+            //Try to load player environment, otherwise generate a new one and save it
+            if (LoadEnvironment(saveSlot) && tryLoadMap) {
+                Debug.Log("Loading from save");
+            } else {
+                Debug.Log("Generating New");
+                GenerateLandscape();
             }
-            for (int x = 0; x < TerrainSize; x++) {
-                for (int y = 0; y < TerrainSize; y++) {
-                    LoadTileFromLSD(x, y);
-                }
-            }
-            lsd = new LandscapeSaveData(null);
-        } else {
-            Debug.Log("Generating New");
-            Map2D = new WFCTile[TerrainSize * TerrainSize];
-            NavComponent = new Navigation[TerrainSize * TerrainSize];
-            BurnData = new BurnComponent[TerrainSize * TerrainSize];
-
-            for (int x = 0; x < TerrainSize; x++) {
-                for (int y = 0; y < TerrainSize; y++) {
-                    Map2D[x * TerrainSize + y].SetParams(null, new int[4] { Empty, Empty, Empty, Empty });
-                    NavComponent[x * TerrainSize + y].Traversability = passable;
-                }
-            }
-
-            for (int x = 0; x < TerrainSize; x++) {
-                for (int y = 0; y < TerrainSize; y++) {
-                    CollapseTerrain(x, y);
-                }
-            }
-            //BurnCell(GetIndex(TerrainSize / 2, TerrainSize / 2), FireLife);
-            SaveEnvironment(saveSlot);
         }
     }
 
@@ -478,20 +442,67 @@ public class LandscapeSimulator : MonoBehaviour {
     }
 
     //*************************Save Data**************************\\
-    [SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
+    //[SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
 
     //Write to Player JSON file
     public void SaveEnvironment(int slot) {
         Debug.Log("Saving");
-        lsd = new LandscapeSaveData(this);
+        LandscapeSaveData lsd = new LandscapeSaveData(this);
         string EnvData = JsonUtility.ToJson(lsd);
         File.WriteAllText(Application.persistentDataPath + "/LandscapeData" + slot + ".json", EnvData);
+    }
+
+    //Fetch slot
+    public void FetchSlot() {
+        //Load Playerprefs for generating or loading Landscape
+        if (PlayerPrefs.HasKey("loadMap")) {
+            //Try to determine if landscape needs loading
+            switch (PlayerPrefs.GetInt("loadMap")) {
+                //0 represents false
+                case 0: tryLoadMap = false; break;
+                //1 represents true
+                case 1: tryLoadMap = true; break;
+            }
+            //Try to load from a slot or generate a new one
+            if (PlayerPrefs.HasKey("loadSlot") && tryLoadMap) {
+                saveSlot = PlayerPrefs.GetInt("loadSlot");
+            } else {
+                //by default override slot 0 if there is no incoming data
+                PlayerPrefs.SetInt("numSlots", 1);
+                PlayerPrefs.SetInt("loadSlot", 1);
+                //ensure map does not try loading as there definitely does not exist said slot
+                tryLoadMap = false;
+            }
+        } else {
+            //
+            PlayerPrefs.SetInt("loadMap", 0);
+            tryLoadMap = false;
+        }
     }
 
     //We load save data from JSON if it exists, otherwise delete it
     public bool LoadEnvironment(int slot) {
         if (File.Exists(Application.persistentDataPath + "/LandscapeData" + slot +".json")) {
-            lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData" + slot +".json"));
+            LandscapeSaveData lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData" + slot +".json")); 
+            TerrainSize = lsd.terrainSize;
+            Map2D = new WFCTile[lsd.map2DIndex.Length];
+            NavComponent = new Navigation[lsd.map2DIndex.Length];
+            BurnData = new BurnComponent[lsd.map2DIndex.Length];
+            for (int i = 0; i < Map2D.Length; i++) {
+                Map2D[i] = tiles[lsd.map2DIndex[i]];
+                NavComponent[i].Traversability = passable;
+                BurnData[i] = new BurnComponent {
+                    BurnState = lsd.BurnState[i],
+                    Health = new ProtectedFloat(lsd.Health[i]),
+                    TimeToLive = lsd.TimeToLive[i]
+                };
+            }
+            for (int x = 0; x < TerrainSize; x++) {
+                for (int y = 0; y < TerrainSize; y++) {
+                    LoadTileFromLSD(x, y);
+                }
+            }
+            lsd = new LandscapeSaveData(null);
             return true;
         } else {
             return false;

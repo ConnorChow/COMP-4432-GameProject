@@ -67,6 +67,7 @@ public class FoliageSimulator : MonoBehaviour {
     static ProtectedInt32 avoid = 1;
     static ProtectedInt32 obstacle = 2;
 
+    //Picked bush tile types
     [Header("Picked Bushes")]
     public Tile BerryBushPicked1;
     public Tile BerryBushPicked2;
@@ -74,11 +75,13 @@ public class FoliageSimulator : MonoBehaviour {
     public Tile BerryBushPicked4;
     Tile[] PickedBerryBushes;
 
+    //Large Bush tile types
     public Tile BigBerryBushPickedUpperLeft;
     public Tile BigBerryBushPickedUpperRight;
     public Tile BigBerryBushPickedLowerRight;
     public Tile BigBerryBushPickedLowerLeft;
 
+    //Regular bush tile types
     [Header("Berry Bushes")]
     public Tile BerryBush1;
     public Tile BerryBush2;
@@ -86,11 +89,13 @@ public class FoliageSimulator : MonoBehaviour {
     public Tile BerryBush4;
     Tile[] FreshBerryBushes;
 
+    //Large Bush Tile Types
     public Tile BigBerryBushUpperLeft;
     public Tile BigBerryBushUpperRight;
     public Tile BigBerryBushLowerRight;
     public Tile BigBerryBushLowerLeft;
 
+    //Store Rock Tile Types
     [Header("Rocks")]
     public Tile Rock1;
     public Tile Rock2;
@@ -103,26 +108,38 @@ public class FoliageSimulator : MonoBehaviour {
     public Tile Rock9;
     Tile[] Rocks;
 
+    //For the big rock in the scene
     [Header("Big Rock")]
     public Tile BigRockLeft;
     public Tile BigRockRight;
 
+    //Store procedural data for landscape generation
     [Header("Foliage Tilemap")]
-    //public static int TerrainSize;
+    //Number of clumps in the scene
     public ProtectedInt32 ClumpQty;
+    //How many instances in each clump
     public ProtectedInt32 ClumpSize;
+    //Spacing between each instance in a clump
     public ProtectedInt32 foliageSpacing;
+    //Tilemap for display and registering foliage
     public Tilemap FoliageTilemap;
 
+    //Maximum number of bushes you want to have in your scene
     public ProtectedInt32 MaxBushInstances = 2048;
+    //ECS component for bushes
     public BushBerriesComponent[] BushBerriesData;
+    //ECS component for tiling - index dictionary
     public Dictionary<BushTilingComponent, int> BushTilingData = new Dictionary<BushTilingComponent, int>();
+    //Hashet to store and save rocks
     public HashSet<Vector2Int> RockTilingData = new HashSet<Vector2Int>();
+    //Entity Component System for the bushes in the scene
     public BushEntityManagement FoliageData;
 
     [Header("Referenced Scripts")]
+    //Scene's landscapeSImulator should be in the same gameObject!
     public LandscapeSimulator LandScapeSimulator;
 
+    //Generate either bushes or rocks in a specified area on the map
     private void GenerateClump(int x, int y, int TimeToLive, int type) {
         int IndexX = x + LandScapeSimulator.TerrainSize / 2;
         int IndexY = y + LandScapeSimulator.TerrainSize / 2;
@@ -196,37 +213,50 @@ public class FoliageSimulator : MonoBehaviour {
         }
     }
 
+    //Using square metrics traverse the map and place clumps of foliage
+    private void GenerateFoliage() {
+        //Adjust clump quantity to remain within domain of max bush instances
+        if (ClumpQty * ClumpSize > MaxBushInstances) {
+            ClumpQty = (MaxBushInstances - (MaxBushInstances % ClumpSize)) / ClumpSize;
+        }
+        //these three lines find the floor of the square root of the clump count,
+        //stores it as a length in another variable (AxisBounds), the squares it.
+        //This is to ensure we have metrics that are easy to work with in square roots
+        ClumpQty = (int)Mathf.Floor(Mathf.Sqrt(ClumpQty));
+        ProtectedInt32 AxisBounds = ClumpQty;
+        ClumpQty *= ClumpQty;
+        //use the length and divide by terrain size to get spacing of each clump
+        ProtectedInt32 ClumpSpacing = LandScapeSimulator.TerrainSize / AxisBounds;
+        //int for switching between spawning rock clumps and bush clumps
+        ProtectedInt32 flipFlop = 0;
+        //x/y for loop iterates through the landscape dropping clumps of foliage
+        for (int x = 0; x < AxisBounds; x++) {
+            for (int y = 0; y < AxisBounds; y++) {
+                //generate clump pulls spacing info and terrain size to place new clump
+                GenerateClump(
+                    (x * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
+                    (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
+                    ClumpSize, flipFlop);
+                //Randomly swap between rock and bush clumps
+                if (Random.Range(0, 2) > 0) {
+                    if (flipFlop != rock) flipFlop = rock;
+                    else flipFlop = berries;
+                }
+            }
+        }
+        //save the newly generated foliage map
+        SaveData(saveSlot);
+    }
+
+    //is this the host or the client?
+    public ProtectedBool isHosting;
+
     private ProtectedBool tryLoad;
     public ProtectedInt32 saveSlot = -1;
 
     // Start is called before the first frame update
     void Start() {
-
-        //Load Playerprefs for generating or loading Landscape
-        if (PlayerPrefs.HasKey("loadMap")) {
-            //Try to determine if landscape needs loading
-            switch (PlayerPrefs.GetInt("loadMap")) {
-                //0 represents false
-                case 0: tryLoad = false; break;
-                //1 represents true
-                case 1: tryLoad = true; break;
-            }
-            //Try to load from a slot or generate a new one
-            if (PlayerPrefs.HasKey("loadSlot") && tryLoad) {
-                saveSlot = PlayerPrefs.GetInt("loadSlot");
-            } else {
-                //by default override slot 0 if there is no incoming data
-                PlayerPrefs.SetInt("numSlots", 1);
-                PlayerPrefs.SetInt("loadSlot", 1);
-                //ensure map does not try loading as there definitely does not exist said slot
-                tryLoad = false;
-            }
-        } else {
-            PlayerPrefs.SetInt("loadMap", 0);
-            tryLoad = false;
-        }
-
-
+        //initialize presets
         PickedBerryBushes = new Tile[4] {
             BerryBushPicked1,
             BerryBushPicked2,
@@ -252,36 +282,21 @@ public class FoliageSimulator : MonoBehaviour {
             Rock9
         };
 
+        //Get Sources to load from
+        FetchSlot();
+
         FoliageData = new BushEntityManagement(MaxBushInstances, this);
         BushBerriesData = new BushBerriesComponent[MaxBushInstances];
 
         tryLoad = LandScapeSimulator.tryLoadMap;
         //If we don't want to load and/or a load file does not exist, generate new foliage
-        if (tryLoad && LoadData(saveSlot)) {
-            Debug.Log("Loading Saved Foliage");
-        } else {
-            Debug.Log("Generating new Foliage");
-            if (ClumpQty * ClumpSize > MaxBushInstances) {
-                ClumpQty = (MaxBushInstances - (MaxBushInstances % ClumpSize)) / ClumpSize;
+        if (isHosting) {
+            if (tryLoad && LoadData(saveSlot)) {
+                Debug.Log("Loading Saved Foliage");
+            } else {
+                Debug.Log("Generating new Foliage");
+                GenerateFoliage();
             }
-            ClumpQty = (int)Mathf.Floor(Mathf.Sqrt(ClumpQty));
-            ProtectedInt32 AxisBounds = ClumpQty;
-            ClumpQty *= ClumpQty;
-            ProtectedInt32 ClumpSpacing = LandScapeSimulator.TerrainSize / AxisBounds;
-            ProtectedInt32 flipFlop = 0;
-            for (int x = 0; x < AxisBounds; x++) {
-                for (int y = 0; y < AxisBounds; y++) {
-                    GenerateClump(
-                        (x * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
-                        (y * ClumpSpacing) - (LandScapeSimulator.TerrainSize / 2),
-                        ClumpSize, flipFlop);
-                    if (Random.Range(0, 2) > 0) {
-                        if (flipFlop != rock) flipFlop = rock;
-                        else flipFlop = berries;
-                    }
-                }
-            }
-            SaveData(saveSlot);
         }
     }
 
@@ -298,6 +313,32 @@ public class FoliageSimulator : MonoBehaviour {
         string data = JsonUtility.ToJson(fsd);
 
         File.WriteAllText(Application.persistentDataPath + "/FoliageData" + slot + ".json", data);
+    }
+
+    public void FetchSlot() {
+        //Load Playerprefs for generating or loading Landscape
+        if (PlayerPrefs.HasKey("loadMap")) {
+            //Try to determine if landscape needs loading
+            switch (PlayerPrefs.GetInt("loadMap")) {
+                //0 represents false
+                case 0: tryLoad = false; break;
+                //1 represents true
+                case 1: tryLoad = true; break;
+            }
+            //Try to load from a slot or generate a new one
+            if (PlayerPrefs.HasKey("loadSlot") && tryLoad) {
+                saveSlot = PlayerPrefs.GetInt("loadSlot");
+            } else {
+                //by default override slot 0 if there is no incoming data
+                PlayerPrefs.SetInt("numSlots", 1);
+                PlayerPrefs.SetInt("loadSlot", 1);
+                //ensure map does not try loading as there definitely does not exist said slot
+                tryLoad = false;
+            }
+        } else {
+            PlayerPrefs.SetInt("loadMap", 0);
+            tryLoad = false;
+        }
     }
 
     public bool LoadData(int slot) {

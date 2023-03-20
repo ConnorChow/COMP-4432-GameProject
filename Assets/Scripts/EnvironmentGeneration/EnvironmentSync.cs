@@ -9,4 +9,9 @@ public class EnvironmentSync : NetworkBehaviour {
     [SerializeField][SyncVar] private GameObject ground;
     [SerializeField][SyncVar] private GameObject foliage;
     [SerializeField][SyncVar] private GameObject fire;
+
+    void Start() {
+        sceneSimulator.GetComponent<LandscapeSimulator>().isHosting = !isClientOnly;
+        sceneSimulator.GetComponent<FoliageSimulator>().isHosting = !isClientOnly;
+    }
 }
