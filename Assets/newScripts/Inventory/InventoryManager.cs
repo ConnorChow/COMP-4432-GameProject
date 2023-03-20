@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class InventoryManager : MonoBehaviour
+public class InventoryManager : NetworkBehaviour
 {
     public GameObject slotPrefab;
     public List<InventorySlot> InventorySlots = new List<InventorySlot>(14);

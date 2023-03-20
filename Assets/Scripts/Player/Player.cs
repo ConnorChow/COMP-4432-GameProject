@@ -64,9 +64,16 @@ public class Player : NetworkBehaviour {
             HelloServer();
         }
 
-        if (rb.transform.position.y > 4 || rb.transform.position.y > 50 || rb.transform.position.x > 4 || rb.transform.position.x > 50)
+        try
         {
-            //outOfBounds();
+            if (rb.transform.position.y > 4 || rb.transform.position.y > 50 || rb.transform.position.x > 4 || rb.transform.position.x > 50)
+            {
+                //outOfBounds();
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
         }
     }
 
