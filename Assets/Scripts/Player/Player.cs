@@ -22,15 +22,14 @@ public class Player : NetworkBehaviour {
 
     // Player Movement
     private Vector2 moveDirection;
-    private Vector2 mousePosition;
     private Transform aimTransform;
     private Rigidbody2D rb;
     public Camera playerCamera;
     public Weapon weapon;
 
     // Player Skin
-    public SpriteRenderer spriteRenderer;
-    public Sprite newSprite;
+    //public SpriteRenderer spriteRenderer;
+    //public Sprite newSprite;
 
     public ProtectedBool isCheater = false;
 
@@ -45,7 +44,7 @@ public class Player : NetworkBehaviour {
         health = maxHealth;
 
         // testing skins
-        if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
+        //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
 
         //StartCoroutine(GetAssetBundle());
         rb = GetComponentInChildren<Rigidbody2D>();
@@ -92,7 +91,7 @@ public class Player : NetworkBehaviour {
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
 
         moveDirection = new Vector2(MoveX, MoveY).normalized;
-        mousePosition = playerCamera.ScreenToWorldPoint(Input.mousePosition);
+        //mousePosition = playerCamera.ScreenToWorldPoint(Input.mousePosition);
 
         if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
         {
@@ -111,21 +110,29 @@ public class Player : NetworkBehaviour {
         // check if not local player
         if (!isLocalPlayer) { return; }
 
-        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E)) { return; }
-
-        if (rb.velocity != Vector2.zero) {
-            Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
+        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - transform.position);
             Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
+            rb.MoveRotation(rotation);
+        }
+
+        
+        if (rb.velocity != Vector2.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
+            Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 5);
             rb.MoveRotation(rotation);
         }
     }
 
     private void Aim()
     {
-        Vector2 aimDirection = mousePosition - rb.position;
-        float aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg - 90f;
-        aimTransform.LookAt(mousePosition);
-        rb.rotation = aimAngle;
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - transform.position);
+        Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
+        rb.MoveRotation(rotation);
     }
 
     public void TakeDamage(int amount)
