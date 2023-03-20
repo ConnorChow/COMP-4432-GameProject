@@ -24,10 +24,13 @@ public class Grenade : MonoBehaviour {
     }
 
     void Explode() {
+        //Get the LandscapeSimulator in the screen
         LandscapeSimulator landscape = GameObject.Find("SceneSimulator").GetComponent<LandscapeSimulator>();
         if (landscape != null) {
+            //use the function from LandscapeSimulator.cs that allows it to burn the specific tile the bomb stops at
             landscape.BurnCellFromV2(new Vector2(transform.position.x, transform.position.y));
         }
+        //Destroy the object
         Destroy(gameObject, 5);
     }
 
