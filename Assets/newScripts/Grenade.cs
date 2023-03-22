@@ -33,7 +33,7 @@ public class Grenade : MonoBehaviour {
         try
         {
             //Get the LandscapeSimulator in the screen
-            LandscapeSimulator landscape = GameObject.Find("SceneSimulator").GetComponent<LandscapeSimulator>();
+            LandscapeSimulator landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
             if (landscape != null)
             {
                 //use the function from LandscapeSimulator.cs that allows it to burn the specific tile the bomb stops at
