@@ -35,7 +35,7 @@ public class SlotSelectionTool : MonoBehaviour {
 
     public void SelectSlot() {
         //identify slot index for each save slot (1, 2, 3, ...)
-        string prefName = "SlotSaved" + slotIndex;
+        string prefName = "SlotSaved" + slotIndex.ToString();
 
         //either generate a new map to fill a slot
         if (slotName == "EMPTY") {
