@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Net;
 
-public class mNetworkManager : NetworkManager
+public class myNetworkManager : NetworkManager
 {
     public override void Start()
     {
