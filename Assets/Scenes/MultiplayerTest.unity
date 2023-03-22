@@ -162,14 +162,14 @@ MonoBehaviour:
   autoConnectClientBuild: 0
   sendRate: 30
   offlineScene: 
-  onlineScene: 
+  onlineScene: Assets/Scenes/Menu.unity
   transport: {fileID: 436556917}
   networkAddress: localhost
   maxConnections: 10
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 6375676033790927927, guid: ef062cf0b7e3247948e2478746b8e5f7, type: 3}
   autoCreatePlayer: 1
-  playerSpawnMethod: 0
+  playerSpawnMethod: 1
   spawnPrefabs: []
   timeInterpolationGui: 0
 --- !u!4 &436556915
@@ -267,7 +267,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 436556913}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
   m_Name: 

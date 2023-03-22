@@ -3219,7 +3219,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1639834847}
   - component: {fileID: 1639834846}
-  - component: {fileID: 1639834845}
   - component: {fileID: 1639834844}
   m_Layer: 0
   m_Name: Networking
@@ -3246,8 +3245,8 @@ MonoBehaviour:
   autoConnectClientBuild: 0
   sendRate: 30
   offlineScene: Assets/Scenes/Menu.unity
-  onlineScene: Assets/Scenes/Main.unity
-  transport: {fileID: 1639834845}
+  onlineScene: Assets/Scenes/MultiplayerTest.unity
+  transport: {fileID: 1639834846}
   networkAddress: localhost
   maxConnections: 10
   authenticator: {fileID: 0}
@@ -3255,24 +3254,9 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs:
-  - {fileID: 1998859551552497020, guid: 3c2aa3d27014246c4a40d428a3b735ef, type: 3}
-  - {fileID: 6375676033790927927, guid: 365e12ae4cdf64395a9ae223647e828f, type: 3}
   - {fileID: 1192131430223260642, guid: 679f743853ed64025bc3b76783280523, type: 3}
+  - {fileID: 4213564593925894268, guid: ff04eb73cede94b4a9ecc0eba33ec286, type: 3}
   timeInterpolationGui: 0
---- !u!114 &1639834845
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639834843}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d9a6a4ae6c9ed044ac0dbbee403691e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CommunicationTransport: {fileID: 1639834846}
-  showDebugLogs: 0
 --- !u!114 &1639834846
 MonoBehaviour:
   m_ObjectHideFlags: 0
