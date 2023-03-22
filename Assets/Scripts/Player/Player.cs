@@ -14,6 +14,9 @@ public class Player : NetworkBehaviour {
     [SyncVar(hook = nameof(helloChange))]
     public int helloCount = 0;
 
+    [SyncVar(hook = nameof(playerCountChanged))]
+    public int playerCount = 0;
+
     // Player Stats
     public ProtectedInt32 health;
     private ProtectedInt32 maxHealth = Globals.maxHealth;
@@ -37,6 +40,10 @@ public class Player : NetworkBehaviour {
 
     public ProtectedBool isCheater = false;
 
+    // Spawn Locations
+    Vector3[] spawnLocations = { new Vector3(0, 0, 0), new Vector3(15, 0, 0), new Vector3(-15, 0, 0) };
+    int spawnLocationChoice = 0;
+
 
     // Start is called before the first frame update
     void Start() {
@@ -45,8 +52,12 @@ public class Player : NetworkBehaviour {
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
 
+        playerCount++;
+
         rb = GetComponentInChildren<Rigidbody2D>();
         playerCamera = GetComponentInChildren<Camera>();
+
+        rb.transform.position.Set(spawnLocations[spawnLocationChoice].x, spawnLocations[spawnLocationChoice].y, spawnLocations[spawnLocationChoice].z);
 
         playerHUD = GameObject.FindGameObjectWithTag("HUD");
         pauseMenu = GameObject.FindGameObjectWithTag("Pause");
@@ -117,10 +128,7 @@ public class Player : NetworkBehaviour {
         //if (Input.GetMouseButtonDown(1))
         //{
             // Mouse Based Rotation
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - transform.position);
-            Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
-            rb.MoveRotation(rotation);
+            Aim();
         //}
 
         // Movement Based Rotation
@@ -202,6 +210,12 @@ public class Player : NetworkBehaviour {
     void helloChange(int oldCount, int newCount)
     {
         Debug.Log($"Old Count: {oldCount} Hellos, New Count: {newCount} Hellos");
+    }
+
+    void playerCountChanged(int oldCOunt, int newCount)
+    {
+        if (newCount == 2) { spawnLocationChoice = 1; }
+        if (newCount == 3) { spawnLocationChoice = 2; }
     }
 
     public void setPlayerName(String name)

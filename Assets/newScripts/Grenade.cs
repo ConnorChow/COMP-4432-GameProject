@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
+using Mirror.Examples.Tanks;
 using UnityEngine;
 
 public class Grenade : MonoBehaviour {
@@ -10,24 +12,15 @@ public class Grenade : MonoBehaviour {
 
     private Vector2 targetPos;
 
-    public float speed = 5;
-
     float timer = 0.5f;
 
     // Start is called before the first frame update
     void Start() {
-        targetPos = GameObject.Find("firePoint").transform.position;
+
     }
 
     // Update is called once per frame
     void Update() {
-        //if (speed > 0) {
-        //    speed -= Random.Range(.1f, .25f) * Time.deltaTime;
-        //    transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-        //} else if (speed <= 0) {
-        //    speed = 0;
-        //    Explode();
-        //}
 
         if (timer > 0) { timer -= Time.deltaTime; } else { Explode(); }
 
@@ -52,11 +45,12 @@ public class Grenade : MonoBehaviour {
         }
 
         // Hurt Players and enemies
-        
+
 
 
         //Destroy the object
-        Destroy(this.gameObject);
+        NetworkServer.UnSpawn(this.gameObject);
+        //Destroy(this.gameObject);
     }
 
     //private void OnCollisionEnter2D(Collision2D collision)
@@ -72,15 +66,5 @@ public class Grenade : MonoBehaviour {
     //        player.TakeDamage(5);
     //        Destroy(gameObject);
     //    }
-    //}
-
-
-
-    //add this to player movement: -- Humraj: I added this to the weapon script that connects to the player script.
-    //public GameObject grenade;
-
-    //if (Input.GetKeyDown("e"))
-    //{
-    //Instantiate(grenade, transform.position, Quaternion.identity);    
     //}
 }

@@ -44,6 +44,8 @@ public class myNetworkManager : NetworkManager
         base.OnClientConnect();
 
         Debug.Log("Connected to Server");
+
+        //NetworkClient.localPlayer.transform.SetPositionAndRotation((0,0,0));
     }
 
     public override void OnClientDisconnect()

@@ -12,7 +12,7 @@ public class shooterEnemy : MonoBehaviour
     public float shootingRange;
     public float fireRate = 1f;
     private float nextFireTime;
-    [SerializeField] float moveSpeed = 5f;
+    //[SerializeField] float moveSpeed = 5f;
     Rigidbody2D rb;
     Transform target;
     Vector2 moveDirection;
