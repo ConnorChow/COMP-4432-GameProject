@@ -37,6 +37,7 @@ public class MainMenu : MonoBehaviour
 
         //joinButton.interactable = false;
         string ipAddress = ipAddressInputField.text;
+        Debug.Log(ipAddress);
         networkManager.networkAddress = ipAddress;
         networkManager.StartClient();
 
