@@ -45,7 +45,7 @@ public struct BurnComponent {
     public ProtectedInt32 TimeToLive;
 }
 
-public class LandscapeSimulator : MonoBehaviour {
+public class LandscapeSimulator : NetworkBehaviour {
     //Socketing info
     static ProtectedInt32 Empty = -1;
     static ProtectedInt32 Grass = 0;
@@ -332,6 +332,7 @@ public class LandscapeSimulator : MonoBehaviour {
         FetchSlot();
 
         BurnQueue = new ProtectedInt32[TerrainSize];
+        NavComponent = new Navigation[TerrainSize * TerrainSize];
         if (true) {
             //Try to load player environment, otherwise generate a new one and save it
             if (LoadEnvironment(saveSlot) && tryLoadMap) {
@@ -442,7 +443,6 @@ public class LandscapeSimulator : MonoBehaviour {
     }
 
     //*************************Save Data**************************\\
-    //[SerializeField] private LandscapeSaveData lsd = null; //lsd for Landscape-Save-Data
 
     //Write to Player JSON file
     public void SaveEnvironment(int slot) {

@@ -58,7 +58,7 @@ public class BushEntityManagement : ECS_EntityComponentManagement {
     }
 }
 
-public class FoliageSimulator : MonoBehaviour {
+public class FoliageSimulator : NetworkBehaviour {
     const int rock = 0;
     const int berries = 1;
 
@@ -350,7 +350,7 @@ public class FoliageSimulator : MonoBehaviour {
             //fill all data values
             for (int i = 0; i < fsd.BerryCount.Length; i++) {
                 Vector2Int tile = new Vector2Int(fsd.BerryTilesX[i], fsd.BerryTilesY[i]);
-
+                //Debug.Log(tile.x * LandScapeSimulator.TerrainSize + tile.y);
                 FoliageTilemap.SetTile(new Vector3Int(tile.x - LandScapeSimulator.TerrainSize / 2, tile.y - LandScapeSimulator.TerrainSize / 2, 0), FreshBerryBushes[Random.Range(0, 4)]);
                 LandScapeSimulator.NavComponent[tile.x * LandScapeSimulator.TerrainSize + tile.y].Traversability = avoid;
                 LandScapeSimulator.FlammefyTile(tile.x * LandScapeSimulator.TerrainSize + tile.y);
