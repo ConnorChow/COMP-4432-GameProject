@@ -13,13 +13,17 @@ public class MainMenu : MonoBehaviour
     //[SerializeField] private GameObject mainMenuPage = null;
     //[SerializeField] private GameObject joinPage = null;
     [SerializeField] private TMP_InputField ipAddressInputField = null;
-    [SerializeField] private Button hostButton = null;
+    [SerializeField] private Button hostSlot1 = null;
+    [SerializeField] private Button hostSlot2 = null;
+    [SerializeField] private Button hostSlot3 = null;
     [SerializeField] private Button joinButton = null;
 
     private void Start()
     {
         joinButton.onClick.AddListener(JoinLobby);
-        hostButton.onClick.AddListener(HostLobby);
+        hostSlot1.onClick.AddListener(HostLobby);
+        hostSlot2.onClick.AddListener(HostLobby);
+        hostSlot3.onClick.AddListener(HostLobby);
     }
 
     public void HostLobby() {
@@ -31,10 +35,12 @@ public class MainMenu : MonoBehaviour
     {
         if (ipAddressInputField.text == "") { return; };
 
-        joinButton.interactable = false;
+        //joinButton.interactable = false;
         string ipAddress = ipAddressInputField.text;
         networkManager.networkAddress = ipAddress;
         networkManager.StartClient();
+
+        Debug.Log("Attempted to launch");
     }
 
 }

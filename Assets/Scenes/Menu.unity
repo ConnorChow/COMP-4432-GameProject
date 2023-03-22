@@ -1091,7 +1091,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 20
   m_Viewport: {fileID: 439891333}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 72808635}
@@ -1676,7 +1676,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManager: {fileID: 1639834844}
   ipAddressInputField: {fileID: 178945051}
-  hostButton: {fileID: 1823371250}
+  hostSlot1: {fileID: 1823371250}
+  hostSlot2: {fileID: 58318668}
+  hostSlot3: {fileID: 125807789}
   joinButton: {fileID: 657421383}
 --- !u!4 &798599046 stripped
 Transform:
