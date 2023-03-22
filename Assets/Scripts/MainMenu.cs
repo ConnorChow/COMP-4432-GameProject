@@ -40,8 +40,6 @@ public class MainMenu : MonoBehaviour
         Debug.Log(ipAddress);
         networkManager.networkAddress = ipAddress;
         networkManager.StartClient();
-
-        Debug.Log("Attempted to launch");
     }
 
 }
