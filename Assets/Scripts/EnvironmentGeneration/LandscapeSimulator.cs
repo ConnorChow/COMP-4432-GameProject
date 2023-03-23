@@ -41,8 +41,8 @@ public struct Navigation {
 
 public struct BurnComponent {
     public ProtectedInt32 BurnState;
-    public ProtectedFloat Health;
     public ProtectedInt32 TimeToLive;
+    public ProtectedFloat Health;
 }
 
 public class LandscapeSimulator : NetworkBehaviour {
@@ -99,6 +99,42 @@ public class LandscapeSimulator : NetworkBehaviour {
     public WFCTile[] Map2D;
     public Navigation[] NavComponent;
     public BurnComponent[] BurnData;
+
+    /*//Update Commands for changing the state of landscape components
+
+    [Command]   //Update Burnstate
+    private void UpdateBurnState(int i, int state) {
+        BurnData[i].BurnState = state;
+    }
+    [Command]   //Update BurnHealth
+    private void UpdateBurnHealth(int i, float health) {
+        BurnData[i].Health = health;
+    }
+    [Command]   //Update Burning TimeToLive
+    private void UpdateBurnTTL(int i, int ttl) {
+        BurnData[i].TimeToLive = ttl;
+    }
+
+    //Serialize BurnData to other players
+    public override void OnSerialize(NetworkWriter writer, bool initialState) {
+        base.OnSerialize(writer, initialState);
+        for (int i = 0; i < BurnData.Length; i++) {
+            writer.WriteInt(BurnData[i].BurnState);
+            writer.WriteInt(BurnData[i].TimeToLive);
+            writer.WriteFloat(BurnData[i].Health);
+        }
+    }
+    //Deserialize BurnData on receiving end
+    public override void OnDeserialize(NetworkReader reader, bool initialState) {
+        base.OnDeserialize(reader, initialState);
+        int previousState;
+        for (int i = 0; i < BurnData.Length; i++) {
+            previousState = BurnData[i].BurnState;
+            BurnData[i].BurnState = reader.ReadInt();
+            BurnData[i].TimeToLive = reader.ReadInt();
+            BurnData[i].Health = reader.ReadFloat();
+        }
+    }*/
 
     public Tilemap GroundTileMap, FireGrid;
 
@@ -225,10 +261,22 @@ public class LandscapeSimulator : NetworkBehaviour {
             BurningEntities += 1;
         }
     }
+    //Allows the Client or server to send a request to Burn a specific cell
+    [Command]
+    private void PlayerBurnCell(int CurrentIndex, int ttl) {
+        HostBurnCell(CurrentIndex, ttl);
+    }
+    //Calls only on the server and distributes call to all clients
+    [ClientRpc]
+    private void HostBurnCell(int CurrentIndex, int ttl) {
+        BurnCell(CurrentIndex, ttl);
+    }
     public void BurnCellFromV2(Vector2 burnCoordinates) {
         Vector2Int tileLoc = new Vector2Int((int)Math.Round(burnCoordinates.x) + (TerrainSize/2), (int)Math.Round(burnCoordinates.y) + (TerrainSize / 2));
-        if (tileLoc.x >= 0 && tileLoc.x < TerrainSize && tileLoc.y >= 0 && tileLoc.y < TerrainSize)
-            BurnCell(tileLoc.x * TerrainSize + tileLoc.y, FireLife);
+        if (tileLoc.x >= 0 && tileLoc.x < TerrainSize && tileLoc.y >= 0 && tileLoc.y < TerrainSize) {
+            //Debug.Log();
+            PlayerBurnCell(tileLoc.x * TerrainSize + tileLoc.y, FireLife);
+        }
     }
     private void FinishBurnCell(int QueueIndex) {
         if (BurnData[BurnQueue[QueueIndex]].BurnState == Burning) {
@@ -265,6 +313,17 @@ public class LandscapeSimulator : NetworkBehaviour {
             BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
         }
     }
+    //Allows the Client or server to send a request to Finish Burning a specific cell
+    [Command]
+    private void PlayerFinishBurnCell(int QueueIndex) {
+            //FinishBurnCell(QueueIndex);
+            HostFinishBurnCell(QueueIndex);
+    }
+    //Calls only on the server and distributes call to all clients
+    [ClientRpc]
+    private void HostFinishBurnCell(int QueueIndex) {
+        FinishBurnCell(QueueIndex);
+    }
     public void NeutralizeTile(int index) {
         BurnData[index] = SafeTile;
     }
@@ -295,8 +354,10 @@ public class LandscapeSimulator : NetworkBehaviour {
         SaveEnvironment(saveSlot);
     }
 
-    // Start is called before the first frame update
-    void Start() {
+    
+
+    // Awake is called when object loads
+    void Awake() {
         //[0] = left, [1] = up, [2] = right, [3] = down
         //GrassVDirt = Grass on down/left, Dirt on up/right
         tiles[0].SetParams(DirtFull, new int[4] { Dirt, Dirt, Dirt, Dirt });
@@ -426,11 +487,11 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
         //Add max one cell per frame
         if (PushCount > 0) {
-            BurnCell(CellAdd, ttl);
+            PlayerBurnCell(CellAdd, ttl);
         }
         //remove max one cell per frame
         if (PullCount > 0) {
-            FinishBurnCell(IndexToRemove);
+            PlayerFinishBurnCell(IndexToRemove);
         }
 
         //Quicksave button

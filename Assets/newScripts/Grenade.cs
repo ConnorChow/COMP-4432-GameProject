@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-public class Grenade : MonoBehaviour {
+public class Grenade : NetworkBehaviour {
 
     public Enemy enemyHealth;
     public Player player;

@@ -156,9 +156,10 @@ public class Player : NetworkBehaviour {
     {
         // Mouse Based Rotation
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - transform.position);
-        Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
+        Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - rb.transform.position);
+        Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 1000 * Time.deltaTime);
         rb.MoveRotation(rotation);
+        Debug.Log(rb.transform.position);
     }
 
     public void TakeDamage(int amount)

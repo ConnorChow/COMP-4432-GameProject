@@ -1675,6 +1675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 1639834844}
+  mnetworkManager: {fileID: 0}
   ipAddressInputField: {fileID: 178945051}
   hostSlot1: {fileID: 1823371250}
   hostSlot2: {fileID: 58318668}
@@ -3260,6 +3261,7 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 1192131430223260642, guid: 679f743853ed64025bc3b76783280523, type: 3}
   - {fileID: 4213564593925894268, guid: ff04eb73cede94b4a9ecc0eba33ec286, type: 3}
+  - {fileID: 351340532369863291, guid: 2feeab82d478ed146b2a4cefc4110770, type: 3}
   timeInterpolationGui: 0
 --- !u!114 &1639834846
 MonoBehaviour:
