@@ -50,7 +50,7 @@ public class Grenade : MonoBehaviour {
 
         //Destroy the object
         NetworkServer.UnSpawn(this.gameObject);
-        //Destroy(this.gameObject);
+        Destroy(this.gameObject);
     }
 
     //private void OnCollisionEnter2D(Collision2D collision)
