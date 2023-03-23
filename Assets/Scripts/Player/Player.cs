@@ -3,6 +3,7 @@ using OPS.AntiCheat.Field;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
@@ -17,11 +18,14 @@ public class Player : NetworkBehaviour {
     [SyncVar(hook = nameof(playerCountChanged))]
     public int playerCount = 0;
 
+    readonly myNetworkManager networkManager;
+
     // Player Stats
     public ProtectedInt32 health;
     private ProtectedInt32 maxHealth = Globals.maxHealth;
     private ProtectedFloat playerSpeed = Globals.maxSpeed;
     public ProtectedString playerName;
+    public TMP_Text ipAddress = null;
 
     // Player Movement
     private Vector2 moveDirection;
@@ -99,7 +103,7 @@ public class Player : NetworkBehaviour {
 
         rb.velocity = new Vector2(MoveX, MoveY).normalized * playerSpeed;
 
-        // Trying to fix player randomly spinning
+        // Fix the bug where player starts randomly spinning
         if (MoveX == 0 && MoveY == 0 && rb.velocity.normalized != new Vector2(0,0))
         {
             rb.velocity = new Vector2(0,0);
@@ -152,15 +156,27 @@ public class Player : NetworkBehaviour {
     {
         // Mouse Based Rotation
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - transform.position);
-        Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 10);
+        Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - rb.transform.position);
+        Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 1000 * Time.deltaTime);
         rb.MoveRotation(rotation);
+        Debug.Log(rb.transform.position);
     }
 
     public void TakeDamage(int amount)
     {
         health -= amount;
-        if (health <= 0) { Destroy(gameObject); }
+        if (health <= 0)
+        {
+            try
+            {
+                NetworkServer.Destroy(gameObject);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+                Destroy(gameObject);
+            }
+        }
     }
 
     public void Heal(int amount)
@@ -177,6 +193,8 @@ public class Player : NetworkBehaviour {
     {
         if (!paused)
         {
+            //rb.gameObject.SetActive(false);
+            rb.freezeRotation = true;
             playerHUD.gameObject.SetActive(false);
             pauseMenu.gameObject.SetActive(true);
             Debug.Log("Paused");
@@ -192,6 +210,8 @@ public class Player : NetworkBehaviour {
     {
         if (paused)
         {
+            //rb.gameObject.SetActive(true);
+            rb.freezeRotation = false;
             pauseMenu.gameObject.SetActive(false);
             playerHUD.gameObject.SetActive(true);
             Debug.Log("Resumed");
@@ -200,6 +220,16 @@ public class Player : NetworkBehaviour {
         //{
         //    Pause();
         //}
+    }
+
+    public void Disconnect()
+    {
+
+    }
+
+    public void updateIP()
+    {
+        ipAddress.text = ("IP: " + networkManager.GetLocalIPv4());
     }
 
 
@@ -244,31 +274,30 @@ public class Player : NetworkBehaviour {
     }
 
 
-    // this is called on the server
+    // this is called by clients on the server
     [Command]
-    void CmdFireArrow()
-    {
+    void CmdFireArrow() {
         GameObject projectile = Instantiate(weapon.arrow, weapon.firePoint.position, weapon.firePoint.rotation);
-        Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
-        NetworkServer.Spawn(projectile);
-        projectileRb.AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
-        RpcOnFire();
+        projectile.GetComponent<Rigidbody2D>().AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
+        NetworkServer.Spawn(projectile); // Commenting this causes a error / Need to fix double shots
+
+        RpcOnFire(projectile);
     }
 
     [Command]
-    void CmdFireGrenade()
-    {
+    void CmdFireGrenade() {
         GameObject projectile = Instantiate(weapon.grenade, weapon.firePoint.position, weapon.firePoint.rotation);
-        Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
-        NetworkServer.Spawn(projectile);
-        projectileRb.AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
-        RpcOnFire();
+        projectile.GetComponent<Rigidbody2D>().AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
+        NetworkServer.Spawn(projectile); // Commenting this causes a error / Need to fix double shots
+
+        RpcOnFire(projectile);
     }
 
-    // this is called on the tank that fired for all observers
+    // this is called on the player that fired for all observers
     [ClientRpc]
-    void RpcOnFire()
+    void RpcOnFire(GameObject projectile)
     {
+        NetworkServer.Spawn(projectile); // Sync projectile to clients
         //animator.SetTrigger("Shoot");
     }
 
@@ -309,6 +338,7 @@ public class Player : NetworkBehaviour {
         // Raise cheat flag
         isCheater = true;
     }
+
 
 
 

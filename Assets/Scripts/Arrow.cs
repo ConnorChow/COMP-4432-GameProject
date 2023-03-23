@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 public class Arrow : MonoBehaviour
 {
@@ -32,7 +33,18 @@ public class Arrow : MonoBehaviour
     {
         //Debug.Log($"Time: {timer}");
         if (timer > 0) { timer -= Time.deltaTime; }
-        else { Destroy(this.gameObject); }
+        else
+        {
+            try
+            {
+                NetworkServer.Destroy(this.gameObject);
+            } catch (Exception e)
+            {
+                Debug.Log("Arrow could not be destroyed over network. Destroying locally.\n" + e);
+                Destroy(this.gameObject);
+            }
+            
+        }
     }
 
 }
