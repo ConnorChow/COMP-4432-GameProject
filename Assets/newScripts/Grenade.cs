@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 public class Grenade : MonoBehaviour {
@@ -47,22 +48,29 @@ public class Grenade : MonoBehaviour {
 
 
         //Destroy the object
-        //NetworkServer.UnSpawn(this.gameObject);
-        Destroy(this.gameObject);
+        try
+        {
+            NetworkServer.Destroy(this.gameObject);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Grenade could not be destroyed over network. Destroying locally.\n" + e);
+            Destroy(this.gameObject);
+        }
     }
 
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Enemy")
-    //    {
-    //        enemyHealth.TakeDamage(5);
-    //        Destroy(gameObject);
-    //    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            enemyHealth.TakeDamage(5);
+            Destroy(gameObject);
+        }
 
-    //    if (collision.gameObject.tag == "Player")
-    //    {
-    //        player.TakeDamage(5);
-    //        Destroy(gameObject);
-    //    }
-    //}
+        if (collision.gameObject.tag == "Player")
+        {
+            player.TakeDamage(5);
+            Destroy(gameObject);
+        }
+    }
 }
