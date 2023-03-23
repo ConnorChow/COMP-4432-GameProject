@@ -89,6 +89,9 @@ public class Player : NetworkBehaviour {
         {
             Debug.Log(e);
         }
+        if (!isLocalPlayer) {
+            playerCamera.gameObject.SetActive(false);
+        }
     }
 
     // Player Functions
