@@ -159,7 +159,6 @@ public class Player : NetworkBehaviour {
         Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - rb.transform.position);
         Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 1000 * Time.deltaTime);
         rb.MoveRotation(rotation);
-        Debug.Log(rb.transform.position);
     }
 
     public void TakeDamage(int amount)

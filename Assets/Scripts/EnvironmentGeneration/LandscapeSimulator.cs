@@ -237,13 +237,25 @@ public class LandscapeSimulator : NetworkBehaviour {
     private int GetIndex(int x, int y) {
         return x * TerrainSize + y;
     }
-    private void BurnCell(int CurrentIndex, int ttl) {
+
+    private void RequestAuthority(NetworkIdentity clientID) {
+        clientID.AssignClientAuthority(this.GetComponent<NetworkIdentity>().connectionToClient);
+    }
+
+    [ServerCallback]
+    private void AssignAuthority(NetworkIdentity clientID) {
+        clientID.AssignClientAuthority(clientID.connectionToClient);
+    }
+
+    public void BurnCell(int CurrentIndex, int ttl) {
         if (BurningEntities < TerrainSize) {
 
             float healthSaved = BurnData[CurrentIndex].Health;
 
             if (BurnData[CurrentIndex].BurnState == Normal) {
-                healthSaved= BurningHealth;
+                healthSaved = BurningHealth;
+            } else if (BurnData[CurrentIndex].BurnState == Burned) {
+                return;
             }
 
             BurnData[CurrentIndex] = new BurnComponent {
@@ -262,23 +274,25 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
     }
     //Allows the Client or server to send a request to Burn a specific cell
-    [Command]
-    private void PlayerBurnCell(int CurrentIndex, int ttl) {
+    [Command(requiresAuthority = false)]
+    public void PlayerBurnCell(int CurrentIndex, int ttl) {
+        //BurnCell(CurrentIndex, ttl);
         HostBurnCell(CurrentIndex, ttl);
     }
     //Calls only on the server and distributes call to all clients
     [ClientRpc]
-    private void HostBurnCell(int CurrentIndex, int ttl) {
+    public void HostBurnCell(int CurrentIndex, int ttl) {
         BurnCell(CurrentIndex, ttl);
     }
+    [ClientCallback]
     public void BurnCellFromV2(Vector2 burnCoordinates) {
         Vector2Int tileLoc = new Vector2Int((int)Math.Round(burnCoordinates.x) + (TerrainSize/2), (int)Math.Round(burnCoordinates.y) + (TerrainSize / 2));
         if (tileLoc.x >= 0 && tileLoc.x < TerrainSize && tileLoc.y >= 0 && tileLoc.y < TerrainSize) {
-            //Debug.Log();
+            //RequestAuthority(GetComponent<NetworkIdentity>());
             PlayerBurnCell(tileLoc.x * TerrainSize + tileLoc.y, FireLife);
         }
     }
-    private void FinishBurnCell(int QueueIndex) {
+    public void FinishBurnCell(int QueueIndex) {
         if (BurnData[BurnQueue[QueueIndex]].BurnState == Burning) {
             int CurrentIndex = BurnQueue[QueueIndex];
 
@@ -314,14 +328,14 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
     }
     //Allows the Client or server to send a request to Finish Burning a specific cell
-    [Command]
-    private void PlayerFinishBurnCell(int QueueIndex) {
+    [Command(requiresAuthority = false)]
+    public void PlayerFinishBurnCell(int QueueIndex) {
             //FinishBurnCell(QueueIndex);
             HostFinishBurnCell(QueueIndex);
     }
     //Calls only on the server and distributes call to all clients
     [ClientRpc]
-    private void HostFinishBurnCell(int QueueIndex) {
+    public void HostFinishBurnCell(int QueueIndex) {
         FinishBurnCell(QueueIndex);
     }
     public void NeutralizeTile(int index) {
@@ -331,8 +345,6 @@ public class LandscapeSimulator : NetworkBehaviour {
     public void FlammefyTile(int index) {
         BurnData[index] = FlammableTile;
     }
-
-    public ProtectedBool isHosting;
 
     private void GenerateLandscape() {
         Map2D = new WFCTile[TerrainSize * TerrainSize];
@@ -417,6 +429,17 @@ public class LandscapeSimulator : NetworkBehaviour {
             }
             loadInFire = false;
         }
+        
+        if (!isServer) {
+            return;
+        }
+        //Quicksave button
+        if (Input.GetKeyDown(KeyCode.F5)) {
+            this.SaveEnvironment(saveSlot);
+            FoliageSystem.SaveData(saveSlot);
+        } else if (Input.GetKeyDown(KeyCode.F9)) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
 
         ProtectedInt32 index;
         ProtectedInt32 LeftNeighbor;
@@ -433,7 +456,7 @@ public class LandscapeSimulator : NetworkBehaviour {
         ProtectedInt32 PullCount = 0;
         ProtectedInt32 PushCount = 0;
 
-        //Debug.Log("Burning: " + BurningEntities);
+        Debug.Log("Burning: " + BurningEntities);
         for (ProtectedInt32 i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
@@ -492,14 +515,6 @@ public class LandscapeSimulator : NetworkBehaviour {
         //remove max one cell per frame
         if (PullCount > 0) {
             PlayerFinishBurnCell(IndexToRemove);
-        }
-
-        //Quicksave button
-        if (Input.GetKeyDown(KeyCode.F5)) {
-            this.SaveEnvironment(saveSlot);
-            FoliageSystem.SaveData(saveSlot);
-        } else if (Input.GetKeyDown(KeyCode.F9)) {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
