@@ -25,7 +25,6 @@ public class Player : NetworkBehaviour {
 
     // Player Movement
     private Vector2 moveDirection;
-    private Transform aimTransform;
     private Rigidbody2D rb;
     public Camera playerCamera;
     public Weapon weapon;
@@ -41,7 +40,7 @@ public class Player : NetworkBehaviour {
     public ProtectedBool isCheater = false;
 
     // Spawn Locations
-    Vector3[] spawnLocations = { new Vector3(0, 0, 0), new Vector3(15, 0, 0), new Vector3(-15, 0, 0) };
+    Vector3[] spawnLocations = { new Vector3(100, 0, 0), new Vector3(15, 0, 0), new Vector3(-15, 0, 0) };
     int spawnLocationChoice = 0;
 
 
@@ -100,15 +99,24 @@ public class Player : NetworkBehaviour {
 
         rb.velocity = new Vector2(MoveX, MoveY).normalized * playerSpeed;
 
+        // Trying to fix player randomly spinning
+        if (MoveX == 0 && MoveY == 0 && rb.velocity.normalized != new Vector2(0,0))
+        {
+            rb.velocity = new Vector2(0,0);
+            rb.rotation = 0f;
+        }
+
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
 
         if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
         {
-            weapon.FireGrenade();
+            //weapon.FireGrenade();
+            CmdFireGrenade();
         }
         if (Input.GetMouseButtonDown(0))
         {
-            weapon.FireArrow();
+            //weapon.FireArrow();
+            CmdFireArrow();
         }
 
         // Pausing
@@ -235,6 +243,34 @@ public class Player : NetworkBehaviour {
 
     }
 
+
+    // this is called on the server
+    [Command]
+    void CmdFireArrow()
+    {
+        GameObject projectile = Instantiate(weapon.arrow, weapon.firePoint.position, weapon.firePoint.rotation);
+        Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
+        NetworkServer.Spawn(projectile);
+        projectileRb.AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
+        RpcOnFire();
+    }
+
+    [Command]
+    void CmdFireGrenade()
+    {
+        GameObject projectile = Instantiate(weapon.grenade, weapon.firePoint.position, weapon.firePoint.rotation);
+        Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
+        NetworkServer.Spawn(projectile);
+        projectileRb.AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
+        RpcOnFire();
+    }
+
+    // this is called on the tank that fired for all observers
+    [ClientRpc]
+    void RpcOnFire()
+    {
+        //animator.SetTrigger("Shoot");
+    }
 
     // --------------------------
 

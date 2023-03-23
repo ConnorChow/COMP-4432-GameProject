@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Mirror;
-using Mirror.Examples.Tanks;
 using UnityEngine;
 
 public class Grenade : MonoBehaviour {
@@ -49,8 +47,8 @@ public class Grenade : MonoBehaviour {
 
 
         //Destroy the object
-        NetworkServer.UnSpawn(this.gameObject);
-        //Destroy(this.gameObject);
+        //NetworkServer.UnSpawn(this.gameObject);
+        Destroy(this.gameObject);
     }
 
     //private void OnCollisionEnter2D(Collision2D collision)

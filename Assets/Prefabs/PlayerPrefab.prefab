@@ -977,6 +977,7 @@ GameObject:
   - component: {fileID: 4144951305791333973}
   - component: {fileID: 887143309101442458}
   - component: {fileID: 1086946233669963682}
+  - component: {fileID: 8637399280871773566}
   - component: {fileID: 3203970043031893492}
   - component: {fileID: 5435896626460236306}
   - component: {fileID: 176438760722405900}
@@ -1049,7 +1050,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
+  syncDirection: 1
   syncMode: 0
   syncInterval: 0
   target: {fileID: 7217604188135771135}
@@ -1066,6 +1067,29 @@ MonoBehaviour:
   compressRotation: 0
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &8637399280871773566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6375676033790927927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2cbc52526ea384ba280d13cd1a57b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0.1
+  target: {fileID: 2401617904259430259}
+  clientAuthority: 1
+  syncVelocity: 1
+  clearVelocity: 0
+  velocitySensitivity: 0.1
+  syncAngularVelocity: 1
+  clearAngularVelocity: 0
+  angularVelocitySensitivity: 0.1
 --- !u!114 &3203970043031893492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1082,12 +1106,13 @@ MonoBehaviour:
   syncMode: 1
   syncInterval: 0.1
   helloCount: 0
+  playerCount: 0
   health:
     fakeValue: 0
   playerName:
     fakeValue: 
   playerCamera: {fileID: 5608808845241054491}
-  weapon: {fileID: 0}
+  weapon: {fileID: 7110099158603391453}
   isCheater:
     fakeValue: 0
 --- !u!114 &5435896626460236306
@@ -1135,9 +1160,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a49f14d493ecf4abbb84dd51e8fd6c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0.1
   arrow: {fileID: 1192131430223260642, guid: 679f743853ed64025bc3b76783280523, type: 3}
   grenade: {fileID: 4213564593925894268, guid: ff04eb73cede94b4a9ecc0eba33ec286, type: 3}
   firePoint: {fileID: 7680544307744532362}

@@ -5,7 +5,6 @@ using Mirror;
 
 public class Weapon : MonoBehaviour
 {
-
     public GameObject arrow;
 
     public GameObject grenade;
@@ -18,7 +17,6 @@ public class Weapon : MonoBehaviour
     {
         GameObject projectile = Instantiate(arrow, firePoint.position, firePoint.rotation);
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
-
         //Debug.Log("Spawning arrow projectile");
         //NetworkServer.Spawn(projectile);
         //Debug.Log("Spawned arrow projectile");
