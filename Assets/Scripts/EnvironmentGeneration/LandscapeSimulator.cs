@@ -100,42 +100,6 @@ public class LandscapeSimulator : NetworkBehaviour {
     public Navigation[] NavComponent;
     public BurnComponent[] BurnData;
 
-    /*//Update Commands for changing the state of landscape components
-
-    [Command]   //Update Burnstate
-    private void UpdateBurnState(int i, int state) {
-        BurnData[i].BurnState = state;
-    }
-    [Command]   //Update BurnHealth
-    private void UpdateBurnHealth(int i, float health) {
-        BurnData[i].Health = health;
-    }
-    [Command]   //Update Burning TimeToLive
-    private void UpdateBurnTTL(int i, int ttl) {
-        BurnData[i].TimeToLive = ttl;
-    }
-
-    //Serialize BurnData to other players
-    public override void OnSerialize(NetworkWriter writer, bool initialState) {
-        base.OnSerialize(writer, initialState);
-        for (int i = 0; i < BurnData.Length; i++) {
-            writer.WriteInt(BurnData[i].BurnState);
-            writer.WriteInt(BurnData[i].TimeToLive);
-            writer.WriteFloat(BurnData[i].Health);
-        }
-    }
-    //Deserialize BurnData on receiving end
-    public override void OnDeserialize(NetworkReader reader, bool initialState) {
-        base.OnDeserialize(reader, initialState);
-        int previousState;
-        for (int i = 0; i < BurnData.Length; i++) {
-            previousState = BurnData[i].BurnState;
-            BurnData[i].BurnState = reader.ReadInt();
-            BurnData[i].TimeToLive = reader.ReadInt();
-            BurnData[i].Health = reader.ReadFloat();
-        }
-    }*/
-
     public Tilemap GroundTileMap, FireGrid;
 
     public bool tryLoadMap = false;
@@ -256,7 +220,7 @@ public class LandscapeSimulator : NetworkBehaviour {
                 healthSaved = BurningHealth;
             } else if (BurnData[CurrentIndex].BurnState == Burned) {
                 return;
-            }
+            } else if (!loadInFire) return;
 
             BurnData[CurrentIndex] = new BurnComponent {
                 BurnState = Burning,
@@ -463,7 +427,7 @@ public class LandscapeSimulator : NetworkBehaviour {
 
             //Debug.Log("Cell: " + index + "\nState: " + BurnData[index].BurnState + "\nHealth: " + BurnData[index].Health + "\nttl: " + BurnData[index].TimeToLive);
 
-            if (BurnData[index].Health <= 0.0f) {
+            if (BurnData[index].Health <= 0.0f && PullCount == 0) {
                 IndexToRemove = i;
                 PullCount++;
                 continue;
@@ -471,7 +435,7 @@ public class LandscapeSimulator : NetworkBehaviour {
                 LeftNeighbor = GetIndex(GetX(index) - 1, GetY(index));
                 if (BurnData[LeftNeighbor].BurnState == Normal && GetX(index) > 0) {
                     BurnData[LeftNeighbor].Health -= FireDamagePerSecond * Elapsed;
-                    if (BurnData[LeftNeighbor].Health < 0) {
+                    if (BurnData[LeftNeighbor].Health < 0 && PushCount == 0) {
                         CellAdd= LeftNeighbor;
                         ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
@@ -480,7 +444,7 @@ public class LandscapeSimulator : NetworkBehaviour {
                 RightNeighbor = GetIndex(GetX(index) + 1, GetY(index));
                 if (BurnData[RightNeighbor].BurnState == Normal && GetX(index) < TerrainSize - 1) {
                     BurnData[RightNeighbor].Health -= FireDamagePerSecond * Elapsed;
-                    if (BurnData[RightNeighbor].Health < 0) {
+                    if (BurnData[RightNeighbor].Health < 0 && PushCount == 0) {
                         CellAdd = RightNeighbor;
                         ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
@@ -489,7 +453,7 @@ public class LandscapeSimulator : NetworkBehaviour {
                 UpNeighbor = GetIndex(GetX(index), GetY(index) + 1);
                 if (BurnData[UpNeighbor].BurnState == Normal && GetY(index) < TerrainSize - 1) {
                     BurnData[UpNeighbor].Health -= FireDamagePerSecond * Elapsed;
-                    if (BurnData[UpNeighbor].Health < 0) {
+                    if (BurnData[UpNeighbor].Health < 0 && PushCount == 0) {
                         CellAdd = UpNeighbor;
                         ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
@@ -498,7 +462,7 @@ public class LandscapeSimulator : NetworkBehaviour {
                 DownNeighbor = GetIndex(GetX(index), GetY(index) - 1);
                 if (BurnData[DownNeighbor].BurnState == Normal && GetY(index) > 0) {
                     BurnData[DownNeighbor].Health -= FireDamagePerSecond * Elapsed;
-                    if (BurnData[DownNeighbor].Health < 0) {
+                    if (BurnData[DownNeighbor].Health < 0 && PushCount == 0) {
                         CellAdd = DownNeighbor;
                         ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
@@ -510,10 +474,12 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
         //Add max one cell per frame
         if (PushCount > 0) {
+            //Debug.Log("Add");
             PlayerBurnCell(CellAdd, ttl);
         }
         //remove max one cell per frame
         if (PullCount > 0) {
+            //Debug.Log("Remove");
             PlayerFinishBurnCell(IndexToRemove);
         }
     }
