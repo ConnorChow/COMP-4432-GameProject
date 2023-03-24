@@ -2048,8 +2048,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bd245dee383b4e37a2d0a56a064d846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  apiUrl: http://localhost/api/players
+  apiUrl: http://localhost/api/characters/players
   characterImageDirectory: Characters/Players
+--- !u!114 &1070669253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070669247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6a5b87fc5084246b20271a2ff55828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  charactersDir: Assets/Characters/Players
 --- !u!1 &1130721366
 GameObject:
   m_ObjectHideFlags: 0
@@ -3167,6 +3180,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1355595289387809642, guid: 2c7bfbf6316154aed9bbfc6206043baa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1070669252}
+    - targetCorrespondingSourceObject: {fileID: 1355595289387809642, guid: 2c7bfbf6316154aed9bbfc6206043baa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1070669253}
   m_SourcePrefab: {fileID: 100100000, guid: 2c7bfbf6316154aed9bbfc6206043baa, type: 3}
 --- !u!1 &1601617296
 GameObject:
