@@ -36,7 +36,7 @@ public class Grenade : NetworkBehaviour {
             if (landscape != null)
             {
                 //use the function from LandscapeSimulator.cs that allows it to burn the specific tile the bomb stops at
-                landscape.BurnCellFromV2(new Vector2(transform.position.x, transform.position.y));
+                landscape.BurnCellFromV2(new Vector2(transform.position.x - 0.5f, transform.position.y - 0.5f));
             }
         } catch (Exception e)
         {
@@ -64,13 +64,15 @@ public class Grenade : NetworkBehaviour {
         if (collision.gameObject.tag == "Enemy")
         {
             enemyHealth.TakeDamage(5);
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            Explode();
         }
 
         if (collision.gameObject.tag == "Player")
         {
             player.TakeDamage(5);
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            Explode();
         }
     }
 }
