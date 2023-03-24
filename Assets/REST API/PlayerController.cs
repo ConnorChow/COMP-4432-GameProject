@@ -34,7 +34,7 @@ using UnityEngine.Networking;
 
 public class PlayerController : MonoBehaviour
 {
-    public string apiUrl = "http://localhost/api/characters/players";
+    public string apiUrl = "http://localhost:8080/api/players";
     public string characterImageDirectory = "Characters/Players";
 
     private SpriteRenderer spriteRenderer;
