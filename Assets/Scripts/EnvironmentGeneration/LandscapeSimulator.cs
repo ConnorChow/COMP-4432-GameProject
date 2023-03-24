@@ -420,7 +420,7 @@ public class LandscapeSimulator : NetworkBehaviour {
         ProtectedInt32 PullCount = 0;
         ProtectedInt32 PushCount = 0;
 
-        Debug.Log("Burning: " + BurningEntities);
+        //Debug.Log("Burning: " + BurningEntities);
         for (ProtectedInt32 i = 0; i < BurningEntities; i++) {
             index = BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
