@@ -47,5 +47,6 @@ public class SlotSelectionTool : MonoBehaviour {
         //specify slot we must load for landscape simulator
         PlayerPrefs.SetInt("loadSlot", slotIndex);
         PlayerPrefs.SetString(prefName, "ACTIVE");
+        PlayerPrefs.SetInt("hosting", 1);
     }
 }

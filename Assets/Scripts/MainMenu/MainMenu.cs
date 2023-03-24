@@ -39,7 +39,7 @@ public class MainMenu : MonoBehaviour
     public void JoinLobby()
     {
         if (ipAddressInputField.text == "") { return; };
-
+        PlayerPrefs.SetInt("hosting", 0);
         //joinButton.interactable = false;
         string ipAddress = ipAddressInputField.text;
         Debug.Log(ipAddress);

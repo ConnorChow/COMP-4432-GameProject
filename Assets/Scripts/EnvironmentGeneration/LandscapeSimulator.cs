@@ -330,7 +330,27 @@ public class LandscapeSimulator : NetworkBehaviour {
         SaveEnvironment(saveSlot);
     }
 
-    
+    //have the client send a request for landscape info
+    [Command(requiresAuthority = false)]
+    public void RequestLandscape() {
+        ProcessLandscapeRequest();
+    }
+    //Server processes request for data and returns Landscape data
+    [ServerCallback]
+    public void ProcessLandscapeRequest() {
+        ReturnLandscape(Map2D, BurnData, BurnQueue, BurningEntities);
+    }
+    //Server replies to clients needing to load in landscape data
+    //fire sync do not yet occur until first frame and must request from the server to burn cells
+    [ClientRpc]
+    public void ReturnLandscape(WFCTile[] hostMap2D, BurnComponent[] hostBurnData, ProtectedInt32[] hostBurnQueue, ProtectedInt32 hostBurningEntities) {
+        if (loadInFire) {
+            Map2D = hostMap2D;
+            BurnData = hostBurnData;
+            BurnQueue = hostBurnQueue;
+            BurningEntities = hostBurningEntities;
+        }
+    }
 
     // Awake is called when object loads
     void Awake() {
@@ -365,12 +385,11 @@ public class LandscapeSimulator : NetworkBehaviour {
             Health = 0,
             TimeToLive = 0
         };
-
-        FetchSlot();
-
         BurnQueue = new ProtectedInt32[TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
-        if (true) {
+        FetchSlot();
+        if (PlayerPrefs.HasKey("hosting") && PlayerPrefs.GetInt("hosting") == 1) {
+            Debug.Log("is server... loading in landscape");
             //Try to load player environment, otherwise generate a new one and save it
             if (LoadEnvironment(saveSlot) && tryLoadMap) {
                 Debug.Log("Loading from save");
@@ -381,15 +400,56 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
     }
 
+    private void Start() {
+        if (!isServer) {
+            Debug.Log("Fetching Landscape");
+            RequestLandscape();
+            for (int x = 0; x < TerrainSize; x++) {
+                for (int y = 0; y < TerrainSize; y++) {
+                    LoadTileFromLSD(x, y);
+                }
+            }
+        }
+    }
+
     bool loadInFire = true;
+
+    [Command(requiresAuthority = false)]
+    public void RequestFire() {
+        ProcessFireRequest();
+    }
+    [ServerCallback]
+    public void ProcessFireRequest() {
+        ReturnFireData(BurnData, BurnQueue, BurningEntities);
+    }
+    [ClientRpc]
+    public void ReturnFireData(BurnComponent[] hostBurnData, ProtectedInt32[] hostBurnQueue, ProtectedInt32 hostBurningEntities) {
+        if (loadInFire) {
+            BurnData = hostBurnData;
+            BurnQueue = hostBurnQueue;
+            BurningEntities = hostBurningEntities;
+            int index;
+            for (int i = 0; i < BurningEntities; i++) {
+                index = BurnQueue[i];
+                FireGrid.SetTile(new Vector3Int(
+                        GetX(index) - (TerrainSize / 2),
+                        GetY(index) - (TerrainSize / 2), 0),
+                    FireSprite);
+            }
+        }
+    }
 
     // Update is called once per frame
     void Update() {
         if (loadInFire) {
-            for (int i = 0; i < BurnData.Length; i++) {
-                if (BurnData[i].BurnState == Burning) {
-                    BurnCell(i, BurnData[i].TimeToLive);
+            if (isServer) {
+                for (int i = 0; i < BurnData.Length; i++) {
+                    if (BurnData[i].BurnState == Burning) {
+                        HostBurnCell(i, BurnData[i].TimeToLive);
+                    }
                 }
+            } else {
+                RequestFire();
             }
             loadInFire = false;
         }
