@@ -97,6 +97,7 @@ public class LandscapeSimulator : NetworkBehaviour {
     public int TerrainSize = 16;
 
     public WFCTile[] Map2D;
+    public ProtectedInt32[] trackTiles;
     public Navigation[] NavComponent;
     public BurnComponent[] BurnData;
 
@@ -174,6 +175,7 @@ public class LandscapeSimulator : NetworkBehaviour {
             int RandomFittingIndex = UnityEngine.Random.Range(0, count);
             int SelectedIndex = TileOptions[RandomFittingIndex];
             Map2D[posx * TerrainSize + posy] = tiles[SelectedIndex];
+            trackTiles[posx * TerrainSize + posy] = SelectedIndex;
 
             if (SelectedIndex == 0) {
                 BurnData[posx * TerrainSize + posy] = SafeTile;
@@ -250,7 +252,7 @@ public class LandscapeSimulator : NetworkBehaviour {
     }
     [ClientCallback]
     public void BurnCellFromV2(Vector2 burnCoordinates) {
-        Vector2Int tileLoc = new Vector2Int((int)Math.Round(burnCoordinates.x) + (TerrainSize/2), (int)Math.Round(burnCoordinates.y) + (TerrainSize / 2));
+        Vector2Int tileLoc = new Vector2Int((int)Math.Round(burnCoordinates.x) + (TerrainSize / 2), (int)Math.Round(burnCoordinates.y) + (TerrainSize / 2));
         if (tileLoc.x >= 0 && tileLoc.x < TerrainSize && tileLoc.y >= 0 && tileLoc.y < TerrainSize) {
             //RequestAuthority(GetComponent<NetworkIdentity>());
             PlayerBurnCell(tileLoc.x * TerrainSize + tileLoc.y, FireLife);
@@ -281,12 +283,12 @@ public class LandscapeSimulator : NetworkBehaviour {
             Map2D[CurrentIndex] = tiles[0];
 
             int detectedBushEntity = -1;
-            
+
             if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(CurrentIndex), GetY(CurrentIndex)) }, out detectedBushEntity)) {
                 if (detectedBushEntity > -1)
                     FoliageSystem.FoliageData.RemoveEntity(detectedBushEntity);
             }
-            
+
             BurningEntities -= 1;
             BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
         }
@@ -294,8 +296,8 @@ public class LandscapeSimulator : NetworkBehaviour {
     //Allows the Client or server to send a request to Finish Burning a specific cell
     [Command(requiresAuthority = false)]
     public void PlayerFinishBurnCell(int QueueIndex) {
-            //FinishBurnCell(QueueIndex);
-            HostFinishBurnCell(QueueIndex);
+        //FinishBurnCell(QueueIndex);
+        HostFinishBurnCell(QueueIndex);
     }
     //Calls only on the server and distributes call to all clients
     [ClientRpc]
@@ -332,23 +334,33 @@ public class LandscapeSimulator : NetworkBehaviour {
 
     //have the client send a request for landscape info
     [Command(requiresAuthority = false)]
-    public void RequestLandscape() {
-        ProcessLandscapeRequest();
+    public void RequestLandscape(int i) {
+        Debug.Log("Making Request");
+        ProcessLandscapeRequest(i);
     }
     //Server processes request for data and returns Landscape data
     [ServerCallback]
-    public void ProcessLandscapeRequest() {
-        ReturnLandscape(Map2D, BurnData, BurnQueue, BurningEntities);
+    public void ProcessLandscapeRequest(int i) {
+        Debug.Log("Processing Request");
+        int[] hostTile = new int[chunkSize];
+        BurnComponent[] hostBurn = new BurnComponent[chunkSize];
+        for (int x = 0; x < chunkSize; x++) {
+            hostTile[x] = trackTiles[x + i];
+            hostBurn[x] = BurnData[x + i];
+        }
+        ReturnLandscape(i, hostTile, hostBurn);
     }
     //Server replies to clients needing to load in landscape data
     //fire sync do not yet occur until first frame and must request from the server to burn cells
     [ClientRpc]
-    public void ReturnLandscape(WFCTile[] hostMap2D, BurnComponent[] hostBurnData, ProtectedInt32[] hostBurnQueue, ProtectedInt32 hostBurningEntities) {
+    public void ReturnLandscape(int i, int[] hostTile, BurnComponent[] tileBurnInfo) {
+        Debug.Log("Returning Landscape");
         if (loadInFire) {
-            Map2D = hostMap2D;
-            BurnData = hostBurnData;
-            BurnQueue = hostBurnQueue;
-            BurningEntities = hostBurningEntities;
+            for (int x = i; x < i + chunkSize; x++) {
+                Map2D[x] = tiles[hostTile[x-i]];
+                BurnData[x] = tileBurnInfo[x-i];
+                LoadTileFromLSD(GetX(x), GetY(x));
+            }
         }
     }
 
@@ -387,6 +399,7 @@ public class LandscapeSimulator : NetworkBehaviour {
         };
         BurnQueue = new ProtectedInt32[TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
+        trackTiles = new ProtectedInt32[TerrainSize * TerrainSize];
         FetchSlot();
         if (PlayerPrefs.HasKey("hosting") && PlayerPrefs.GetInt("hosting") == 1) {
             Debug.Log("is server... loading in landscape");
@@ -400,14 +413,14 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
     }
 
+    ProtectedInt32 chunkSize = 64;
+
     private void Start() {
         if (!isServer) {
-            Debug.Log("Fetching Landscape");
-            RequestLandscape();
-            for (int x = 0; x < TerrainSize; x++) {
-                for (int y = 0; y < TerrainSize; y++) {
-                    LoadTileFromLSD(x, y);
-                }
+            Map2D = new WFCTile[TerrainSize * TerrainSize];
+            BurnData = new BurnComponent[TerrainSize * TerrainSize];
+            for (int i = 0; i < Map2D.Length; i+=chunkSize) {
+                RequestLandscape(i);
             }
         }
     }
@@ -418,14 +431,13 @@ public class LandscapeSimulator : NetworkBehaviour {
     public void RequestFire() {
         ProcessFireRequest();
     }
-    [ServerCallback]
+    //[ServerCallback]
     public void ProcessFireRequest() {
-        ReturnFireData(BurnData, BurnQueue, BurningEntities);
+        ReturnFireData(BurnQueue, BurningEntities);
     }
     [ClientRpc]
-    public void ReturnFireData(BurnComponent[] hostBurnData, ProtectedInt32[] hostBurnQueue, ProtectedInt32 hostBurningEntities) {
+    public void ReturnFireData(ProtectedInt32[] hostBurnQueue, ProtectedInt32 hostBurningEntities) {
         if (loadInFire) {
-            BurnData = hostBurnData;
             BurnQueue = hostBurnQueue;
             BurningEntities = hostBurningEntities;
             int index;
@@ -443,8 +455,10 @@ public class LandscapeSimulator : NetworkBehaviour {
     void Update() {
         if (loadInFire) {
             if (isServer) {
+                Debug.Log("Generating Fire");
                 for (int i = 0; i < BurnData.Length; i++) {
                     if (BurnData[i].BurnState == Burning) {
+                        BurnCell(i, BurnData[i].TimeToLive);
                         HostBurnCell(i, BurnData[i].TimeToLive);
                     }
                 }
@@ -453,7 +467,7 @@ public class LandscapeSimulator : NetworkBehaviour {
             }
             loadInFire = false;
         }
-        
+
         if (!isServer) {
             return;
         }
@@ -496,7 +510,7 @@ public class LandscapeSimulator : NetworkBehaviour {
                 if (BurnData[LeftNeighbor].BurnState == Normal && GetX(index) > 0) {
                     BurnData[LeftNeighbor].Health -= FireDamagePerSecond * Elapsed;
                     if (BurnData[LeftNeighbor].Health < 0 && PushCount == 0) {
-                        CellAdd= LeftNeighbor;
+                        CellAdd = LeftNeighbor;
                         ttl = BurnData[index].TimeToLive - 1;
                         PushCount++;
                     }
@@ -584,14 +598,15 @@ public class LandscapeSimulator : NetworkBehaviour {
 
     //We load save data from JSON if it exists, otherwise delete it
     public bool LoadEnvironment(int slot) {
-        if (File.Exists(Application.persistentDataPath + "/LandscapeData" + slot +".json")) {
-            LandscapeSaveData lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData" + slot +".json")); 
+        if (File.Exists(Application.persistentDataPath + "/LandscapeData" + slot + ".json")) {
+            LandscapeSaveData lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData" + slot + ".json"));
             TerrainSize = lsd.terrainSize;
             Map2D = new WFCTile[lsd.map2DIndex.Length];
             NavComponent = new Navigation[lsd.map2DIndex.Length];
             BurnData = new BurnComponent[lsd.map2DIndex.Length];
             for (int i = 0; i < Map2D.Length; i++) {
                 Map2D[i] = tiles[lsd.map2DIndex[i]];
+                trackTiles[i] = lsd.map2DIndex[i];
                 NavComponent[i].Traversability = passable;
                 BurnData[i] = new BurnComponent {
                     BurnState = lsd.BurnState[i],

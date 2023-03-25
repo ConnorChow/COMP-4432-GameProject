@@ -3369,8 +3369,8 @@ MonoBehaviour:
   Interval: 10
   Timeout: 10000
   FastResend: 2
-  SendWindowSize: 4096
-  ReceiveWindowSize: 4096
+  SendWindowSize: 300000
+  ReceiveWindowSize: 300000
   MaxRetransmit: 40
   MaximizeSocketBuffers: 1
   ReliableMaxMessageSize: 298449
