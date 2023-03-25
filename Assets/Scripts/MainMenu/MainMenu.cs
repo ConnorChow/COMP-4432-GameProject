@@ -33,6 +33,7 @@ public class MainMenu : MonoBehaviour
 
     public void HostLobby() {
         Debug.Log("Hosting...");
+        PlayerPrefs.SetInt("hosting", 1);
         networkManager.StartHost();
     }
 
