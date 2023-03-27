@@ -9,6 +9,11 @@ using System.Net;
 
 public class myNetworkManager : NetworkManager
 {
+    EnemySpawner enemySpawner;
+    [SerializeField] public GameObject swarmerPrefab;
+    [SerializeField] public GameObject bigSwarmerPrefab;
+    [SerializeField] public GameObject[] spawnLocations;
+
     public override void Start()
     {
         base.Start();
@@ -63,9 +68,21 @@ public class myNetworkManager : NetworkManager
             .ToString();
     }
 
-    public void SpawnEnemy(GameObject enemy)
+    public void startSpawnEnemy()
     {
-        NetworkServer.Spawn(enemy);
+        StartCoroutine(spawnEnemy(enemySpawner.swarmerInterval, enemySpawner.swarmerPrefab));
+        StartCoroutine(spawnEnemy(enemySpawner.bigSwarmerInterval, enemySpawner.bigSwarmerPrefab));
+    }
+
+    public IEnumerator spawnEnemy(float interval, GameObject enemy)
+    {
+        System.Random r = new System.Random();
+        int rInt = r.Next(0, spawnLocations.Length);
+
+        yield return new WaitForSeconds(interval);
+        GameObject newEnemy = Instantiate(enemy, spawnLocations[rInt].transform.position, spawnLocations[rInt].transform.rotation); //Enemy spawn
+        NetworkServer.Spawn(newEnemy);
+        StartCoroutine(spawnEnemy(interval, enemy));
     }
 
     //public override void OnServerAddPlayer(NetworkConnectionToClient conn)

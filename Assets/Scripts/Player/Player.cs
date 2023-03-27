@@ -15,9 +15,6 @@ public class Player : NetworkBehaviour {
     [SyncVar(hook = nameof(helloChange))]
     public int helloCount = 0;
 
-    [SyncVar(hook = nameof(playerCountChanged))]
-    public int playerCount = 0;
-
     readonly myNetworkManager networkManager;
 
     // Player Stats
@@ -44,7 +41,7 @@ public class Player : NetworkBehaviour {
     public ProtectedBool isCheater = false;
 
     // Spawn Locations
-    Vector3[] spawnLocations = { new Vector3(100, 0, 0), new Vector3(15, 0, 0), new Vector3(-15, 0, 0) };
+    public GameObject[] spawnLocations;
     int spawnLocationChoice = 0;
 
 
@@ -52,15 +49,22 @@ public class Player : NetworkBehaviour {
     void Start() {
         health = maxHealth;
 
+        spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
+
+        System.Random r = new System.Random();
+        int rInt = r.Next(0, spawnLocations.Length);
+        spawnLocationChoice = rInt;
+
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
-
-        playerCount++;
 
         rb = GetComponentInChildren<Rigidbody2D>();
         playerCamera = GetComponentInChildren<Camera>();
 
-        rb.transform.position.Set(spawnLocations[spawnLocationChoice].x, spawnLocations[spawnLocationChoice].y, spawnLocations[spawnLocationChoice].z);
+        Debug.Log($"Spawn location choice: {rInt} -> {spawnLocations[rInt].transform}");
+        Debug.Log($"Player position: {rb.transform}");
+
+        rb.transform.position.Set(spawnLocations[spawnLocationChoice].transform.position.x, spawnLocations[spawnLocationChoice].transform.position.y, spawnLocations[spawnLocationChoice].transform.position.z);
 
         playerHUD = GameObject.FindGameObjectWithTag("HUD");
         pauseMenu = GameObject.FindGameObjectWithTag("Pause");
@@ -89,6 +93,7 @@ public class Player : NetworkBehaviour {
         {
             Debug.Log(e);
         }
+
         if (!isLocalPlayer) {
             playerCamera.gameObject.SetActive(false);
         }
@@ -98,7 +103,7 @@ public class Player : NetworkBehaviour {
     void HandleMovement()
     {
         // check if not local player
-        if (!isLocalPlayer) { return; }
+        //if (!isLocalPlayer) { return; }
 
         // handle player movement
         float MoveX = Input.GetAxisRaw("Horizontal");
@@ -252,12 +257,6 @@ public class Player : NetworkBehaviour {
         Debug.Log($"Old Count: {oldCount} Hellos, New Count: {newCount} Hellos");
     }
 
-    void playerCountChanged(int oldCOunt, int newCount)
-    {
-        if (newCount == 2) { spawnLocationChoice = 1; }
-        if (newCount == 3) { spawnLocationChoice = 2; }
-    }
-
     public void setPlayerName(String name)
     {
         playerName = name;
@@ -270,18 +269,13 @@ public class Player : NetworkBehaviour {
         Debug.Log("Received Hello from Server");
     }
 
-    void SpawnEnemies()
-    {
-
-    }
-
 
     // this is called by clients on the server
     [Command]
     void CmdFireArrow() {
         GameObject projectile = Instantiate(weapon.arrow, weapon.firePoint.position, weapon.firePoint.rotation);
         projectile.GetComponent<Rigidbody2D>().AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
-        NetworkServer.Spawn(projectile); // Commenting this causes a error / Need to fix double shots
+        NetworkServer.Spawn(projectile); // Commenting this causes a error --- Need to fix double shots
 
         RpcOnFire(projectile);
     }
@@ -290,7 +284,7 @@ public class Player : NetworkBehaviour {
     void CmdFireGrenade() {
         GameObject projectile = Instantiate(weapon.grenade, weapon.firePoint.position, weapon.firePoint.rotation);
         projectile.GetComponent<Rigidbody2D>().AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
-        NetworkServer.Spawn(projectile); // Commenting this causes a error / Need to fix double shots
+        NetworkServer.Spawn(projectile); // Commenting this causes a error --- Need to fix double shots
 
         RpcOnFire(projectile);
     }

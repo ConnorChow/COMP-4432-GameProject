@@ -2030,7 +2030,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &980908018
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -8259,6 +8259,9 @@ MonoBehaviour:
   - {fileID: 4213564593925894268, guid: ff04eb73cede94b4a9ecc0eba33ec286, type: 3}
   - {fileID: 351340532369863291, guid: 2feeab82d478ed146b2a4cefc4110770, type: 3}
   timeInterpolationGui: 0
+  swarmerPrefab: {fileID: 0}
+  bigSwarmerPrefab: {fileID: 0}
+  spawnLocations: []
 --- !u!114 &1639834846
 MonoBehaviour:
   m_ObjectHideFlags: 0
