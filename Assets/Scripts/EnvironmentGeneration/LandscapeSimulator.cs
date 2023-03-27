@@ -204,15 +204,6 @@ public class LandscapeSimulator : NetworkBehaviour {
         return x * TerrainSize + y;
     }
 
-    private void RequestAuthority(NetworkIdentity clientID) {
-        clientID.AssignClientAuthority(this.GetComponent<NetworkIdentity>().connectionToClient);
-    }
-
-    [ServerCallback]
-    private void AssignAuthority(NetworkIdentity clientID) {
-        clientID.AssignClientAuthority(clientID.connectionToClient);
-    }
-
     public void BurnCell(int CurrentIndex, int ttl) {
         if (BurningEntities < TerrainSize) {
 
@@ -449,6 +440,11 @@ public class LandscapeSimulator : NetworkBehaviour {
                     FireSprite);
             }
         }
+    }
+
+    public override void OnStartClient() {
+        base.OnStartClient();
+
     }
 
     // Update is called once per frame
