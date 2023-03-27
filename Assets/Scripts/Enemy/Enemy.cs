@@ -36,6 +36,12 @@ public class Enemy : MonoBehaviour
 
     void HandleMovement()
     {
+    
+        //Implement enemy changing targets and chasing the closer player
+        //Player1 = GameObject.FindGameObjectWithTag("Player1").transform;
+        //rangeplayer1 = Vector3.Distance(transform.position, Player1.position);
+        //if(rangeplayer1<rangeplayer2)
+        //{transform.position=Vector3.Lerp(transform.position, Player1.position} 
         if (target)
         {
             Vector3 direction = (target.position - transform.position).normalized;
