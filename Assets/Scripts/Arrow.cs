@@ -14,6 +14,7 @@ public class Arrow : MonoBehaviour
     float timer = 5f;
 
 
+    /*
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
@@ -25,6 +26,22 @@ public class Arrow : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             player.TakeDamage(damage);
+            Destroy(gameObject);
+        }
+    }
+    */
+    
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.gameObject.tag == "Enemy")
+        {
+            collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+            Destroy(gameObject);
+        }
+
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.gameObject.GetComponent<Player>().TakeDamage(damage);
             Destroy(gameObject);
         }
     }
