@@ -493,7 +493,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 991131783}
   m_Direction: 2
   m_Value: 0.99999976
-  m_Size: 0.5882353
+  m_Size: 0.58823526
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8280,8 +8280,8 @@ MonoBehaviour:
   Interval: 10
   Timeout: 10000
   FastResend: 2
-  SendWindowSize: 300000
-  ReceiveWindowSize: 300000
+  SendWindowSize: 2000000
+  ReceiveWindowSize: 2000000
   MaxRetransmit: 40
   MaximizeSocketBuffers: 1
   ReliableMaxMessageSize: 298449
@@ -9274,7 +9274,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 2.8125
+  orthographic size: 3.5208333
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

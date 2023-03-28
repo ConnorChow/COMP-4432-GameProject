@@ -42,7 +42,7 @@ public class SlotSelectionTool : MonoBehaviour {
             PlayerPrefs.SetInt("loadMap", 0);
 
         } else { //or, load a map from a slot
-            PlayerPrefs.SetInt("loadMap", 1);
+            PlayerPrefs.SetInt("loadMap", 0);
         }
         //specify slot we must load for landscape simulator
         PlayerPrefs.SetInt("loadSlot", slotIndex);
