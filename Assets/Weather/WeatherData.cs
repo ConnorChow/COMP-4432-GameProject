@@ -3,8 +3,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Mirror;
 
-public class WeatherData : MonoBehaviour {
+public class WeatherData : NetworkBehaviour {
 	private float timer;
 	public float minutesBetweenUpdate;
 	public WeatherInfo Info;

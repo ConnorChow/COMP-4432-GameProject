@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using Mirror;
 
-public class GetLocation : MonoBehaviour
+public class GetLocation : NetworkBehaviour
 {
     public LocationInfo Info;
 	public float latitude;
