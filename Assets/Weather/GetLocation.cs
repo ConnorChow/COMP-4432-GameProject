@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using System;
 using Mirror;
 
-public class GetLocation : NetworkBehaviour
+public class GetLocation : MonoBehaviour
 {
     public LocationInfo Info;
 	public float latitude;
