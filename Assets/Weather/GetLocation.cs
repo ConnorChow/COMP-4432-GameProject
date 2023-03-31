@@ -11,12 +11,13 @@ public class GetLocation : MonoBehaviour
 	public float longitude;
 	public WeatherData weatherData;
 	private string IPAddress;
-	void Start() {
+	void Start() 
+	{
 		StartCoroutine (GetIP());
 	}
 	private IEnumerator GetIP()
 	{
-		var www = new UnityWebRequest("https://ipapi.co/")
+		var www = new UnityWebRequest("https://ipapi.co/json/")
 		{
 			downloadHandler = new DownloadHandlerBuffer()
 		};
@@ -35,6 +36,7 @@ public class GetLocation : MonoBehaviour
 
 	private IEnumerator GetCoordinates()
 	{
+		//string encodedIPAddress = Uri.EscapeDataString(IPAddress);
 		var www = new UnityWebRequest("https://ipapi.co/json/" + IPAddress)
 		{
 			downloadHandler = new DownloadHandlerBuffer()

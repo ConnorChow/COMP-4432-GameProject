@@ -339,7 +339,7 @@ SpriteRenderer:
   m_Size: {x: 18.58, y: 16.89}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &58318666
@@ -1473,7 +1473,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &533460729
 Transform:
   m_ObjectHideFlags: 0
@@ -6465,7 +6465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &658334549
 Transform:
   m_ObjectHideFlags: 0
@@ -6540,7 +6540,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &754503783
 Transform:
   m_ObjectHideFlags: 0
@@ -7051,7 +7051,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &980908018
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -12204,7 +12204,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1163748623
 Transform:
   m_ObjectHideFlags: 0
@@ -13084,7 +13084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -14895,7 +14895,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 361a0725613ea4c64a282c5d92f96dca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minutesBetweenUpdate: 5
+  minutesBetweenUpdate: 0
   Info:
     latitude: 0
     longitude: 0
@@ -14921,7 +14921,7 @@ MonoBehaviour:
       visibility: 0
       ozone: 0
     offset: 0
-  API_key: 06fdfb01c406e86c0a5819f83ad945da 1
+  API_key: 9a450fda46a74dc536c74286cbca0fbe
   currentWeatherText: {fileID: 1180853682}
   getLocation: {fileID: 2115038570}
 --- !u!114 &2115038572
@@ -14937,7 +14937,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weatherData: {fileID: 2115038571}
-  currentWeather: 
+  currentWeather: rain
   rainObject: {fileID: 533460728}
   snowObject: {fileID: 980908017}
   cloudyObject: {fileID: 754503782}
