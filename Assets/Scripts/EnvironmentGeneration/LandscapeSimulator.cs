@@ -70,7 +70,7 @@ public class LandscapeSimulator : NetworkBehaviour {
     static ProtectedInt32 Burning = 1;
     static ProtectedInt32 Burned = 2;
 
-    WFCTile[] tiles = new WFCTile[18];
+    public WFCTile[] tiles = new WFCTile[18];
 
     [Header("Ground TileTypes")]
     public Tile DirtFull;
@@ -188,14 +188,14 @@ public class LandscapeSimulator : NetworkBehaviour {
 
     }
 
-    private void LoadTileFromLSD(int posx, int posy) {
+    public void LoadTileFromLSD(int posx, int posy) {
         GroundTileMap.SetTile(new Vector3Int(posx - (TerrainSize / 2), posy - (TerrainSize / 2), 0), Map2D[posx * TerrainSize + posy].GetTile());
     }
 
-    private int GetY(int index) {
+    public int GetY(int index) {
         return index % TerrainSize;
     }
-    private int GetX(int index) {
+    public int GetX(int index) {
         return (index - GetY(index)) / TerrainSize;
     }
 
@@ -354,6 +354,10 @@ public class LandscapeSimulator : NetworkBehaviour {
             Health = 0,
             TimeToLive = 0
         };
+
+        Map2D = new WFCTile[TerrainSize * TerrainSize];
+        NavComponent = new Navigation[TerrainSize * TerrainSize];
+        BurnData = new BurnComponent[TerrainSize * TerrainSize];
     }
 
     // Awake is called when object loads
@@ -375,7 +379,7 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
     }
 
-    bool loadInFire = true;
+    public bool loadInFire = true;
 
     // Update is called once per frame
     void Update() {
@@ -559,13 +563,11 @@ public class LandscapeSimulator : NetworkBehaviour {
     }
 
     public void LoadFromClassifier(Map2dClassifier m2d) {
+        Debug.Log("Load Chunk " + m2d.chunkInterval);
         int chunkSize = m2d.chunkSize;
         int chunkInterval = m2d.chunkInterval;
-        
-        Map2D = new WFCTile[TerrainSize * TerrainSize];
-        NavComponent = new Navigation[TerrainSize * TerrainSize];
-        BurnData = new BurnComponent[TerrainSize * TerrainSize];
         int offset = chunkSize * chunkInterval;
+
 
         for (int i = 0; i < chunkSize; i++) {
             Map2D[i + offset] = tiles[
@@ -574,13 +576,8 @@ public class LandscapeSimulator : NetworkBehaviour {
 
             LoadTileFromLSD(GetX(i), GetY(i));
 
-            NavComponent[i + offset].Traversability = passable;
-            Debug.Log("BurnState: " + m2d.BurnState[i]);
-            BurnData[i + offset] = new BurnComponent {
-                BurnState = m2d.BurnState[i],
-                Health = m2d.Health[i],
-                TimeToLive = m2d.TimeToLive[i]
-            };
+            if (m2d.map2DIndex[i] == 0) NeutralizeTile(i + offset);
+            else FlammefyTile(i + offset);
         }
     }
 }
@@ -589,9 +586,7 @@ public struct Map2dClassifier {
     public int chunkSize;
     public int chunkInterval;
     public int[] map2DIndex;
-    public int[] BurnState;
-    public int[] TimeToLive;
-    public float[] Health;
+    //public int[] BurnState;
 }
 
 //************Save Data*************//

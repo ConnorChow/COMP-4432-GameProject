@@ -7,62 +7,71 @@ using UnityEngine.Tilemaps;
 public class EnvironmentSync : NetworkBehaviour {
     [SerializeField] LandscapeSimulator landscape;
     [SerializeField] FoliageSimulator foliage;
-    [SerializeField] int chunkSize = 2048; //FUCKING MAKE INTO 2^x
-    private bool loaded = false;
-    private int chunkInterval;
-    private int chunkQty;
+    int chunkSize = 4096; //FUCKING MAKE INTO 2^x
+    public int chunkQty = 0;
     private Map2dClassifier[] m2d;
 
     void Start () {
-        chunkQty = landscape.Map2D.Length / chunkSize;
-        m2d = new Map2dClassifier[chunkQty];
-        loaded = true;
     }
 
-    void Update() {
-        if (!loaded && chunkInterval < chunkQty) {
-            Debug.Log("General Syncing GameObjects");
+    public override void OnStartClient() {
+        base.OnStartClient();
+        if (!PlayerPrefs.HasKey("hosting") || (PlayerPrefs.HasKey("hosting") && PlayerPrefs.GetInt("hosting") != 1)) {
+            landscape.initializeTileTypes();
             RequestSynchronizeClientTerrain();
-            chunkInterval++;
-            if (chunkInterval >= chunkQty) {
-                loaded = true;
-            }
         }
+    }
+    void Update() {
+        
     }
 
     [Command(requiresAuthority = false)]
     public void RequestSynchronizeClientTerrain() {
         LandscapeSaveData lsd = new LandscapeSaveData(landscape);
 
-        landscape.initializeTileTypes();
+        chunkQty = landscape.Map2D.Length / chunkSize;
+        m2d = new Map2dClassifier[chunkQty];
 
-        m2d[chunkInterval] = new Map2dClassifier {
-            chunkSize = chunkSize,
-            chunkInterval = chunkInterval,
-            map2DIndex = new int[chunkSize],
-            BurnState = new int[chunkSize],
-            TimeToLive = new int[chunkSize],
-            Health = new float[chunkSize]
-        };
-        for (int i = 0; i < chunkSize; i++) {
-            m2d[chunkInterval].map2DIndex[i] = lsd.map2DIndex[(chunkInterval * chunkSize) + i];
-            m2d[chunkInterval].BurnState[i] = lsd.BurnState[(chunkInterval * chunkSize) + i];
-            m2d[chunkInterval].TimeToLive[i] = lsd.TimeToLive[(chunkInterval * chunkSize) + i];
-            m2d[chunkInterval].Health[i] = lsd.Health[(chunkInterval * chunkSize) + i];
+        for (int chunkInterval = 0; chunkInterval < chunkQty; chunkInterval++) {
+            m2d[chunkInterval] = new Map2dClassifier {
+                chunkSize = chunkSize,
+                chunkInterval = chunkInterval,
+                map2DIndex = new int[chunkSize],
+                //BurnState = new int[chunkSize],
+            };
+            for (int i = 0; i < chunkSize; i++) {
+                m2d[chunkInterval].map2DIndex[i] = lsd.map2DIndex[(chunkInterval * chunkSize) + i];
+                //m2d[chunkInterval].BurnState[i] = lsd.BurnState[(chunkInterval * chunkSize) + i];
+            }
+            SynchronizeClientTerrain(m2d[chunkInterval]);
         }
-        SynchronizeClientTerrain(m2d[chunkInterval]);
-        SynchronizeTerrain(m2d[chunkInterval]);
 
         FoliageSaveData fsd = new FoliageSaveData(foliage);
     }
 
+    public int GetY(int index) {
+        return index % landscape.TerrainSize;
+    }
+    public int GetX(int index) {
+        return (index - GetY(index)) / landscape.TerrainSize;
+    }
+
     [ClientRpc]
     public void SynchronizeClientTerrain(Map2dClassifier m2d) {
-        SynchronizeTerrain(m2d);
-    }
-    private void SynchronizeTerrain(Map2dClassifier m2d) {
-        if (!loaded) {
-            landscape.LoadFromClassifier(m2d);
+        Debug.Log("Load Chunk " + m2d.chunkInterval);
+        int chunkSize = m2d.chunkSize;
+        int chunkInterval = m2d.chunkInterval;
+        int offset = chunkSize * chunkInterval;
+
+        for (int i = 0; i < chunkSize; i++) {
+            landscape.Map2D[i + offset] = landscape.tiles[
+                m2d.map2DIndex[i]
+            ];
+
+            if (m2d.map2DIndex[i] == 0) landscape.NeutralizeTile(i + offset);
+            else landscape.FlammefyTile(i + offset);
+
+            landscape.LoadTileFromLSD(GetX(i), GetY(i));
         }
     }
 }
