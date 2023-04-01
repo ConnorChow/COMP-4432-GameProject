@@ -11,9 +11,9 @@ public class EnemySpawner : NetworkBehaviour
     public GameObject bigSwarmerPrefab;
 
     [SerializeField]
-    public float swarmerInterval = 3.5f; //Interchangeable time to spawn enemy
+    public float swarmerInterval = 10f; //Interchangeable time to spawn enemy
     [SerializeField]
-    public float bigSwarmerInterval = 10f; //Interchangeable time to spawn enemy
+    public float bigSwarmerInterval = 30f; //Interchangeable time to spawn enemy
 
     public GameObject[] spawnLocations;
 
