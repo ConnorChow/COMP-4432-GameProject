@@ -21,9 +21,12 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button hostSlot3 = null;
     [SerializeField] private Button joinButton = null;
 
+    AudioSource audioSrc;
+
 
     private void Start()
     {
+        audioSrc = GetComponent<AudioSource>();
         joinButton.onClick.AddListener(JoinLobby);
         hostSlot1.onClick.AddListener(HostLobby);
         hostSlot2.onClick.AddListener(HostLobby);
@@ -32,13 +35,14 @@ public class MainMenu : MonoBehaviour
     }
 
     public void HostLobby() {
+        audioSrc.Play();
         Debug.Log("Hosting...");
         PlayerPrefs.SetInt("hosting", 1);
         networkManager.StartHost();
     }
 
-    public void JoinLobby()
-    {
+    public void JoinLobby() {
+        audioSrc.Play();
         if (ipAddressInputField.text == "") { return; };
         PlayerPrefs.SetInt("hosting", 0);
         //joinButton.interactable = false;
