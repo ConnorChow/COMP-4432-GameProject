@@ -493,7 +493,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 991131783}
   m_Direction: 2
   m_Value: 0.99999976
-  m_Size: 0.5882353
+  m_Size: 0.58823526
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3682,7 +3682,8 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 1192131430223260642, guid: 679f743853ed64025bc3b76783280523, type: 3}
   - {fileID: 4213564593925894268, guid: ff04eb73cede94b4a9ecc0eba33ec286, type: 3}
-  - {fileID: 351340532369863291, guid: 2feeab82d478ed146b2a4cefc4110770, type: 3}
+  - {fileID: 6375676033790927927, guid: 365e12ae4cdf64395a9ae223647e828f, type: 3}
+  - {fileID: 1998859551552497020, guid: 3c2aa3d27014246c4a40d428a3b735ef, type: 3}
   timeInterpolationGui: 0
   swarmerPrefab: {fileID: 0}
   bigSwarmerPrefab: {fileID: 0}
