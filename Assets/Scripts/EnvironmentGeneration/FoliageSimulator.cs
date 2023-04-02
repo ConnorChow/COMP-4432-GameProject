@@ -42,7 +42,7 @@ public class BushEntityManagement : ECS_EntityComponentManagement {
 
             FoliageSystem.FoliageTilemap.SetTile(
                 new Vector3Int(FoliageSystem.BushBerriesData[RemovedIndex].Tile.x - (FoliageSystem.LandScapeSimulator.TerrainSize / 2),
-                FoliageSystem.BushBerriesData[RemovedIndex].Tile.y - (FoliageSystem.LandScapeSimulator.TerrainSize/2),
+                FoliageSystem.BushBerriesData[RemovedIndex].Tile.y - (FoliageSystem.LandScapeSimulator.TerrainSize / 2),
                 0), null);
 
             int index = FoliageSystem.BushBerriesData[RemovedIndex].Tile.x * FoliageSystem.LandScapeSimulator.TerrainSize + FoliageSystem.BushBerriesData[RemovedIndex].Tile.y;
@@ -254,8 +254,7 @@ public class FoliageSimulator : NetworkBehaviour {
     private ProtectedBool tryLoad;
     public ProtectedInt32 saveSlot = -1;
 
-    // Start is called before the first frame update
-    void Start() {
+    public void InitializeData() {
         //initialize presets
         PickedBerryBushes = new Tile[4] {
             BerryBushPicked1,
@@ -269,8 +268,7 @@ public class FoliageSimulator : NetworkBehaviour {
             BerryBush3,
             BerryBush4
         };
-        Rocks = new Tile[9]
-        {
+        Rocks = new Tile[9] {
             Rock1,
             Rock2,
             Rock3,
@@ -282,11 +280,16 @@ public class FoliageSimulator : NetworkBehaviour {
             Rock9
         };
 
-        //Get Sources to load from
-        FetchSlot();
-
         FoliageData = new BushEntityManagement(MaxBushInstances, this);
         BushBerriesData = new BushBerriesComponent[MaxBushInstances];
+    }
+
+    // Start is called before the first frame update
+    void Start() {
+        InitializeData();
+
+        //Get Sources to load from
+        FetchSlot();
 
         if (PlayerPrefs.HasKey("hosting") && PlayerPrefs.GetInt("hosting") == 1) {
             tryLoad = LandScapeSimulator.tryLoadMap;
@@ -371,7 +374,7 @@ public class FoliageSimulator : NetworkBehaviour {
                 Vector2Int tile = new Vector2Int(fsd.RockTilesX[i], fsd.RockTilesY[i]);
 
                 FoliageTilemap.SetTile(new Vector3Int(tile.x - LandScapeSimulator.TerrainSize / 2, tile.y - LandScapeSimulator.TerrainSize / 2, 0), Rocks[Random.Range(0, 9)]);
-                
+
                 LandScapeSimulator.NavComponent[tile.x * LandScapeSimulator.TerrainSize + tile.y].Traversability = obstacle;
                 LandScapeSimulator.NeutralizeTile(tile.x * LandScapeSimulator.TerrainSize + tile.y);
                 RockTilingData.Add(new Vector2Int(tile.x, tile.y));
@@ -400,8 +403,8 @@ public class FoliageSaveData {
 
         int bushArrayLength = fs.BushTilingData.Count;
 
-        BerryCount= new int[bushArrayLength];
-        Countdown= new int[bushArrayLength];
+        BerryCount = new int[bushArrayLength];
+        Countdown = new int[bushArrayLength];
         BerryTilesX = new int[bushArrayLength];
         BerryTilesY = new int[bushArrayLength];
 

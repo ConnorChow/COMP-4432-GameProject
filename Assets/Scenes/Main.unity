@@ -5486,6 +5486,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b1a1c5d276fd4a06abc8948bb455e33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  swarmerPrefab: {fileID: 6375676033790927927, guid: 365e12ae4cdf64395a9ae223647e828f, type: 3}
+  bigSwarmerPrefab: {fileID: 1998859551552497020, guid: 3c2aa3d27014246c4a40d428a3b735ef, type: 3}
+  swarmerInterval: 10
+  bigSwarmerInterval: 30
+  spawnLocations: []
 --- !u!114 &509126063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5665,6 +5673,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0faa2a03ba33426685d74a969ff2523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprites: []
+  index: 0
 --- !u!114 &988210772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6203,6 +6213,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a49f14d493ecf4abbb84dd51e8fd6c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  arrow: {fileID: 0}
+  grenade: {fileID: 0}
+  firePoint: {fileID: 0}
+  fireForce: 0
 --- !u!212 &1534963149
 SpriteRenderer:
   m_ObjectHideFlags: 0

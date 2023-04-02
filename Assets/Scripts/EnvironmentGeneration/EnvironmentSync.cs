@@ -12,10 +12,20 @@ public struct BurnQueueClassifier {
     public float[] health;
 }
 
+public struct BushesClassifier {
+    public int[] bushLocX;
+    public int[] bushLocY;
+}
+public struct RocksClassifier {
+    public int[] rockLocX;
+    public int[] rockLocY;
+}
+
 public class EnvironmentSync : NetworkBehaviour {
     [SerializeField] LandscapeSimulator landscape;
     [SerializeField] FoliageSimulator foliage;
     int chunkSize = 4096; //FUCKING MAKE INTO 2^x
+    int foliageChunkSize = 2048;
     public int chunkQty = 0;
     private Map2dClassifier[] m2d;
 
@@ -27,6 +37,7 @@ public class EnvironmentSync : NetworkBehaviour {
         if (!PlayerPrefs.HasKey("hosting") || (PlayerPrefs.HasKey("hosting") && PlayerPrefs.GetInt("hosting") != 1)) {
             if (landscape.loadInFire) {
                 landscape.initializeTileTypes();
+                foliage.InitializeData();
                 RequestSynchronizeClientTerrain();
             }
         }
@@ -37,7 +48,10 @@ public class EnvironmentSync : NetworkBehaviour {
 
     [Command(requiresAuthority = false)]
     public void RequestSynchronizeClientTerrain() {
-        if (!isServer) return;
+
+        FoliageSaveData fsd = new FoliageSaveData(foliage);
+        chunkQty = fsd.BerryTilesX.Length;
+
 
         LandscapeSaveData lsd = new LandscapeSaveData(landscape);
 
@@ -70,8 +84,6 @@ public class EnvironmentSync : NetworkBehaviour {
             bq.health[i] = landscape.BurnData[bq.BurnQueue[i]].Health;
         }
         SynchronizeBurnQueue(bq);
-
-        FoliageSaveData fsd = new FoliageSaveData(foliage);
     }
 
     public int GetY(int index) {
