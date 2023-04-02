@@ -279,6 +279,7 @@ GameObject:
   m_Component:
   - component: {fileID: 250851235}
   - component: {fileID: 250851236}
+  - component: {fileID: 250851237}
   m_Layer: 0
   m_Name: WeatherController
   m_TagString: Untagged
@@ -319,6 +320,18 @@ MonoBehaviour:
   snowObject: {fileID: 1272581644}
   cloudyObject: {fileID: 1272581643}
   sunnyObject: {fileID: 1272581642}
+--- !u!114 &250851237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250851234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5828be959b1844f88b033a106600e9ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &324943366
 GameObject:
   m_ObjectHideFlags: 0
@@ -697,7 +710,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &459206248
 PrefabInstance:
@@ -958,32 +971,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Info:
     ip: 
-    network: 
-    version: 
-    city: 
-    region: 
-    region_code: 
+    location: 
     country: 
-    country_name: 
-    country_code: 
-    country_code_iso3: 
-    country_capital: 
-    country_tld: 
-    continent_code: 
-    in_eu: 
-    postal: 
-    latitude: 0
-    longitude: 0
+    region: 
+    city: 
+    lat: 0
+    lng: 0
+    postalCode: 
     timezone: 
-    utc_offset: 
-    country_calling_code: 
-    currency: 
-    currency_name: 
-    languages: 
-    country_area: 
-    country_population: 
-    asn: 
-    org: 
+    geonameId: 0
+    asType: 
+    asn: 0
+    name: 
+    route: 
+    domain: 
+    type: 
+    isp: 
   latitude: 48.3702
   longitude: -89.2812
   weatherData: {fileID: 1511062586}
@@ -1000,7 +1003,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &756708676
 GameObject:
@@ -1460,7 +1463,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1692412367
 GameObject:
