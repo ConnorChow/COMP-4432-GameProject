@@ -34,8 +34,8 @@ public class Player : NetworkBehaviour {
     //public SpriteRenderer spriteRenderer;
     //public Sprite newSprite;
 
-    private GameObject playerHUD;
-    private GameObject pauseMenu;
+    [SerializeField] private GameObject playerHUD;
+    [SerializeField] private GameObject pauseMenu;
     private ProtectedBool paused = false;
 
     public ProtectedBool isCheater = false;
@@ -65,9 +65,6 @@ public class Player : NetworkBehaviour {
         Debug.Log($"Player position: {rb.transform}");
 
         rb.transform.position.Set(spawnLocations[spawnLocationChoice].transform.position.x, spawnLocations[spawnLocationChoice].transform.position.y, spawnLocations[spawnLocationChoice].transform.position.z);
-
-        playerHUD = GameObject.FindGameObjectWithTag("HUD");
-        pauseMenu = GameObject.FindGameObjectWithTag("Pause");
     }
 
     // Update is called once per frame
@@ -76,21 +73,16 @@ public class Player : NetworkBehaviour {
         RotateInDirection0fInput();
 
         // Testing Client to Server Commands
-        if (isLocalPlayer && Input.GetKeyDown(KeyCode.X))
-        {
+        if (isLocalPlayer && Input.GetKeyDown(KeyCode.X)) {
             Debug.Log("Sending Hello to Server");
             HelloServer();
         }
 
-        try
-        {
-            if (rb.transform.position.y > 50 || rb.transform.position.y > 50 || rb.transform.position.x > 50 || rb.transform.position.x > 50)
-            {
+        try {
+            if (rb.transform.position.y > 50 || rb.transform.position.y > 50 || rb.transform.position.x > 50 || rb.transform.position.x > 50) {
                 outOfBounds();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Debug.Log(e);
         }
 
@@ -100,8 +92,7 @@ public class Player : NetworkBehaviour {
     }
 
     // Player Functions
-    void HandleMovement()
-    {
+    void HandleMovement() {
         // check if not local player
         //if (!isLocalPlayer) { return; }
 
@@ -112,30 +103,26 @@ public class Player : NetworkBehaviour {
         rb.velocity = new Vector2(MoveX, MoveY).normalized * playerSpeed;
 
         // Fix the bug where player starts randomly spinning
-        if (MoveX == 0 && MoveY == 0 && rb.velocity.normalized != new Vector2(0,0))
-        {
-            rb.velocity = new Vector2(0,0);
+        if (MoveX == 0 && MoveY == 0 && rb.velocity.normalized != new Vector2(0, 0)) {
+            rb.velocity = new Vector2(0, 0);
             rb.rotation = 0f;
         }
 
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
 
-        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E))
-        {
+        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E)) {
             //weapon.FireGrenade();
             CmdFireGrenade();
         }
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (Input.GetMouseButtonDown(0)) {
             //weapon.FireArrow();
             CmdFireArrow();
         }
 
         // Pausing
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (paused) { Resume(); }
-            if (!paused) { Pause(); }
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (paused) Resume(); 
+            else if (!paused) Pause();
         }
 
     }
@@ -147,8 +134,8 @@ public class Player : NetworkBehaviour {
         // Input Based Mouse Rotation
         //if (Input.GetMouseButtonDown(1))
         //{
-            // Mouse Based Rotation
-            Aim();
+        // Mouse Based Rotation
+        Aim();
         //}
 
         // Movement Based Rotation
@@ -160,8 +147,7 @@ public class Player : NetworkBehaviour {
         //}
     }
 
-    private void Aim()
-    {
+    private void Aim() {
         // Mouse Based Rotation
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - rb.transform.position);
@@ -169,43 +155,34 @@ public class Player : NetworkBehaviour {
         rb.MoveRotation(rotation);
     }
 
-    public void TakeDamage(int amount)
-    {
+    public void TakeDamage(int amount) {
         health -= amount;
-        if (health <= 0)
-        {
-            try
-            {
+        if (health <= 0) {
+            try {
                 NetworkServer.Destroy(gameObject);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Debug.Log(e);
                 Destroy(gameObject);
             }
         }
     }
 
-    public void Heal(int amount)
-    {
-        if (health !>= 0) { health += amount; }
+    public void Heal(int amount) {
+        if (health! >= 0) { health += amount; }
     }
 
-    public void OnApplicationPause(bool pause)
-    {
-        
+    public void OnApplicationPause(bool pause) {
+
     }
 
-    public void Pause()
-    {
-        if (!paused)
-        {
-            //rb.gameObject.SetActive(false);
-            rb.freezeRotation = true;
+    public void Pause() {
+        if (!paused) {
+            paused = true;
             playerHUD.gameObject.SetActive(false);
             pauseMenu.gameObject.SetActive(true);
             Debug.Log("Paused");
-            OnApplicationPause(paused);
+            //OnApplicationPause(paused);
+            Time.timeScale = 0;
         }
         //else
         //{
@@ -213,15 +190,13 @@ public class Player : NetworkBehaviour {
         //}
     }
 
-    public void Resume()
-    {
-        if (paused)
-        {
-            //rb.gameObject.SetActive(true);
-            rb.freezeRotation = false;
+    public void Resume() {
+        if (paused) {
+            paused = false;
             pauseMenu.gameObject.SetActive(false);
             playerHUD.gameObject.SetActive(true);
             Debug.Log("Resumed");
+            Time.timeScale = 1;
         }
         //else
         //{
@@ -229,13 +204,11 @@ public class Player : NetworkBehaviour {
         //}
     }
 
-    public void Disconnect()
-    {
+    public void Disconnect() {
 
     }
 
-    public void updateIP()
-    {
+    public void updateIP() {
         ipAddress.text = ("IP: " + networkManager.GetLocalIPv4());
     }
 
@@ -245,27 +218,23 @@ public class Player : NetworkBehaviour {
 
     // Client to Server Commands
     [Command]
-    void HelloServer()
-    {
+    void HelloServer() {
         Debug.Log("Received Hello from Client");
         ReplyHello();
         helloCount += 1;
     }
 
-    void helloChange(int oldCount, int newCount)
-    {
+    void helloChange(int oldCount, int newCount) {
         Debug.Log($"Old Count: {oldCount} Hellos, New Count: {newCount} Hellos");
     }
 
-    public void setPlayerName(String name)
-    {
+    public void setPlayerName(String name) {
         playerName = name;
     }
 
     // Server to Client Commands
     [ClientRpc]
-    void ReplyHello()
-    {
+    void ReplyHello() {
         Debug.Log("Received Hello from Server");
     }
 
@@ -291,8 +260,7 @@ public class Player : NetworkBehaviour {
 
     // this is called on the player that fired for all observers
     [ClientRpc]
-    void RpcOnFire(GameObject projectile)
-    {
+    void RpcOnFire(GameObject projectile) {
         NetworkServer.Spawn(projectile); // Sync projectile to clients
         //animator.SetTrigger("Shoot");
     }
@@ -302,8 +270,7 @@ public class Player : NetworkBehaviour {
 
     // Cheat Detection
     [TargetRpc]
-    void outOfBounds()
-    {
+    void outOfBounds() {
         Debug.Log($"Player is out of bounds. X: {rb.transform.position.x} Y: {rb.transform.position.y}");
 
         // Add player position adjustment
@@ -312,8 +279,7 @@ public class Player : NetworkBehaviour {
     }
 
     [TargetRpc]
-    void tooFast()
-    {
+    void tooFast() {
         Debug.Log($"Player speed is too fast. Speed: {playerSpeed})");
 
         // Set player speed back to normal
@@ -324,8 +290,7 @@ public class Player : NetworkBehaviour {
     }
 
     [TargetRpc]
-    void tooMuchHealth()
-    {
+    void tooMuchHealth() {
         Debug.Log($"Player has too much health. Health: {health})");
 
         // Set player health back to normal

@@ -460,7 +460,7 @@ public class LandscapeSimulator : NetworkBehaviour {
             }
         }
 
-        Debug.Log("Burning: " + burnQueue.Count);
+        //Debug.Log("Burning: " + burnQueue.Count);
 
         if (!isServer) {
             return;
