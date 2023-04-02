@@ -584,6 +584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
 --- !u!1 &434905219
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,6 +713,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+>>>>>>> parent of c445b0a (.)
 --- !u!1001 &459206248
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -724,10 +727,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Landscape
       objectReference: {fileID: 0}
-    - target: {fileID: 3220796842725616248, guid: 2feeab82d478ed146b2a4cefc4110770, type: 3}
-      propertyPath: FireSound
-      value: 
-      objectReference: {fileID: 351340532369863291, guid: 2feeab82d478ed146b2a4cefc4110770, type: 3}
     - target: {fileID: 3220796842725616248, guid: 2feeab82d478ed146b2a4cefc4110770, type: 3}
       propertyPath: FoliageSystem
       value: 
