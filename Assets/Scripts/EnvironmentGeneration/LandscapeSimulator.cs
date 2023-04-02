@@ -125,7 +125,7 @@ public class LandscapeSimulator : NetworkBehaviour {
     BurnComponent SafeTile;
 
     public ProtectedInt32[] BurnQueue;
-    [SyncVar]public SyncHashSet<ProtectedInt32> burnQueue = new SyncHashSet<ProtectedInt32>();
+    [SerializeField]public readonly SyncHashSet<ProtectedInt32> burnQueue = new SyncHashSet<ProtectedInt32>();
     public ProtectedInt32 BurningEntities = 0;
     [Command(requiresAuthority = false)]
     public void BurnQueueAdd(int index) {
@@ -460,6 +460,8 @@ public class LandscapeSimulator : NetworkBehaviour {
             }
         }
 
+        Debug.Log("Burning: " + burnQueue.Count);
+
         if (!isServer) {
             return;
         }
@@ -479,7 +481,6 @@ public class LandscapeSimulator : NetworkBehaviour {
         ProtectedInt32 PullCount = 0;
         ProtectedInt32 PushCount = 0;
 
-        //Debug.Log("Burning: " + burnQueue.Count);
         for (ProtectedInt32 i = 0; i < burnQueue.Count; i++) {
             index = burnQueue.ElementAt(i);//BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
@@ -487,7 +488,7 @@ public class LandscapeSimulator : NetworkBehaviour {
             //Debug.Log("Cell: " + index + "\nState: " + BurnData[index].BurnState + "\nHealth: " + BurnData[index].Health + "\nttl: " + BurnData[index].TimeToLive);
 
             if (BurnData[index].Health <= 0.0f && PullCount == 0) {
-                Debug.Log("there's a cell to remove");
+                //Debug.Log("there's a cell to remove");
                 IndexToRemove = index;
                 PullCount++;
                 continue;
@@ -534,12 +535,12 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
         //Add max one cell per frame
         if (PushCount > 0) {
-            Debug.Log("Add");
+            //Debug.Log("Add");
             PlayerBurnCell(CellAdd, ttl);
         }
         //remove max one cell per frame
         if (PullCount > 0) {
-            Debug.Log("Remove");
+            //Debug.Log("Remove");
             PlayerFinishBurnCell(IndexToRemove);
         }
         //Quicksave button

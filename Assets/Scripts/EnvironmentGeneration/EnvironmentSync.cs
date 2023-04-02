@@ -102,7 +102,7 @@ public class EnvironmentSync : NetworkBehaviour {
 
     [ClientRpc]
     public void SynchronizeBurnQueue(BurnQueueClassifier bq) {
-        if (landscape.loadInFire == false || isServer) return;
+        //if (landscape.loadInFire == false || isServer) return;
         int index;
         for (int i = 0; i < bq.BurnQueue.Length; i++) {
             index = bq.BurnQueue[i];
