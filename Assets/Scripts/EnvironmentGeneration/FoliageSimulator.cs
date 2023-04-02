@@ -288,16 +288,20 @@ public class FoliageSimulator : NetworkBehaviour {
         FoliageData = new BushEntityManagement(MaxBushInstances, this);
         BushBerriesData = new BushBerriesComponent[MaxBushInstances];
 
-        tryLoad = LandScapeSimulator.tryLoadMap;
-        //If we don't want to load and/or a load file does not exist, generate new foliage
-        if (true) {
-            if (tryLoad && LoadData(saveSlot)) {
-                Debug.Log("Loading Saved Foliage");
-            } else {
-                Debug.Log("Generating new Foliage");
-                GenerateFoliage();
+        if (PlayerPrefs.HasKey("hosting") && PlayerPrefs.GetInt("hosting") == 1) {
+            tryLoad = LandScapeSimulator.tryLoadMap;
+            saveSlot = LandScapeSimulator.saveSlot;
+            //If we don't want to load and/or a load file does not exist, generate new foliage
+            if (true) {
+                if (tryLoad && LoadData(saveSlot)) {
+                    Debug.Log("Loading Saved Foliage");
+                } else {
+                    Debug.Log("Generating new Foliage");
+                    GenerateFoliage();
+                }
             }
         }
+
     }
 
     // Update is called once per frame

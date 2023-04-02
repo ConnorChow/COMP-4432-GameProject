@@ -1,8 +1,16 @@
 using Mirror;
+using OPS.AntiCheat.Field;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
+public struct BurnQueueClassifier {
+    public int[] BurnQueue;
+    public int[] ttl;
+    public float[] health;
+}
 
 public class EnvironmentSync : NetworkBehaviour {
     [SerializeField] LandscapeSimulator landscape;
@@ -17,13 +25,10 @@ public class EnvironmentSync : NetworkBehaviour {
     public override void OnStartClient() {
         base.OnStartClient();
         if (!PlayerPrefs.HasKey("hosting") || (PlayerPrefs.HasKey("hosting") && PlayerPrefs.GetInt("hosting") != 1)) {
-            landscape.initializeTileTypes();
-            RequestSynchronizeClientTerrain();
-            /*for (int x = 0; x < landscape.TerrainSize; x++) {
-                for (int y = 0; y < landscape.TerrainSize; y++) {
-                    landscape.LoadTileFromLSD(x, y);
-                }
-            }*/
+            if (landscape.loadInFire) {
+                landscape.initializeTileTypes();
+                RequestSynchronizeClientTerrain();
+            }
         }
     }
     void Update() {
@@ -54,7 +59,17 @@ public class EnvironmentSync : NetworkBehaviour {
             }
             SynchronizeClientTerrain(m2d[chunkInterval], isLast);
         }
-
+        BurnQueueClassifier bq = new BurnQueueClassifier {
+            BurnQueue = new int[landscape.burnQueue.Count],
+            ttl = new int[landscape.burnQueue.Count],
+            health = new float[landscape.burnQueue.Count]
+        };
+        for (int i = 0; i < landscape.burnQueue.Count; i++) {
+            bq.BurnQueue[i] = landscape.BurnQueue.ElementAt(i);
+            bq.ttl[i] = landscape.BurnData[bq.BurnQueue[i]].TimeToLive;
+            bq.health[i] = landscape.BurnData[bq.BurnQueue[i]].Health;
+        }
+        SynchronizeBurnQueue(bq);
 
         FoliageSaveData fsd = new FoliageSaveData(foliage);
     }
@@ -81,6 +96,19 @@ public class EnvironmentSync : NetworkBehaviour {
             if (m2d.map2DIndex[i] == 0) landscape.NeutralizeTile(i + offset);
             else landscape.FlammefyTile(i + offset);
         }
-        landscape.isMapLoaded = isLast;
+
+        //landscape.isMapLoaded = isLast;
+    }
+
+    [ClientRpc]
+    public void SynchronizeBurnQueue(BurnQueueClassifier bq) {
+        if (landscape.loadInFire == false || isServer) return;
+        int index;
+        for (int i = 0; i < bq.BurnQueue.Length; i++) {
+            index = bq.BurnQueue[i];
+            landscape.BurnCell(index, bq.ttl[i]);
+            landscape.BurnData[index].Health = bq.health[i];
+        }
+        landscape.isMapLoaded = true;
     }
 }
