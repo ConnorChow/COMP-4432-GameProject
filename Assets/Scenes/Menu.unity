@@ -493,7 +493,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 991131783}
   m_Direction: 2
   m_Value: 0.99999976
-  m_Size: 0.58823526
+  m_Size: 0.5882353
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1686,6 +1686,92 @@ MonoBehaviour:
   hostSlot2: {fileID: 58318668}
   hostSlot3: {fileID: 125807789}
   joinButton: {fileID: 657421383}
+--- !u!1 &794128132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 794128134}
+  - component: {fileID: 794128133}
+  - component: {fileID: 794128135}
+  m_Layer: 0
+  m_Name: WeatherManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &794128133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 794128132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 361a0725613ea4c64a282c5d92f96dca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minutesBetweenUpdate: 0.03
+  Info:
+    latitude: 48.3702
+    longitude: -89.2812
+    timezone: -04:00
+    currently:
+      time: 0
+      summary: 
+      icon: 
+      nearestStormDistance: 0
+      nearestStormBearing: 0
+      precipIntensity: 0
+      precipProbability: 0
+      temperature: 0
+      apparentTemperature: 0
+      dewPoint: 0
+      humidity: 0
+      pressure: 0
+      windSpeed: 0
+      windGust: 0
+      windBearing: 0
+      cloudCover: 0
+      uvIndex: 0
+      visibility: 0
+      ozone: 0
+    offset: 0
+  API_key: at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K
+  currentWeatherText: {fileID: 1180853682}
+  getLocation: {fileID: 0}
+--- !u!4 &794128134
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 794128132}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &794128135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 794128132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ea26102c096f42678b4678296a908d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &798599046 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6861488911404734218, guid: 2c7bfbf6316154aed9bbfc6206043baa, type: 3}
@@ -2253,7 +2339,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 4.476, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1645, y: 130}
+  m_AnchoredPosition: {x: -7468, y: 1338}
   m_SizeDelta: {x: 318.3229, y: 33.7101}
   m_Pivot: {x: -1.7824956, y: 13.581247}
 --- !u!114 &1180853682
@@ -4563,6 +4649,7 @@ GameObject:
   - component: {fileID: 2115038565}
   - component: {fileID: 2115038568}
   - component: {fileID: 2115038569}
+  - component: {fileID: 2115038570}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4613,7 +4700,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 3.5208333
+  orthographic size: 2.8125
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4711,3 +4798,36 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
+--- !u!114 &2115038570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115038564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20181381c8fbb4d78b21e61c8701f0e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Info:
+    ip: 
+    location: 
+    country: 
+    region: 
+    city: 
+    lat: 0
+    lng: 0
+    postalCode: 
+    timezone: 
+    geonameId: 0
+    asType: 
+    asn: 0
+    name: 
+    route: 
+    domain: 
+    type: 
+    isp: 
+  latitude: 0
+  longitude: 0
+  weatherData: {fileID: 0}

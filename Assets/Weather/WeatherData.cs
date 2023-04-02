@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using Mirror;
+using SimpleJSON;
 
 public class WeatherData : MonoBehaviour {
 	private float timer;
 	public float minutesBetweenUpdate;
-	public WeatherInfo Info;
+	public MyWeatherInfo Info;
 	public string API_key;
 	private float latitude;
 	private float longitude;
@@ -46,13 +47,13 @@ public class WeatherData : MonoBehaviour {
 			yield break;
 		}
 
-		Info = JsonUtility.FromJson<WeatherInfo>(www.downloadHandler.text);
+		Info = JsonUtility.FromJson<MyWeatherInfo>(www.downloadHandler.text);
 		currentWeatherText.text = "Current weather: " + Info.currently.summary;
 	}
 }   
 
     [Serializable]
-    public class WeatherInfo
+    public class MyWeatherInfo
 {
 	public float latitude;
 	public float longitude;

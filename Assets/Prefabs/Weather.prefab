@@ -9908,6 +9908,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2477734567642098638}
+  - component: {fileID: 4502548813754647353}
   m_Layer: 0
   m_Name: Weather
   m_TagString: Untagged
@@ -9934,6 +9935,49 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4502548813754647353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6136842084765091760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20181381c8fbb4d78b21e61c8701f0e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Info:
+    ip: 
+    network: 
+    version: 
+    city: 
+    region: 
+    region_code: 
+    country: 
+    country_name: 
+    country_code: 
+    country_code_iso3: 
+    country_capital: 
+    country_tld: 
+    continent_code: 
+    in_eu: 
+    postal: 
+    latitude: 0
+    longitude: 0
+    timezone: 
+    utc_offset: 
+    country_calling_code: 
+    currency: 
+    currency_name: 
+    languages: 
+    country_area: 
+    country_population: 
+    asn: 
+    org: 
+  latitude: 0
+  longitude: 0
+  weatherData: {fileID: 0}
 --- !u!1 &6327498983299655074
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,6 +13,12 @@ public class StateManager : MonoBehaviour {
 	public GameObject snowObject;
 	public GameObject cloudyObject;
 	public GameObject sunnyObject;
+
+	void Start()
+    {
+        weatherData = GameObject.Find("WeatherManager").GetComponent<WeatherData>();
+    }
+	
 	void Update () {
 		currentWeather = weatherData.Info.currently.icon;
 

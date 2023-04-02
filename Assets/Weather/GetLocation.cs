@@ -14,7 +14,9 @@ public class GetLocation : MonoBehaviour
 	private string IPAddress;
 	void Start() 
 	{
+		weatherData = FindObjectOfType<WeatherData>();
 		StartCoroutine (GetIP());
+		//weatherData = GameObject.Find("WeatherDataObject").GetComponent<WeatherData>();
 	}
 	private IEnumerator GetIP()
 	{
@@ -34,7 +36,7 @@ public class GetLocation : MonoBehaviour
 
 		IPAddress = www.downloadHandler.text;
 		StartCoroutine (GetCoordinates());*/
-		var www = UnityWebRequest.Get("https://ipapi.co/json/");
+		var www = UnityWebRequest.Get("https://api.ipify.org?format=json&ip=216.211.17.25");
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
@@ -44,6 +46,7 @@ public class GetLocation : MonoBehaviour
         }
 
         IPAddress = www.downloadHandler.text;
+		IPAddress = IPAddress.Trim();
         StartCoroutine(GetCoordinates());
 	}
 
@@ -70,7 +73,8 @@ public class GetLocation : MonoBehaviour
 		IPAddress = Info.ip;
 		weatherData.Begin ();
 	}*/
-		var www = UnityWebRequest.Get("https://ipapi.co/" + IPAddress + "/json/");
+		//var www = UnityWebRequest.Get("https://ipapi.co/" + IPAddress.Trim() + "/json/");
+		var www = UnityWebRequest.Get("https://geo.ipify.org/api/v2/country,city?apiKey=at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K&ipAddress=216.211.17.25");
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
@@ -78,11 +82,22 @@ public class GetLocation : MonoBehaviour
             Debug.LogError(www.error);
             yield break;
         }
-
-        Info = JsonUtility.FromJson<LocationInfo>(www.downloadHandler.text);
-        latitude = Info.latitude;
-        longitude = Info.longitude;
+		Debug.Log(www.downloadHandler.text);
+        
+		Info = JsonUtility.FromJson<LocationInfo>(www.downloadHandler.text);
+        latitude = Info.lat;
+        longitude = Info.lng;
         IPAddress = Info.ip;
+
+		if (weatherData == null)
+        {
+            weatherData = FindObjectOfType<WeatherData>();
+            if (weatherData == null)
+            {
+                Debug.LogError("WeatherData not found in scene!");
+                yield break;
+            }
+        }
         weatherData.Begin();
     }
 }
@@ -90,45 +105,21 @@ public class GetLocation : MonoBehaviour
 [Serializable]
 public class LocationInfo
 {
-	/*public string status;
-	public string country;
-	public string countryCode;
-	public string region;
-	public string regionName;
-	public string city;
-	public string zip;
-	public float lat;
-	public float lon;
-	public string timezone;
-	public string isp;
-	public string org;
-	public string @as;
-	public string query;*/
 	public string ip;
-	public string network;
-	public string version;
-	public string city;
-	public string region;
-	public string region_code;
+	public string location;
 	public string country;
-	public string country_name;
-	public string country_code;
-	public string country_code_iso3;
-	public string country_capital;
-	public string country_tld;
-	public string continent_code;
-	public string in_eu;
-	public string postal;
-	public float latitude;
-    public float longitude;
+	public string region;
+	public string city;
+	public float lat;
+	public float lng;
+	public string postalCode;
 	public string timezone;
-	public string utc_offset;
-	public string country_calling_code;
-	public string currency;
-	public string currency_name;
-	public string languages;
-	public string country_area;
-	public string country_population;
-	public string asn;
-	public string org;
+	public int geonameId;
+	public string asType;
+	public int asn;
+	public string name;
+	public string route;
+	public string domain;
+	public string type;
+	public string isp;
 }

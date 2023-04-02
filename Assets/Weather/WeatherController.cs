@@ -1,4 +1,3 @@
-/*
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,9 +26,10 @@ public class WeatherInfo
 
 public class WeatherController : MonoBehaviour
 {
-    private const string API_KEY = "88169749096b61e3b85398905927f53c";
+    private const string API_KEY = "9a450fda46a74dc536c74286cbca0fbe";
     private const float API_CHECK_MAXTIME = 10 * 60.0f; //10 minutes
     public GameObject SnowSystem;
+    public GameObject RainSystem;
     public string CityId;
     private float apiCheckCountdown = API_CHECK_MAXTIME;
 
@@ -62,7 +62,7 @@ public class WeatherController : MonoBehaviour
 
     IEnumerator GetWeather(Action<WeatherInfo> onSuccess)
     {
-        using (UnityWebRequest req = UnityWebRequest.Get(String.Format("http://api.openweathermap.org/data/2.5/weather?id={0}&APPID={1}", CityId, API_KEY)))
+        using (UnityWebRequest req = UnityWebRequest.Get(String.Format("http://api.openweathermap.org/geo/1.0/zip?zip=P7B,CA&appid=9a450fda46a74dc536c74286cbca0fbe", CityId, API_KEY)))
         {
             yield return req.Send();
             while (!req.isDone)
@@ -74,4 +74,3 @@ public class WeatherController : MonoBehaviour
         }
     }
 }
-*/
