@@ -16,6 +16,7 @@ using OPS.AntiCheat.Field;
 using System.IO;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 public struct WFCTile {
     Tile tile;
@@ -124,7 +125,16 @@ public class LandscapeSimulator : NetworkBehaviour {
     BurnComponent SafeTile;
 
     public ProtectedInt32[] BurnQueue;
+    [SyncVar]public SyncHashSet<ProtectedInt32> burnQueue = new SyncHashSet<ProtectedInt32>();
     public ProtectedInt32 BurningEntities = 0;
+    [Command(requiresAuthority = false)]
+    public void BurnQueueAdd(int index) {
+        burnQueue.Add(index);
+    }
+    [Command(requiresAuthority = false)]
+    public void BurnQueueRemove(int index) {
+        burnQueue.Remove(index);
+    }
 
     public FoliageSimulator FoliageSystem;
 
@@ -229,6 +239,7 @@ public class LandscapeSimulator : NetworkBehaviour {
             FireGrid.SetTile(spawnLoc, FireSprite);
             CreateFireSound(spawnLoc, healthSaved);
 
+            BurnQueueAdd(CurrentIndex);
             BurnQueue[BurningEntities] = CurrentIndex;
             BurningEntities += 1;
         }
@@ -251,39 +262,36 @@ public class LandscapeSimulator : NetworkBehaviour {
             PlayerBurnCell(tileLoc.x * TerrainSize + tileLoc.y, FireLife);
         }
     }
-    public void FinishBurnCell(int QueueIndex) {
-        if (BurnData[BurnQueue[QueueIndex]].BurnState == Burning) {
-            int CurrentIndex = BurnQueue[QueueIndex];
+    public void FinishBurnCell(int index) {
+        if (BurnData[index].BurnState == Burning) {
 
-            BurnData[CurrentIndex] = new BurnComponent {
+            BurnData[index] = new BurnComponent {
                 BurnState = Burned,
                 Health = 0,
                 TimeToLive = 0
             };
 
             FireGrid.SetTile(new Vector3Int(
-                GetX(CurrentIndex) - (TerrainSize / 2),
-                GetY(CurrentIndex) - (TerrainSize / 2), 0),
+                GetX(index) - (TerrainSize / 2),
+                GetY(index) - (TerrainSize / 2), 0),
                 null);
             GroundTileMap.SetTile(new Vector3Int(
-                GetX(CurrentIndex) - (TerrainSize / 2),
-                GetY(CurrentIndex) - (TerrainSize / 2), 0),
+                GetX(index) - (TerrainSize / 2),
+                GetY(index) - (TerrainSize / 2), 0),
                 DirtFull);
             GroundTileMap.SetTile(new Vector3Int(
-                GetX(CurrentIndex) - (TerrainSize / 2),
-                GetY(CurrentIndex) - (TerrainSize / 2), 0),
+                GetX(index) - (TerrainSize / 2),
+                GetY(index) - (TerrainSize / 2), 0),
                 DirtFull);
-            Map2D[CurrentIndex] = tiles[0];
+            Map2D[index] = tiles[0];
 
             int detectedBushEntity = -1;
 
-            if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(CurrentIndex), GetY(CurrentIndex)) }, out detectedBushEntity)) {
+            if (FoliageSystem.BushTilingData.TryGetValue(new BushTilingComponent { Tile = new Vector2Int(GetX(index), GetY(index)) }, out detectedBushEntity)) {
                 if (detectedBushEntity > -1)
                     FoliageSystem.FoliageData.RemoveEntity(detectedBushEntity);
             }
-
-            BurningEntities -= 1;
-            BurnQueue[QueueIndex] = BurnQueue[BurningEntities];
+            BurnQueueRemove(index);
         }
     }
     //Allows the Client or server to send a request to Finish Burning a specific cell
@@ -374,6 +382,7 @@ public class LandscapeSimulator : NetworkBehaviour {
         Map2D = new WFCTile[TerrainSize * TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
         BurnData = new BurnComponent[TerrainSize * TerrainSize];
+        //BurnQueue = new ProtectedInt32[TerrainSize];
     }
 
     // Awake is called when object loads
@@ -408,7 +417,6 @@ public class LandscapeSimulator : NetworkBehaviour {
 
     // Update is called once per frame
     void Update() {
-        Debug.Log("Load in Fire: " + loadInFire);
         if (loadInFire) {
             if (isServer) {
                 Debug.Log("Generating Fire");
@@ -420,7 +428,6 @@ public class LandscapeSimulator : NetworkBehaviour {
                 }
                 loadInFire = false;
             } else {
-                Debug.Log(isMapLoaded);
                 if (isMapLoaded) {
                     Debug.Log("Attempting to load tiles");
                     for (int x = 0; x < TerrainSize; x++) {
@@ -429,12 +436,13 @@ public class LandscapeSimulator : NetworkBehaviour {
                         }
                     }
                     int newIndex = 0;
-                    for (int i = 0; i < BurningEntities; i++) {
-                        newIndex = BurnQueue[i];
+                    for (int i = 0; i < burnQueue.Count; i++) {
+                        newIndex = burnQueue.ElementAt(i);//BurnQueue[i];
                         FireGrid.SetTile(new Vector3Int(
                             GetX(newIndex) - (TerrainSize / 2),
                             GetY(newIndex) - (TerrainSize / 2), 0),
                             FireSprite);
+                        BurnData[newIndex].BurnState = Burning;
                     }
                     loadInFire = false;
                 }
@@ -455,13 +463,6 @@ public class LandscapeSimulator : NetworkBehaviour {
         if (!isServer) {
             return;
         }
-        //Quicksave button
-        if (Input.GetKeyDown(KeyCode.F5)) {
-            this.SaveEnvironment(saveSlot);
-            FoliageSystem.SaveData(saveSlot);
-        } else if (Input.GetKeyDown(KeyCode.F9)) {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
 
         ProtectedInt32 index;
         ProtectedInt32 LeftNeighbor;
@@ -478,15 +479,16 @@ public class LandscapeSimulator : NetworkBehaviour {
         ProtectedInt32 PullCount = 0;
         ProtectedInt32 PushCount = 0;
 
-        //Debug.Log("Burning: " + BurningEntities);
-        for (ProtectedInt32 i = 0; i < BurningEntities; i++) {
-            index = BurnQueue[i];
+        //Debug.Log("Burning: " + burnQueue.Count);
+        for (ProtectedInt32 i = 0; i < burnQueue.Count; i++) {
+            index = burnQueue.ElementAt(i);//BurnQueue[i];
             BurnData[index].Health -= FireDamagePerSecond * Elapsed;
 
             //Debug.Log("Cell: " + index + "\nState: " + BurnData[index].BurnState + "\nHealth: " + BurnData[index].Health + "\nttl: " + BurnData[index].TimeToLive);
 
             if (BurnData[index].Health <= 0.0f && PullCount == 0) {
-                IndexToRemove = i;
+                Debug.Log("there's a cell to remove");
+                IndexToRemove = index;
                 PullCount++;
                 continue;
             } else if (BurnData[index].TimeToLive > 0) {
@@ -532,13 +534,20 @@ public class LandscapeSimulator : NetworkBehaviour {
         }
         //Add max one cell per frame
         if (PushCount > 0) {
-            //Debug.Log("Add");
+            Debug.Log("Add");
             PlayerBurnCell(CellAdd, ttl);
         }
         //remove max one cell per frame
         if (PullCount > 0) {
-            //Debug.Log("Remove");
+            Debug.Log("Remove");
             PlayerFinishBurnCell(IndexToRemove);
+        }
+        //Quicksave button
+        if (Input.GetKeyDown(KeyCode.F5)) {
+            this.SaveEnvironment(saveSlot);
+            FoliageSystem.SaveData(saveSlot);
+        } else if (Input.GetKeyDown(KeyCode.F9)) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
@@ -574,7 +583,6 @@ public class LandscapeSimulator : NetworkBehaviour {
                 tryLoadMap = false;
             }
         } else {
-            //
             PlayerPrefs.SetInt("loadMap", 0);
             tryLoadMap = false;
         }
@@ -633,7 +641,6 @@ public struct Map2dClassifier {
     public int chunkSize;
     public int chunkInterval;
     public int[] map2DIndex;
-    //public int[] BurnState;
 }
 
 //************Save Data*************//
