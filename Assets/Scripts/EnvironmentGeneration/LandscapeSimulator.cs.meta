@@ -3,31 +3,7 @@ guid: 22b4d8bdcda90e6468f3a0fc7368fea8
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - DirtFull: {instanceID: 0}
-  - GrassFull: {instanceID: 0}
-  - GrassDirtDown: {instanceID: 0}
-  - GrassDirtDownLeft: {instanceID: 0}
-  - GrassDirtLeft: {instanceID: 0}
-  - GrassDirtUpLeft: {instanceID: 0}
-  - GrassDirtUp: {instanceID: 0}
-  - GrassDirtUpRight: {instanceID: 0}
-  - GrassDirtRight: {instanceID: 0}
-  - GrassDirtDownRight: {instanceID: 0}
-  - DirtGrassDown: {instanceID: 0}
-  - DirtGrassDownLeft: {instanceID: 0}
-  - DirtGrassLeft: {instanceID: 0}
-  - DirtGrassUpLeft: {instanceID: 0}
-  - DirtGrassUp: {instanceID: 0}
-  - DirtGrassUpRight: {instanceID: 0}
-  - DirtGrassRight: {instanceID: 0}
-  - DirtGrassDownRight: {instanceID: 0}
-  - GroundTileMap: {instanceID: 0}
-  - FireGrid: {instanceID: 0}
-  - FireSprite: {instanceID: 0}
-  - BurnedTile: {instanceID: 0}
-  - FireSound: {fileID: 4015826150943435358, guid: 6c87898e75d08f741b427164442678e3, type: 3}
-  - FoliageSystem: {instanceID: 0}
+  defaultReferences: []
   executionOrder: 1100
   icon: {instanceID: 0}
   userData: 

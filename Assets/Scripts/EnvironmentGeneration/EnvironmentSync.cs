@@ -19,11 +19,6 @@ public class EnvironmentSync : NetworkBehaviour {
         if (!PlayerPrefs.HasKey("hosting") || (PlayerPrefs.HasKey("hosting") && PlayerPrefs.GetInt("hosting") != 1)) {
             landscape.initializeTileTypes();
             RequestSynchronizeClientTerrain();
-            /*for (int x = 0; x < landscape.TerrainSize; x++) {
-                for (int y = 0; y < landscape.TerrainSize; y++) {
-                    landscape.LoadTileFromLSD(x, y);
-                }
-            }*/
         }
     }
     void Update() {
@@ -32,8 +27,6 @@ public class EnvironmentSync : NetworkBehaviour {
 
     [Command(requiresAuthority = false)]
     public void RequestSynchronizeClientTerrain() {
-        if (!isServer) return;
-
         LandscapeSaveData lsd = new LandscapeSaveData(landscape);
 
         chunkQty = landscape.Map2D.Length / chunkSize;
@@ -43,18 +36,15 @@ public class EnvironmentSync : NetworkBehaviour {
             m2d[chunkInterval] = new Map2dClassifier {
                 chunkSize = chunkSize,
                 chunkInterval = chunkInterval,
-                map2DIndex = new int[chunkSize]
+                map2DIndex = new int[chunkSize],
+                //BurnState = new int[chunkSize],
             };
             for (int i = 0; i < chunkSize; i++) {
                 m2d[chunkInterval].map2DIndex[i] = lsd.map2DIndex[(chunkInterval * chunkSize) + i];
+                //m2d[chunkInterval].BurnState[i] = lsd.BurnState[(chunkInterval * chunkSize) + i];
             }
-            bool isLast = false;
-            if (chunkInterval == chunkQty - 1) {
-                isLast = true;
-            }
-            SynchronizeClientTerrain(m2d[chunkInterval], isLast);
+            SynchronizeClientTerrain(m2d[chunkInterval]);
         }
-
 
         FoliageSaveData fsd = new FoliageSaveData(foliage);
     }
@@ -67,7 +57,7 @@ public class EnvironmentSync : NetworkBehaviour {
     }
 
     [ClientRpc]
-    public void SynchronizeClientTerrain(Map2dClassifier m2d, bool isLast) {
+    public void SynchronizeClientTerrain(Map2dClassifier m2d) {
         Debug.Log("Load Chunk " + m2d.chunkInterval);
         int chunkSize = m2d.chunkSize;
         int chunkInterval = m2d.chunkInterval;
@@ -80,7 +70,8 @@ public class EnvironmentSync : NetworkBehaviour {
 
             if (m2d.map2DIndex[i] == 0) landscape.NeutralizeTile(i + offset);
             else landscape.FlammefyTile(i + offset);
+
+            landscape.LoadTileFromLSD(GetX(i), GetY(i));
         }
-        landscape.isMapLoaded = isLast;
     }
 }

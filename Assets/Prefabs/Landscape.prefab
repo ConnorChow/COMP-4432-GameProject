@@ -105,15 +105,10 @@ MonoBehaviour:
     fakeValue: 5
   FireSprite: {fileID: 11400000, guid: 724fe61ae589e2d47b9bde4b36b8e45d, type: 2}
   BurnedTile: {fileID: 11400000, guid: a51afebbaf991274dbe74188699f3aad, type: 2}
-  fireSound: {fileID: 4015826150943435358, guid: 6c87898e75d08f741b427164442678e3, type: 3}
-  noisePieces: []
-  noiseTimers: []
-  maxFireSounds: 15
   BurnQueue: []
   BurningEntities:
     fakeValue: 0
   FoliageSystem: {fileID: 0}
-  loadInFire: 1
 --- !u!156049354 &3910918606526953554
 Grid:
   m_ObjectHideFlags: 0

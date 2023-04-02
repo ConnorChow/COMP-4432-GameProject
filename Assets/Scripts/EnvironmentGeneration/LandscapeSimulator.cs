@@ -115,11 +115,6 @@ public class LandscapeSimulator : NetworkBehaviour {
     public AnimatedTile FireSprite;
     public Tile BurnedTile;
 
-    public GameObject fireSound;
-    public GameObject[] noisePieces;
-    public float[] noiseTimers;
-    public int maxFireSounds = 15;
-
     BurnComponent FlammableTile;
     BurnComponent SafeTile;
 
@@ -224,10 +219,11 @@ public class LandscapeSimulator : NetworkBehaviour {
                 Health = healthSaved,
                 TimeToLive = ttl
             };
-            Vector3Int spawnLoc = new Vector3Int(GetX(CurrentIndex) - (TerrainSize / 2), GetY(CurrentIndex) - (TerrainSize / 2), 0);
 
-            FireGrid.SetTile(spawnLoc, FireSprite);
-            CreateFireSound(spawnLoc, healthSaved);
+            FireGrid.SetTile(new Vector3Int(
+                GetX(CurrentIndex) - (TerrainSize / 2),
+                GetY(CurrentIndex) - (TerrainSize / 2), 0),
+                FireSprite);
 
             BurnQueue[BurningEntities] = CurrentIndex;
             BurningEntities += 1;
@@ -248,6 +244,7 @@ public class LandscapeSimulator : NetworkBehaviour {
     public void BurnCellFromV2(Vector2 burnCoordinates) {
         Vector2Int tileLoc = new Vector2Int((int)Math.Round(burnCoordinates.x) + (TerrainSize / 2), (int)Math.Round(burnCoordinates.y) + (TerrainSize / 2));
         if (tileLoc.x >= 0 && tileLoc.x < TerrainSize && tileLoc.y >= 0 && tileLoc.y < TerrainSize) {
+            //RequestAuthority(GetComponent<NetworkIdentity>());
             PlayerBurnCell(tileLoc.x * TerrainSize + tileLoc.y, FireLife);
         }
     }
@@ -299,19 +296,6 @@ public class LandscapeSimulator : NetworkBehaviour {
     }
     public void NeutralizeTile(int index) {
         BurnData[index] = SafeTile;
-    }
-
-    //recycle an audio source to the location of fire
-    public void CreateFireSound(Vector3 loc, float timer) {
-        for (int i = 0; i < maxFireSounds; i++) {
-            if (!noisePieces[i].activeInHierarchy) {
-                noisePieces[i].SetActive(true);
-                noisePieces[i].GetComponent<AudioSource>().Play();
-                noisePieces[i].transform.position = loc;
-                noiseTimers[i] = timer;
-                break;
-            }
-        }
     }
 
     public void FlammefyTile(int index) {
@@ -380,14 +364,6 @@ public class LandscapeSimulator : NetworkBehaviour {
     void Awake() {
         initializeTileTypes();
 
-        //Initialize audio source for fire noise
-        noisePieces = new GameObject[maxFireSounds];
-        noiseTimers = new float[maxFireSounds];
-        for (int i = 0; i < maxFireSounds; i++) {
-            noisePieces[i] = Instantiate(fireSound);
-            noisePieces[i].SetActive(false);
-        }
-
         BurnQueue = new ProtectedInt32[TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
         FetchSlot();
@@ -404,11 +380,9 @@ public class LandscapeSimulator : NetworkBehaviour {
     }
 
     public bool loadInFire = true;
-    public bool isMapLoaded = false;
 
     // Update is called once per frame
     void Update() {
-        Debug.Log("Load in Fire: " + loadInFire);
         if (loadInFire) {
             if (isServer) {
                 Debug.Log("Generating Fire");
@@ -418,38 +392,17 @@ public class LandscapeSimulator : NetworkBehaviour {
                         HostBurnCell(i, BurnData[i].TimeToLive);
                     }
                 }
-                loadInFire = false;
             } else {
-                Debug.Log(isMapLoaded);
-                if (isMapLoaded) {
-                    Debug.Log("Attempting to load tiles");
-                    for (int x = 0; x < TerrainSize; x++) {
-                        for (int y = 0; y < TerrainSize; y++) {
-                            LoadTileFromLSD(x, y);
-                        }
-                    }
-                    int newIndex = 0;
-                    for (int i = 0; i < BurningEntities; i++) {
-                        newIndex = BurnQueue[i];
-                        FireGrid.SetTile(new Vector3Int(
-                            GetX(newIndex) - (TerrainSize / 2),
-                            GetY(newIndex) - (TerrainSize / 2), 0),
-                            FireSprite);
-                    }
-                    loadInFire = false;
+                int newIndex = 0;
+                for (int i = 0; i < BurningEntities; i++) {
+                    newIndex = BurnQueue[i];
+                    FireGrid.SetTile(new Vector3Int(
+                        GetX(newIndex) - (TerrainSize / 2),
+                        GetY(newIndex) - (TerrainSize / 2), 0),
+                        FireSprite);
                 }
             }
-        }
-
-        //Run burning noise timers
-        for (int i = 0; i < maxFireSounds; i++) {
-            if (noisePieces[i].activeInHierarchy) {
-                noiseTimers[i] -= Time.deltaTime;
-                if (noiseTimers[i] <= 0) {
-                    noisePieces[i].GetComponent<AudioSource>().Stop();
-                    noisePieces[i].SetActive(false);
-                }
-            }
+            loadInFire = false;
         }
 
         if (!isServer) {
