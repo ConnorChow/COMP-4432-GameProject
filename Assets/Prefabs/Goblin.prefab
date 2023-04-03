@@ -184,9 +184,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa6e8b4dec8c4834a93e0b21adac7e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
-  maxHealth: 3
-  moveSpeed: 2.5
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  health:
+    fakeValue: 6
+  maxHealth:
+    fakeValue: 4
+  moveSpeed:
+    fakeValue: 4
+  chargeSpeed:
+    fakeValue: 5
+  dmgBufferInterval:
+    fakeValue: 1
+  fireCheckInterval:
+    fakeValue: 1
+  enemySprite: {fileID: 230057797940481495}
+  behaviourState:
+    fakeValue: 0
+  attackState:
+    fakeValue: 0
+  MoveToTolerance:
+    fakeValue: 0.05
 --- !u!114 &8675217294755881859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,14 +253,22 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7779913062816576559}
+<<<<<<< Updated upstream
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
+=======
+  m_LocalRotation: {x: 0, y: -0, z: 0.7071068, w: -0.7071068}
+>>>>>>> Stashed changes
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.7607923, y: 2.7607923, z: 2.7607923}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2.75, y: 2.75, z: 2.75}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6861488911404734218}
   m_RootOrder: -1
+<<<<<<< Updated upstream
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+=======
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 270}
+>>>>>>> Stashed changes
 --- !u!212 &230057797940481495
 SpriteRenderer:
   m_ObjectHideFlags: 0
