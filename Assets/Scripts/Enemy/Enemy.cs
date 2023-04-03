@@ -81,6 +81,8 @@ public class Enemy : NetworkBehaviour {
         //Movetowards behaviour
         if (moveTo && !reachedLoc) {
             MoveToBehaviour();
+        } else {
+            rb.velocity = Vector3.zero;
         }
         //Damage related behaviour
         if (dmgBuffer > 0) {
@@ -421,11 +423,13 @@ public class Enemy : NetworkBehaviour {
 
     bool IsPlayerValid(GameObject playerObj, Player playerScr) {
         if (playerScr == null || playerObj == null) {
+            playersDetected.Remove(playerObj);
             return false;
         } else {
             if (playerScr.health > 0) {
                 return true;
             } else {
+                playersDetected.Remove(playerObj);
                 return false;
             }
         }
