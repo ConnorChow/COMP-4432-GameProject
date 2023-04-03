@@ -16,11 +16,11 @@ public class StateManager : MonoBehaviour {
 
 	void Start()
     {
-        weatherData = GameObject.Find("WeatherManager").GetComponent<WeatherData>();
+        weatherData = GameObject.Find("WeatherData").GetComponent<WeatherData>();
     }
 	
 	void Update () {
-		currentWeather = weatherData.Info.currently.icon;
+		currentWeather = weatherData.Info.currently.current_weather;
 
 		if (currentWeather == "rain") {
 			SpawnRain ();
@@ -28,7 +28,7 @@ public class StateManager : MonoBehaviour {
 			SpawnSnow ();
 		} else if (currentWeather == "cloudy" || currentWeather == "partly-cloudy-day" || currentWeather == "partly-cloudy-night" || currentWeather == "fog") {
 			SpawnCloudy ();
-		} else if (currentWeather == "clear-day" || currentWeather == "clear-night" || currentWeather == "wind") {
+		} else if (currentWeather == "sunny" || currentWeather == "clear-night" || currentWeather == "wind") {
 			SpawnSunny ();
 		} else {
 			None ();
