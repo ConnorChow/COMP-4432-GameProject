@@ -38,7 +38,7 @@ public class Player : NetworkBehaviour {
     [SerializeField] UnityEngine.UI.Slider bowCooldownSlider;
 
     //Timer for the player's bomb mechanic
-    [SerializeField] ProtectedFloat BombCooldown = 30;
+    [SerializeField] ProtectedFloat bombCooldown = 30;
     ProtectedFloat bombTimer;
     ProtectedBool canFireBomb = false;
     [SerializeField] UnityEngine.UI.Slider bombCooldownSlider;
@@ -130,14 +130,32 @@ public class Player : NetworkBehaviour {
             fireCheck = fireCheckInterval;
         }
 
-        if (!isLocalPlayer) return;
+        if (!isLocalPlayer) {
+            playerHUD.SetActive(false);
+            pauseMenu.SetActive(false);
+            return;
+        }
+        //Display the cooldown on objects
+        if (bowTimer > 0) {
+            bowTimer -= Time.deltaTime;
+            bowCooldownSlider.value = 1 - (bowTimer / bowCooldown);
+        } else {
+            bowCooldownSlider.value = 1;
+        }
+        if (bombTimer > 0) {
+            bombTimer -= Time.deltaTime;
+            bombCooldownSlider.value = 1 - (bombTimer / bombCooldown);
+        } else {
+            bombCooldownSlider.value = 1;
+        }
+
         //Handle inputs from the player
-        if ((Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E)) && !paused) {
-            //weapon.FireGrenade();
+        if ((Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E)) && !paused && bombTimer <= 0) {
+            bombTimer = bombCooldown;
             CmdFireGrenade();
         }
-        if (Input.GetMouseButtonDown(0) && !paused) {
-            //weapon.FireArrow();
+        if (Input.GetMouseButtonDown(0) && !paused && bowTimer <= 0) {
+            bowTimer = bowCooldown;
             CmdFireArrow();
         }
 
