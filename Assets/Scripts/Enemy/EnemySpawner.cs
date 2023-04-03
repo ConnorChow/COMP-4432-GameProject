@@ -29,24 +29,6 @@ public class EnemySpawner : NetworkBehaviour
     }
 
     // Update is called once per frame
-    private void Update()
-    {
-        int numOfEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
-
-        if (numOfEnemies >= 10)
-        {
-            StopAllCoroutines();
-        }
-        else
-        {
-            StartCoroutine(spawnEnemy(swarmerInterval, swarmerPrefab)); //Use this to quickly spawn enemy
-            StartCoroutine(spawnEnemy(bigSwarmerInterval, bigSwarmerPrefab)); //Use this to spawn a second enemy, preferably a tougher one
-        }
-    }
-
-
-
-
     public IEnumerator spawnEnemy(float interval, GameObject enemy)
     {
         System.Random r = new System.Random();
@@ -55,6 +37,6 @@ public class EnemySpawner : NetworkBehaviour
         yield return new WaitForSeconds(interval);
         GameObject newEnemy = Instantiate(enemy, spawnLocations[rInt].transform.position, spawnLocations[rInt].transform.rotation); //Enemy spawn
         NetworkServer.Spawn(newEnemy);
-        //StartCoroutine(spawnEnemy(interval, enemy));
+        StartCoroutine(spawnEnemy(interval, enemy));
     }
 }

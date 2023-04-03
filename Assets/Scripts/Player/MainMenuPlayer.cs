@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class MainMenuPlayer : MonoBehaviour {
+public class MainMenuPlayer : MonoBehaviour
+{
     public Rigidbody2D rb;
 
     public Weapon weapon;
@@ -16,25 +17,30 @@ public class MainMenuPlayer : MonoBehaviour {
     //public GameObject PointB;
 
     // Update is called once per frame
-    void Start() {
-        //GameObject weaponObject = new GameObject("Weapon");
-        //weapon = weaponObject.AddComponent<Weapon>();
+    void Start()
+    {
+        GameObject weaponObject = new GameObject("Weapon");
+        weapon = weaponObject.AddComponent<Weapon>();
     }
 
-    void Update() {
+    void Update()
+    {
         RotateInDirection0fInput();
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0))
+        {
             weapon.FireArrow();
         }
 
-        if (Input.GetKeyDown(KeyCode.E)) {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
             weapon.FireGrenade();
         }
 
     }
 
-    private void RotateInDirection0fInput() {
+    private void RotateInDirection0fInput()
+    {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - transform.position);
         Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 5);
