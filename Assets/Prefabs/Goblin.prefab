@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4088202382498979552}
   - component: {fileID: 353038191877939572}
   - component: {fileID: 8675217294755881859}
+  - component: {fileID: 297504994660219928}
   m_Layer: 0
   m_Name: Goblin
   m_TagString: Enemy
@@ -192,9 +193,11 @@ MonoBehaviour:
   maxHealth:
     fakeValue: 4
   moveSpeed:
-    fakeValue: 4
+    fakeValue: 2
+  regularSpeed:
+    fakeValue: 2
   chargeSpeed:
-    fakeValue: 5
+    fakeValue: 4
   dmgBufferInterval:
     fakeValue: 1
   fireCheckInterval:
@@ -204,6 +207,10 @@ MonoBehaviour:
     fakeValue: 0
   attackState:
     fakeValue: 0
+  patrolRadius:
+    fakeValue: 5
+  waitIdlyTime:
+    fakeValue: 2
   MoveToTolerance:
     fakeValue: 0.05
 --- !u!114 &8675217294755881859
@@ -229,6 +236,41 @@ MonoBehaviour:
   syncAngularVelocity: 1
   clearAngularVelocity: 0
   angularVelocitySensitivity: 0.1
+--- !u!58 &297504994660219928
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6375676033790927927}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 10
 --- !u!1 &7779913062816576559
 GameObject:
   m_ObjectHideFlags: 0
