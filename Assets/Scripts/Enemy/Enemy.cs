@@ -459,6 +459,10 @@ public class Enemy : NetworkBehaviour {
         Player player = collision.gameObject.GetComponentInParent<Player>();
         if (player != null) {
             playersDetected.Remove(player.gameObject);
+            if (player = playerScript) {
+                playerTarget = null;
+                playerScript = null;
+            }
         }
         Enemy enemy = collision.gameObject.GetComponent<Enemy>();
         if (enemy != null) {
