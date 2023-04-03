@@ -17,7 +17,7 @@ public class EnemySpawner : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
+        spawnLocations = GameObject.FindGameObjectsWithTag("EnemySpawn");
         Debug.Log(spawnLocations);
 
         StartCoroutine(spawnEnemy(swarmerInterval,swarmerPrefab)); //Use this to quickly spawn enemy

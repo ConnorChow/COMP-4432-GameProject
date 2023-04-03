@@ -311,6 +311,22 @@ public class Player : NetworkBehaviour {
         ipAddress.text = ("IP: " + networkManager.GetLocalIPv4());
     }
 
+    void allDead()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        int deadCount = 0;
+
+        for(int i = 0; i < players.Length; i++)
+        {
+            if (players[i].gameObject.GetComponent<Player>().health == 0) {
+                deadCount += 1;
+            }
+
+            if (deadCount == players.Length) {
+                // Show game over screen
+            }
+        }
+    }
 
     // --------------------------
 
