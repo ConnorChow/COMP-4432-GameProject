@@ -5,14 +5,10 @@ using Mirror;
 
 public class EnemySpawner : NetworkBehaviour
 {
-    [SerializeField]
     public GameObject swarmerPrefab;
-    [SerializeField]
     public GameObject bigSwarmerPrefab;
 
-    [SerializeField]
     public float swarmerInterval = 10f; //Interchangeable time to spawn enemy
-    [SerializeField]
     public float bigSwarmerInterval = 30f; //Interchangeable time to spawn enemy
 
     public GameObject[] spawnLocations;
@@ -45,8 +41,6 @@ public class EnemySpawner : NetworkBehaviour
     }
 
 
-
-
     public IEnumerator spawnEnemy(float interval, GameObject enemy)
     {
         System.Random r = new System.Random();
@@ -55,6 +49,6 @@ public class EnemySpawner : NetworkBehaviour
         yield return new WaitForSeconds(interval);
         GameObject newEnemy = Instantiate(enemy, spawnLocations[rInt].transform.position, spawnLocations[rInt].transform.rotation); //Enemy spawn
         NetworkServer.Spawn(newEnemy);
-        //StartCoroutine(spawnEnemy(interval, enemy));
+        StartCoroutine(spawnEnemy(interval, enemy));
     }
 }
