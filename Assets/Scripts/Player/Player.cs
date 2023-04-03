@@ -105,6 +105,9 @@ public class Player : NetworkBehaviour {
 
     // Update is called once per frame
     void Update() {
+
+        updateIP();
+
         HandleMovement();
         RotateInDirection0fInput();
 
@@ -171,6 +174,7 @@ public class Player : NetworkBehaviour {
             if (paused) Resume();
             else Pause();
         }
+
     }
 
     // Player Functions
@@ -267,10 +271,6 @@ public class Player : NetworkBehaviour {
             //OnApplicationPause(paused);
             Time.timeScale = 0;
         }
-        //else
-        //{
-        //    Resume();
-        //}
     }
 
     [Client]
@@ -282,10 +282,6 @@ public class Player : NetworkBehaviour {
             Debug.Log("Resumed");
             Time.timeScale = 1;
         }
-        //else
-        //{
-        //    Pause();
-        //}
     }
 
     public void Quit() {
@@ -293,10 +289,6 @@ public class Player : NetworkBehaviour {
 
         if (isClient) { NetworkClient.Disconnect(); }
     }
-
-    //public void Disconnect() {
-
-    //}
 
     public void updateIP() {
         ipAddress.text = ("IP: " + networkManager.GetLocalIPv4());
@@ -320,6 +312,22 @@ public class Player : NetworkBehaviour {
         }
     }
 
+   
+
+    [Command]
+    void respawn()
+    {
+
+    }
+
+    [TargetRpc]
+    void respawnPlayer()
+    {
+        NetworkClient.localPlayer.transform.position.Set(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+        playerSprite.gameObject.SetActive(true);
+        health = Globals.maxHealth;
+    }
+
     [Command]
     void requestRestart()
     {
@@ -337,9 +345,10 @@ public class Player : NetworkBehaviour {
     }
 
 
+    // Revive
     private void OnTriggerEnter2D(Collision2D collision)
     {
-        outOfBounds();
+        
     }
 
     // --------------------------
