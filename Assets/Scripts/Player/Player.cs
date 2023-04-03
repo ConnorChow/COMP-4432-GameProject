@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class Player : NetworkBehaviour {
@@ -30,9 +31,17 @@ public class Player : NetworkBehaviour {
     public Camera playerCamera;
     public Weapon weapon;
 
-    // Player Skin
-    //public SpriteRenderer spriteRenderer;
-    //public Sprite newSprite;
+    //Timer for the player's bow mechanic
+    [SerializeField] ProtectedFloat bowCooldown = 1;
+    ProtectedFloat bowTimer;
+    ProtectedBool canFireArrow = false;
+    [SerializeField] UnityEngine.UI.Slider bowCooldownSlider;
+
+    //Timer for the player's bomb mechanic
+    [SerializeField] ProtectedFloat BombCooldown = 30;
+    ProtectedFloat bombTimer;
+    ProtectedBool canFireBomb = false;
+    [SerializeField] UnityEngine.UI.Slider bombCooldownSlider;
 
     [SerializeField] private GameObject playerHUD;
     [SerializeField] private GameObject pauseMenu;
@@ -44,6 +53,16 @@ public class Player : NetworkBehaviour {
     public GameObject[] spawnLocations;
     int spawnLocationChoice = 0;
 
+    //Health damage buffer (also a timer for checking burns on the player)
+    [SerializeField] ProtectedFloat dmgBufferInterval = 1;
+    ProtectedFloat dmgBuffer;
+    [SerializeField] ProtectedFloat fireCheckInterval = 1;
+    ProtectedFloat fireCheck;
+    private LandscapeSimulator landscape;
+    //Player Sprite... called to modify colours on damage
+    [SerializeField] SpriteRenderer playerSprite;
+    [SerializeField] AudioSource playerAudioSource;
+    [SerializeField] UnityEngine.UI.Slider healthSlider;
 
     // Start is called before the first frame update
     void Start() {
@@ -54,6 +73,8 @@ public class Player : NetworkBehaviour {
         System.Random r = new System.Random();
         int rInt = r.Next(0, spawnLocations.Length);
         spawnLocationChoice = rInt;
+
+        landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
 
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
@@ -89,6 +110,42 @@ public class Player : NetworkBehaviour {
         if (!isLocalPlayer) {
             playerCamera.gameObject.SetActive(false);
         }
+
+        //Damage related behaviour
+        if (dmgBuffer > 0) {
+            dmgBuffer -= Time.deltaTime;
+            playerSprite.color = new Color(1, 1 - dmgBuffer, 1 - dmgBuffer);
+        } else {
+            playerSprite.color = Color.white;
+        }
+
+        if (fireCheck > 0) {
+            fireCheck -= Time.deltaTime;
+        } else {
+            Vector3Int tileLoc = new Vector3Int((int)Mathf.Round(rb.transform.position.x - 0.5f), (int)Mathf.Round(rb.transform.position.y - 0.5f), 0);
+            
+            if (landscape.FireGrid.GetTile(tileLoc) != null) {
+                TakeDamage(2);
+            }
+            fireCheck = fireCheckInterval;
+        }
+
+        if (!isLocalPlayer) return;
+        //Handle inputs from the player
+        if ((Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E)) && !paused) {
+            //weapon.FireGrenade();
+            CmdFireGrenade();
+        }
+        if (Input.GetMouseButtonDown(0) && !paused) {
+            //weapon.FireArrow();
+            CmdFireArrow();
+        }
+
+        // Pausing
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (paused) Resume();
+            else Pause();
+        }
     }
 
     // Player Functions
@@ -109,22 +166,6 @@ public class Player : NetworkBehaviour {
         }
 
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
-
-        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E)) {
-            //weapon.FireGrenade();
-            CmdFireGrenade();
-        }
-        if (Input.GetMouseButtonDown(0)) {
-            //weapon.FireArrow();
-            CmdFireArrow();
-        }
-
-        // Pausing
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            if (paused) Resume(); 
-            else if (!paused) Pause();
-        }
-
     }
 
     private void RotateInDirection0fInput() {
@@ -151,20 +192,38 @@ public class Player : NetworkBehaviour {
         // Mouse Based Rotation
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - rb.transform.position);
-        Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 1000 * Time.deltaTime);
+        Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 1000 * Time.fixedDeltaTime);
         rb.MoveRotation(rotation);
     }
 
     public void TakeDamage(int amount) {
+        if (dmgBuffer > 0) return;
+
         health -= amount;
+
+        dmgBuffer = dmgBufferInterval;
+
+        RequestToCry();
+
+        healthSlider.value = (float)health / (float)maxHealth;
+
         if (health <= 0) {
-            try {
-                NetworkServer.Destroy(gameObject);
-            } catch (Exception e) {
-                Debug.Log(e);
-                Destroy(gameObject);
-            }
+            //try {
+            //    NetworkServer.Destroy(gameObject);
+            //} catch (Exception e) {
+            //    Debug.Log(e);
+            //    Destroy(gameObject);
+            //}
         }
+    }
+    [Command(requiresAuthority =false)]
+    void RequestToCry() {
+        YouCanCry();
+    }
+
+    [ClientRpc]
+    void YouCanCry() {
+        playerAudioSource.Play();
     }
 
     public void Heal(int amount) {

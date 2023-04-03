@@ -36,13 +36,17 @@ public class Arrow : MonoBehaviour
         if (collision.collider.gameObject.tag == "Enemy")
         {
             collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
-            Destroy(gameObject);
+            Destroy(GetComponent<SpriteRenderer>());
+            Destroy(GetComponent<Collider2D>());
+            Destroy(gameObject, 0.25f);
         }
 
         if (collision.gameObject.tag == "Player")
         {
             collision.gameObject.GetComponent<Player>().TakeDamage(damage);
-            Destroy(gameObject);
+            Destroy(GetComponent<SpriteRenderer>());
+            Destroy(GetComponent<Collider2D>());
+            Destroy(gameObject, 0.25f);
         }
     }
 
