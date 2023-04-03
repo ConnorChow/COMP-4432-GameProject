@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class Player : NetworkBehaviour {
 
@@ -35,16 +34,19 @@ public class Player : NetworkBehaviour {
     [SerializeField] ProtectedFloat bowCooldown = 1;
     ProtectedFloat bowTimer;
     ProtectedBool canFireArrow = false;
-    [SerializeField] UnityEngine.UI.Slider bowCooldownSlider;
+    [SerializeField] Slider bowCooldownSlider;
 
     //Timer for the player's bomb mechanic
     [SerializeField] ProtectedFloat bombCooldown = 30;
     ProtectedFloat bombTimer;
     ProtectedBool canFireBomb = false;
-    [SerializeField] UnityEngine.UI.Slider bombCooldownSlider;
+    [SerializeField] Slider bombCooldownSlider;
 
     [SerializeField] private GameObject playerHUD;
     [SerializeField] private GameObject pauseMenu;
+    //Pause Menu Buttons for resuming the game and quitting the game
+    [SerializeField] Button resumeButton;
+    [SerializeField] Button quitButton;
     private ProtectedBool paused = false;
 
     public ProtectedBool isCheater = false;
@@ -62,7 +64,7 @@ public class Player : NetworkBehaviour {
     //Player Sprite... called to modify colours on damage
     [SerializeField] SpriteRenderer playerSprite;
     [SerializeField] AudioSource playerAudioSource;
-    [SerializeField] UnityEngine.UI.Slider healthSlider;
+    [SerializeField] Slider healthSlider;
 
     // Start is called before the first frame update
     void Start() {
@@ -78,6 +80,9 @@ public class Player : NetworkBehaviour {
 
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
+        resumeButton.onClick.AddListener(Resume);
+        quitButton.onClick.AddListener(Quit);
+
 
         rb = GetComponentInChildren<Rigidbody2D>();
         playerCamera = GetComponentInChildren<Camera>();
@@ -226,14 +231,25 @@ public class Player : NetworkBehaviour {
         healthSlider.value = (float)health / (float)maxHealth;
 
         if (health <= 0) {
-            //try {
-            //    NetworkServer.Destroy(gameObject);
-            //} catch (Exception e) {
-            //    Debug.Log(e);
-            //    Destroy(gameObject);
-            //}
+            Die();
         }
     }
+    public void Die() {
+        bombTimer = 0;
+        bowTimer = 0;
+        RequestKillPlayer();
+    }
+
+    [Command(requiresAuthority = false)]
+    public void RequestKillPlayer() {
+        KillPlayer();
+    }
+    [ClientRpc]
+    public void KillPlayer() {
+        Debug.Log("Kill Player");
+        playerSprite.gameObject.SetActive(false);
+    }
+
     [Command(requiresAuthority =false)]
     void RequestToCry() {
         YouCanCry();
@@ -281,9 +297,15 @@ public class Player : NetworkBehaviour {
         //}
     }
 
-    public void Disconnect() {
+    public void Quit() {
+        if (isServer) { NetworkServer.DisconnectAll(); }
 
+        if (isClient) { NetworkClient.Disconnect(); }
     }
+
+    //public void Disconnect() {
+
+    //}
 
     public void updateIP() {
         ipAddress.text = ("IP: " + networkManager.GetLocalIPv4());
