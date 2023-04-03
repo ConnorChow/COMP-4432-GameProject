@@ -114,14 +114,6 @@ public class Player : NetworkBehaviour {
             HelloServer();
         }
 
-        try {
-            if (rb.transform.position.y > 50 || rb.transform.position.y > 50 || rb.transform.position.x > 50 || rb.transform.position.x > 50) {
-                outOfBounds();
-            }
-        } catch (Exception e) {
-            Debug.Log(e);
-        }
-
         if (!isLocalPlayer) {
             playerCamera.gameObject.SetActive(false);
         }
@@ -198,7 +190,7 @@ public class Player : NetworkBehaviour {
             rb.rotation = 0f;
         }
 
-        this.gameObject.transform.position = new Vector2(rb.position.x, rb.position.y);
+        //this.gameObject.transform.position = new Vector2(rb.position.x, rb.position.y);
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
     }
 
@@ -356,6 +348,12 @@ public class Player : NetworkBehaviour {
     void restartWorld()
     {
 
+    }
+
+
+    private void OnTriggerEnter2D(Collision2D collision)
+    {
+        outOfBounds();
     }
 
     // --------------------------
