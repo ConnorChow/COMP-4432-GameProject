@@ -71,7 +71,6 @@ public class Player : NetworkBehaviour {
     void Start() {
         health = maxHealth;
 
-        spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
 
         foreach (var item in spawnLocations)
         {
@@ -82,7 +81,6 @@ public class Player : NetworkBehaviour {
         //int rInt = r.Next(0, spawnLocations.Length);
         //spawnLocationChoice = rInt;
 
-        landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
 
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
@@ -91,10 +89,13 @@ public class Player : NetworkBehaviour {
         resumeButton.onClick.AddListener(Resume);
         quitButton.onClick.AddListener(Quit);
 
-
         rb = GetComponentInChildren<Rigidbody2D>();
+
+        spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
+
         playerCamera = GetComponentInChildren<Camera>();
 
+        landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
         //Debug.Log($"Spawn location choice: {rInt} -> {spawnLocations[rInt].transform}");
         //Debug.Log($"Player position: {rb.transform}");
 
