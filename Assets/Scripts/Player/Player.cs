@@ -56,6 +56,9 @@ public class Player : NetworkBehaviour {
     public GameObject[] spawnLocations;
     int spawnLocationChoice = 0;
 
+    // Level Border
+    readonly GameObject border = GameObject.FindGameObjectWithTag("Wall");
+
     //Health damage buffer (also a timer for checking burns on the player)
     [SerializeField] ProtectedFloat dmgBufferInterval = 1;
     ProtectedFloat dmgBuffer;
@@ -112,14 +115,6 @@ public class Player : NetworkBehaviour {
         if (isLocalPlayer && Input.GetKeyDown(KeyCode.X)) {
             Debug.Log("Sending Hello to Server");
             HelloServer();
-        }
-
-        try {
-            if (rb.transform.position.y > 50 || rb.transform.position.y > 50 || rb.transform.position.x > 50 || rb.transform.position.x > 50) {
-                outOfBounds();
-            }
-        } catch (Exception e) {
-            Debug.Log(e);
         }
 
         if (!isLocalPlayer) {
@@ -356,6 +351,12 @@ public class Player : NetworkBehaviour {
     void restartWorld()
     {
 
+    }
+
+
+    private void OnTriggerEnter2D(Collision2D collision)
+    {
+        outOfBounds();
     }
 
     // --------------------------
