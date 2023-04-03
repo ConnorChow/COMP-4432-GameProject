@@ -99,8 +99,9 @@ public class GetLocation : MonoBehaviour
             }
         }
         weatherData.Begin();
-    }
+	}
 }
+
 
 [Serializable]
 public class LocationInfo

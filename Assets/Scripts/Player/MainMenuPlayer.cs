@@ -17,6 +17,12 @@ public class MainMenuPlayer : MonoBehaviour
     //public GameObject PointB;
 
     // Update is called once per frame
+    void Start()
+    {
+        GameObject weaponObject = new GameObject("Weapon");
+        weapon = weaponObject.AddComponent<Weapon>();
+    }
+
     void Update()
     {
         RotateInDirection0fInput();
