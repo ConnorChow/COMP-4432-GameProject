@@ -190,7 +190,7 @@ public class Player : NetworkBehaviour {
             rb.rotation = 0f;
         }
 
-        this.gameObject.transform.position = new Vector2(rb.position.x, rb.position.y);
+        //this.gameObject.transform.position = new Vector2(rb.position.x, rb.position.y);
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
     }
 
