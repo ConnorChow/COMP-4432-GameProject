@@ -18,7 +18,7 @@ public class Enemy : NetworkBehaviour {
     private Rigidbody2D rb;
 
     [Header("Attack Data")]
-    [SerializeField] ProtectedInt32 LevelOfDamage;
+    [SerializeField] ProtectedInt32 LevelOfDamage = 1;
 
     //List of players close to the enemy
     [SerializeField]public readonly HashSet<GameObject> playersDetected = new HashSet<GameObject>();
@@ -172,10 +172,11 @@ public class Enemy : NetworkBehaviour {
     }
     //******************************************* Attack Behaviour *******************************************
     void AttackBehaviour() {
-        if (playerTarget == null || playerScript == null) {
+        if (!IsPlayerValid(playerTarget, playerScript)) {
+            ClearAttackStates();
             behaviourState = 0;
             playerTarget = DetectNearestPlayerInRadius();
-            if (playerTarget != null) {
+            if (IsPlayerValid(playerTarget, playerScript)) {
                 TriggerAttackMode(playerTarget);
             } else {
                 return;
@@ -191,6 +192,20 @@ public class Enemy : NetworkBehaviour {
             else if (attackState == retreat)
                 RetreatPhase();
         }
+    }
+
+    void ClearAttackStates() {
+        //Reset general state data
+        attackState = confront;
+        moveSpeed = regularSpeed;
+        //Reset Flanking State
+        ResetFlankInit();
+        //Reset Charging State
+        enteredAttack = false;
+        adrenalineTimer = 0;
+        timeTillDamage = 0;
+        //Reset Flanking Data
+        startedRetreat = false;
     }
     //******************************************* Attack Phases *******************************************
     [Header("Confrontation Data")]
@@ -250,7 +265,7 @@ public class Enemy : NetworkBehaviour {
         //get a matrix-estimated value of the angle to define theta
         float theta = (angle / 180) * 3.1415f;
         //generate a two-dimensional rotation around the z-axis
-        float x = ((position.x - pivotPoint.x) * MathF.Cos(theta)) - ((position.y - pivotPoint.y) * Mathf.Sin(theta));
+        float x = ((position.x - pivotPoint.x) * Mathf.Cos(theta)) - ((position.y - pivotPoint.y) * Mathf.Sin(theta));
         float y = ((position.x - pivotPoint.x) * Mathf.Sin(theta)) + ((position.y - pivotPoint.y) * Mathf.Cos(theta));
         //offset rotated vector by the pivot point
         x += pivotPoint.x;
@@ -258,10 +273,17 @@ public class Enemy : NetworkBehaviour {
 
         return new Vector3(x, y, 0);
     }
+    //simply resets timer and randomly changes flanking direction
+    void ResetFlankInit() {
+        flankPatienceTimer = UnityEngine.Random.Range(flankingPatience / 2, flankingPatience);
+        if (UnityEngine.Random.Range(0, 2) == 1) {
+            flankingAngleInterval *= -1;
+        }
+    }
 
     [Header("Charging Data")]
     //Charge Phase: Enemy will charge at the player until they run out of adrenaline or manage to attempt an attack
-    [SerializeField] ProtectedFloat maxAdrenalineLevel = 10;
+    [SerializeField] ProtectedFloat maxAdrenalineTime = 10;
     [SerializeField] ProtectedFloat closingDistance = 1.5f;
     [SerializeField] ProtectedFloat inflictDamageDelay = 0.1f;
     ProtectedFloat adrenalineTimer = 0;
@@ -273,12 +295,9 @@ public class Enemy : NetworkBehaviour {
         attackState = charge;
         moveSpeed = chargeSpeed;
         // redefine flanking behaviour to a random new level of patience and direction to flank around the player
-        flankPatienceTimer = UnityEngine.Random.Range(flankingPatience/2, flankingPatience);
-        if (UnityEngine.Random.Range(0, 2) == 1) {
-            flankingAngleInterval *= -1;
-        }
+        ResetFlankInit();
         //Initialize adrenaline level
-        adrenalineTimer = maxAdrenalineLevel;
+        adrenalineTimer = maxAdrenalineTime;
     }
     void ChargePhase() {
         float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
@@ -299,16 +318,37 @@ public class Enemy : NetworkBehaviour {
             timeTillDamage -= Time.deltaTime;
             if (timeTillDamage <= 0) {
                 if (dist <= closingDistance) {
-                    playerScript.TakeDamage()
+                    playerScript.TakeDamage(LevelOfDamage);
                 }
+                EnterRetreatPhase();
             }
+        }
+        //Adrenaline Timeout
+        adrenalineTimer -= Time.deltaTime;
+        if (adrenalineTimer <= 0) {
+            EnterRetreatPhase();
         }
     }
 
-    //[Header("Retreat Data")]
+    [Header("Retreat Data")]
+    //Retreat Phase: Have the player run to a random point
     [SerializeField] ProtectedFloat maxRetreatDistance = 5;
+    ProtectedBool startedRetreat = false;
+    void EnterRetreatPhase() {
+        moveSpeed = regularSpeed;
+        enteredAttack = false;
+        adrenalineTimer = 0;
+        timeTillDamage = 0;
+        attackState = retreat;
+    }
     void RetreatPhase() {
-
+        if (!startedRetreat) {
+            MoveTo(FindRandomPointInRadius(transform.position, maxRetreatDistance));
+        } else {
+            if (!moveTo) {
+                EnterConfrontPhase();
+            }
+        }
     }
 
     //******************************************* Movement Behaviour *******************************************
@@ -362,12 +402,14 @@ public class Enemy : NetworkBehaviour {
         if (playersDetected.Count == 0) return null;
         GameObject nearestPlayer = playersDetected.ElementAt(0);
         foreach (GameObject player in playersDetected) {
+            if (!IsPlayerValid(player, player.GetComponentInParent<Player>())) continue;
             float newDistance = Vector3.Distance(transform.position, player.transform.position);
             float currentDistance = Vector3.Distance(transform.position, nearestPlayer.transform.position);
-            if (newDistance < currentDistance) {
+            if (newDistance < currentDistance || !IsPlayerValid(nearestPlayer, nearestPlayer.GetComponentInParent<Player>())) {
                 nearestPlayer = player;
             }
         }
+        playerScript = nearestPlayer.GetComponentInParent<Player>();
         return nearestPlayer;
     }
 
@@ -375,10 +417,10 @@ public class Enemy : NetworkBehaviour {
         if (playerScr == null || playerObj == null) {
             return false;
         } else {
-            if (playerScr.health <= 0) {
-                return false;
-            } else {
+            if (playerScr.health > 0) {
                 return true;
+            } else {
+                return false;
             }
         }
     }
@@ -395,7 +437,7 @@ public class Enemy : NetworkBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
-        Player player = collision.gameObject.GetComponent<Player>();
+        Player player = collision.gameObject.GetComponentInParent<Player>();
         if (player != null) {
             playersDetected.Add(player.gameObject);
         }
@@ -405,7 +447,7 @@ public class Enemy : NetworkBehaviour {
         }
     }
     private void OnTriggerExit2D(Collider2D collision) {
-        Player player = collision.gameObject.GetComponent<Player>();
+        Player player = collision.gameObject.GetComponentInParent<Player>();
         if (player != null) {
             playersDetected.Remove(player.gameObject);
         }
