@@ -71,12 +71,13 @@ public class Player : NetworkBehaviour {
     void Start() {
         health = maxHealth;
 
+        spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
 
         foreach (var item in spawnLocations)
         {
             NetworkManager.startPositions.Add(item.transform);
         }
-        
+
         //System.Random r = new System.Random();
         //int rInt = r.Next(0, spawnLocations.Length);
         //spawnLocationChoice = rInt;
@@ -91,7 +92,6 @@ public class Player : NetworkBehaviour {
         resumeButton.onClick.AddListener(Resume);
         quitButton.onClick.AddListener(Quit);
 
-        spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
 
         playerCamera = GetComponentInChildren<Camera>();
 
@@ -176,7 +176,7 @@ public class Player : NetworkBehaviour {
     // Player Functions
     void HandleMovement() {
         // check if not local player
-        //if (!isLocalPlayer) { return; }
+        if (!isLocalPlayer) { return; }
 
         // handle player movement
         float MoveX = Input.GetAxisRaw("Horizontal");
@@ -197,26 +197,12 @@ public class Player : NetworkBehaviour {
     private void RotateInDirection0fInput() {
         // check if not local player
         if (!isLocalPlayer) { return; }
-
-        // Input Based Mouse Rotation
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        // Mouse Based Rotation
-        Aim();
-        //}
-
-        // Movement Based Rotation
-        //if (rb.velocity != Vector2.zero)
-        //{
-        //    Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, moveDirection);
-        //    Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 5);
-        //    rb.MoveRotation(rotation);
-        //}
+        Aim(); 
     }
 
     private void Aim() {
         // Mouse Based Rotation
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mousePos = playerCamera.ScreenToWorldPoint(Input.mousePosition);
         Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - rb.transform.position);
         Quaternion rotation = Quaternion.RotateTowards(rb.transform.rotation, targetRotation, 1000 * Time.fixedDeltaTime);
         rb.MoveRotation(rotation);
