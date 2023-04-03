@@ -105,9 +105,12 @@ public class Player : NetworkBehaviour {
 
     // Update is called once per frame
     void Update() {
+<<<<<<< Updated upstream
 
         //
 
+=======
+>>>>>>> Stashed changes
         HandleMovement();
         RotateInDirection0fInput();
 
@@ -346,10 +349,17 @@ public class Player : NetworkBehaviour {
 
 
     // Revive
-    private void OnTriggerEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
     {
-        
+        Player player = collision.gameObject.GetComponentInParent<Player>();
+        if (player != null)
+        {
+
+            player.health += 1;
+        }
     }
+
+    //void IEnumerator
 
     // --------------------------
 
