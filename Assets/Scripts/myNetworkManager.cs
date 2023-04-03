@@ -9,11 +9,6 @@ using System.Net;
 
 public class myNetworkManager : NetworkManager
 {
-    EnemySpawner enemySpawner;
-    [SerializeField] public GameObject swarmerPrefab;
-    [SerializeField] public GameObject bigSwarmerPrefab;
-    [SerializeField] public GameObject[] spawnLocations;
-
     public override void Start()
     {
         base.Start();
@@ -50,7 +45,8 @@ public class myNetworkManager : NetworkManager
 
         Debug.Log("Connected to Server");
 
-        //NetworkClient.localPlayer.transform.SetPositionAndRotation((0,0,0));
+        // Sync objects already existing on server (eg. client joins late)
+        NetworkServer.SpawnObjects();
     }
 
     public override void OnClientDisconnect()
@@ -67,33 +63,5 @@ public class myNetworkManager : NetworkManager
                 f => f.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
             .ToString();
     }
-
-    public void startSpawnEnemy()
-    {
-        StartCoroutine(spawnEnemy(enemySpawner.swarmerInterval, enemySpawner.swarmerPrefab));
-        StartCoroutine(spawnEnemy(enemySpawner.bigSwarmerInterval, enemySpawner.bigSwarmerPrefab));
-    }
-
-    public IEnumerator spawnEnemy(float interval, GameObject enemy)
-    {
-        System.Random r = new System.Random();
-        int rInt = r.Next(0, spawnLocations.Length);
-
-        yield return new WaitForSeconds(interval);
-        GameObject newEnemy = Instantiate(enemy, spawnLocations[rInt].transform.position, spawnLocations[rInt].transform.rotation); //Enemy spawn
-        NetworkServer.Spawn(newEnemy);
-        StartCoroutine(spawnEnemy(interval, enemy));
-    }
-
-    //public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    //{
-    //    base.OnServerAddPlayer(conn);
-
-    //    if (SceneManager.GetActiveScene().name == menuScene)
-    //    {
-    //        NetworkRoomPlayerLobby roomPlayerInstance = Instantiate(roomPlayerPrefab);
-    //        NetworkServerAddPlayerForConnection(conn, roomPlayerInstance - gameObject);
-    //    }
-    //}
 
 }

@@ -9,7 +9,7 @@ public class EnemySpawner : NetworkBehaviour
     public GameObject bigSwarmerPrefab;
 
     public float swarmerInterval = 10f; //Interchangeable time to spawn enemy
-    public float bigSwarmerInterval = 30f; //Interchangeable time to spawn enemy
+    public float bigSwarmerInterval = 50f; //Interchangeable time to spawn enemy
 
     public GameObject[] spawnLocations;
 
