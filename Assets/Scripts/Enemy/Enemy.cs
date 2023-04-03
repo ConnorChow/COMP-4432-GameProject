@@ -232,7 +232,7 @@ public class Enemy : NetworkBehaviour {
 
     [Header("Flanking Data")]
     // Flank Phase: the enemy will try to circle around the target player before charging at them
-    [SerializeField] ProtectedFloat flankingPatience = 6; //Highest level of patience to attempt flanking the player before attacking
+    [SerializeField] ProtectedFloat flankingPatience = 6;       //Highest level of patience to attempt flanking the player before attacking
     [SerializeField] ProtectedFloat flankingAngleInterval = 15; //floating point value in degrees denoting how many angles are used to loop around the player.
                                                                 //Smaller values are smoother but have the AI calculate the rotation more frequently
     ProtectedFloat flankPatienceTimer;
