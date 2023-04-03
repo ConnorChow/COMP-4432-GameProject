@@ -298,12 +298,14 @@ public class Player : NetworkBehaviour {
     }
 
     public void Quit() {
+        if (isServer) { NetworkServer.DisconnectAll(); }
 
+        if (isClient) { NetworkClient.Disconnect(); }
     }
 
-    public void Disconnect() {
+    //public void Disconnect() {
 
-    }
+    //}
 
     public void updateIP() {
         ipAddress.text = ("IP: " + networkManager.GetLocalIPv4());
