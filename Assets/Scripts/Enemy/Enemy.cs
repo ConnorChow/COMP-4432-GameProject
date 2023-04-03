@@ -305,7 +305,6 @@ public class Enemy : NetworkBehaviour {
             MoveTo(transform.position);
             if (timeTillDamage <= 0) {
                 enemyAnimator.ResetTrigger("Attack");
-                enemyAnimator.SetTrigger("Attack");
             }
             enteredAttack = true;
             timeTillDamage = inflictDamageDelay;
@@ -314,11 +313,13 @@ public class Enemy : NetworkBehaviour {
         }
         //behaviour for if in attack
         if (enteredAttack) {
+            enemyAnimator.SetTrigger("Attack");
             moveTo = false;
             timeTillDamage -= Time.deltaTime;
             if (timeTillDamage <= 0) {
                 if (dist <= closingDistance) {
                     playerScript.TakeDamage(LevelOfDamage);
+                    Debug.Log("Inflict damage");
                 }
                 EnterRetreatPhase();
             }
@@ -335,17 +336,21 @@ public class Enemy : NetworkBehaviour {
     [SerializeField] ProtectedFloat maxRetreatDistance = 5;
     ProtectedBool startedRetreat = false;
     void EnterRetreatPhase() {
+        Debug.Log("Begin Retreat");
         moveSpeed = regularSpeed;
         enteredAttack = false;
         adrenalineTimer = 0;
         timeTillDamage = 0;
         attackState = retreat;
+        startedRetreat = false;
     }
     void RetreatPhase() {
         if (!startedRetreat) {
             MoveTo(FindRandomPointInRadius(transform.position, maxRetreatDistance));
+            startedRetreat = true;
         } else {
             if (!moveTo) {
+                ClearAttackStates();
                 EnterConfrontPhase();
             }
         }
@@ -366,6 +371,7 @@ public class Enemy : NetworkBehaviour {
     [Header("MoveTo Data")]
     [SerializeField] ProtectedFloat MoveToTolerance = 0.05f;
     Vector3 lastFrameLoc;
+    [SerializeField] ProtectedFloat stuckDistance = 0.0125f;
     ProtectedInt32 stuckWarnings = 0;
     private void MoveToBehaviour() {
         if (Vector3.Distance(target, rb.transform.position) < MoveToTolerance) {
@@ -374,7 +380,7 @@ public class Enemy : NetworkBehaviour {
             rb.velocity = Vector3.zero;
             enemyAnimator.SetBool("Walking", false);
             return;
-        } else if (rb.transform.position == lastFrameLoc) {
+        } else if (Vector3.Distance(rb.transform.position,lastFrameLoc) < stuckDistance) {
             if (stuckWarnings >= 100) {
                 Debug.Log("Bad Path, ending moveto");
                 stuckWarnings = 0;
