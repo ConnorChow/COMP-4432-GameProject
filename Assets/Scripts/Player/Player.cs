@@ -16,7 +16,7 @@ public class Player : NetworkBehaviour {
     [SyncVar(hook = nameof(helloChange))]
     public int helloCount = 0;
 
-    readonly myNetworkManager networkManager;
+    public readonly myNetworkManager networkManager = new myNetworkManager();
 
     // Player Stats
     public ProtectedInt32 health;
@@ -106,7 +106,7 @@ public class Player : NetworkBehaviour {
     // Update is called once per frame
     void Update() {
 
-        updateIP();
+        //
 
         HandleMovement();
         RotateInDirection0fInput();
@@ -174,7 +174,7 @@ public class Player : NetworkBehaviour {
             if (paused) Resume();
             else Pause();
         }
-
+        updateIP();
     }
 
     // Player Functions
