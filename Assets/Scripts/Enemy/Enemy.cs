@@ -23,9 +23,9 @@ public class Enemy : NetworkBehaviour {
     [SerializeField]public readonly HashSet<GameObject> comradesNearby = new HashSet<GameObject>();
 
     //Player that is being targeted
-    private GameObject playerTarget = null;
+    [SerializeField] private GameObject playerTarget = null;
     //Player's script (to track health)
-    private Player playerScript = null;
+    [SerializeField] private Player playerScript = null;
 
     //Patrol data
     private Vector3 spawnPosition;
@@ -55,6 +55,14 @@ public class Enemy : NetworkBehaviour {
 
     private void Start() {
         health = maxHealth;
+        
+        spawnPosition = transform.position;
+
+        // perform some random initialization on the flanking behaviour
+        flankPatienceTimer = UnityEngine.Random.Range(flankingPatience/2, flankingPatience);
+        if (UnityEngine.Random.Range(0, 2) == 1) {
+            flankingAngleInterval *= -1;
+        }
 
         landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
 
@@ -63,9 +71,7 @@ public class Enemy : NetworkBehaviour {
             playerEnemyTracker.enemies.Add(gameObject);
         }
 
-        spawnPosition = transform.position;
-
-        flankPatienceTimer = UnityEngine.Random.Range(0.5f, flankingPatience);
+        
     }
 
     private void Update() {
@@ -186,25 +192,97 @@ public class Enemy : NetworkBehaviour {
         }
     }
     //******************************************* Attack Phases *******************************************
+    [Header("Confrontation Data")]
+    //Confront phase: Try to get within a certain radius of the player before shifting to flank phase
+    [SerializeField] ProtectedFloat minRadius = 3;
+    [SerializeField] ProtectedFloat radiusTolerance = 1;
+    void EnterConfrontPhase() {
+        moveSpeed = regularSpeed;
+        MoveTo(transform.position);
+        attackState = confront;
+    }
     void ConfrontPhase() {
-
+        MoveTo(playerTarget.transform.position);
+        if (moveTo) {
+            float dist = Vector3.Distance(playerTarget.transform.position, transform.position);
+            if (dist <= minRadius) {
+                Debug.Log("Player reached");
+                EnterFlankPhase();
+            }
+        }
     }
 
-    [SerializeField] ProtectedFloat flankingPatience = 2; //Highest level of patience to attempt flanking the player before attacking
+    [Header("Flanking Data")]
+    // Flank Phase: the enemy will try to circle around the target player before charging at them
+    [SerializeField] ProtectedFloat flankingPatience = 6; //Highest level of patience to attempt flanking the player before attacking
+    [SerializeField] ProtectedFloat flankingAngleInterval = 15; //floating point value in degrees denoting how many angles are used to loop around the player.
+                                                                //Smaller values are smoother but have the AI calculate the rotation more frequently
     ProtectedFloat flankPatienceTimer;
+    void EnterFlankPhase() {
+        Debug.Log("begin Flank");
+        attackState = flank;
+        MoveTo(transform.position);
+        moveSpeed = regularSpeed;
+    }
     void FlankPhase() {
+        //check if the enemy has any patience, otherwise perform a charge
+        if (flankPatienceTimer > 0) {
+            //decrement timer
+            flankPatienceTimer -= Time.deltaTime;
+            //continue flanking if done moving
+            if (!moveTo) {
+                //find a new vector to move to that is a rotation of the current position around the player. Mimics a flanking behaviour
+                MoveTo(NextRotationAroundPoint(playerScript.transform.position, transform.position, flankingAngleInterval));
+            }
+            float dist = Vector3.Distance(playerTarget.transform.position, transform.position);
+            if (dist < minRadius - radiusTolerance) {
+                //EnterChargePhase();
+            } else if (dist > minRadius + radiusTolerance) {
+                //EnterConfrontPhase();
+            }
+        } else {
+            // If patience expires, move to charge phase
+            EnterChargePhase();
+        }
+    }
+    Vector3 NextRotationAroundPoint(Vector3 pivotPoint, Vector3 position, float angle) {
+        //get a matrix-estimated value of the angle to define theta
+        float theta = (angle / 180) * 3.1415f;
+        //generate a two-dimensional rotation around the z-axis
+        float x = ((position.x - pivotPoint.x) * MathF.Cos(theta)) - ((position.y - pivotPoint.y) * Mathf.Sin(theta));
+        float y = ((position.x - pivotPoint.x) * Mathf.Sin(theta)) + ((position.y - pivotPoint.y) * Mathf.Cos(theta));
+        //offset rotated vector by the pivot point
+        x += pivotPoint.x;
+        y += pivotPoint.y;
 
+        return new Vector3(x, y, 0);
+    }
+
+    //[Header("Charging Data")]
+    //Charge Phase: Enemy will charge at the player until they run out of adrenaline or manage to attempt an attack
+    void EnterChargePhase() {
+        Debug.Log("Begin Charge");
+        MoveTo(transform.position);
+        attackState = charge;
+        moveSpeed = chargeSpeed;
+        // redefine flanking behaviour to a random new level of patience and direction to flank around the player
+        flankPatienceTimer = UnityEngine.Random.Range(flankingPatience/2, flankingPatience);
+        if (UnityEngine.Random.Range(0, 2) == 1) {
+            flankingAngleInterval *= -1;
+        }
     }
     void ChargePhase() {
 
     }
+
+    //[Header("Retreat Data")]
     void RetreatPhase() {
 
     }
 
     //******************************************* Movement Behaviour *******************************************
     //allows for very simple moveto command to inform the entity to go somewhere
-    [Header("Movement Data")]
+    [Header("MoveTo Data")]
     //is the enemy currently supposed to be moving somewhere?
     ProtectedBool moveTo;
     //Has the enemy reached their location?

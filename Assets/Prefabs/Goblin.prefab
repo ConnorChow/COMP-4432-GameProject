@@ -198,6 +198,8 @@ MonoBehaviour:
     fakeValue: 2
   chargeSpeed:
     fakeValue: 4
+  playerTarget: {fileID: 0}
+  playerScript: {fileID: 0}
   dmgBufferInterval:
     fakeValue: 1
   fireCheckInterval:
@@ -212,10 +214,16 @@ MonoBehaviour:
     fakeValue: 5
   waitIdlyTime:
     fakeValue: 2
-  flankingPatience:
+  minRadius:
+    fakeValue: 3
+  radiusTolerance:
     fakeValue: 2
+  flankingPatience:
+    fakeValue: 5
+  flankingAngleInterval:
+    fakeValue: 20
   MoveToTolerance:
-    fakeValue: 0.05
+    fakeValue: 0.1
 --- !u!114 &8675217294755881859
 MonoBehaviour:
   m_ObjectHideFlags: 0
