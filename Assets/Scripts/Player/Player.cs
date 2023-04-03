@@ -86,7 +86,7 @@ public class Player : NetworkBehaviour {
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
 
 
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponentInChildren<Rigidbody2D>();
 
         resumeButton.onClick.AddListener(Resume);
         quitButton.onClick.AddListener(Quit);
