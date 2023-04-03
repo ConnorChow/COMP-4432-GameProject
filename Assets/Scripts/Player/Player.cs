@@ -105,12 +105,6 @@ public class Player : NetworkBehaviour {
 
     // Update is called once per frame
     void Update() {
-<<<<<<< Updated upstream
-
-        //
-
-=======
->>>>>>> Stashed changes
         HandleMovement();
         RotateInDirection0fInput();
 
