@@ -184,20 +184,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Info:
-    ip: 
+    ip: 216.211.17.25
     location: 
-    country: 
-    region: 
-    city: 
-    lat: 0
-    lng: 0
-    postalCode: 
-    timezone: 
-    geonameId: 0
+    country: CA
+    region: Ontario
+    city: Thunder Bay
+    lat: 48.38202
+    lng: -89.25018
+    postalCode: P7B5V9
+    timezone: -04:00
+    geonameId: 6166142
     asType: 
-    asn: 0
-    name: 
-    route: 
+    asn: 32277
+    name: TBAYTEL
+    route: 216.211.0.0\/17
     domain: 
     type: 
     isp: 
@@ -5965,7 +5965,7 @@ GameObject:
   - component: {fileID: 1167715274}
   - component: {fileID: 1167715275}
   m_Layer: 0
-  m_Name: WeatherManager
+  m_Name: WeatherData
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5989,25 +5989,22 @@ MonoBehaviour:
     longitude: -89.2812
     timezone: America/Toronto
     currently:
-      time: 0
-      summary: 
-      icon: 
-      nearestStormDistance: 0
-      nearestStormBearing: 0
-      precipIntensity: 0
-      precipProbability: 0
+      generationtime_ms: 0
+      utc_offset_seconds: 0
+      timezone: 
+      timezone_abbreviation: 
+      elevation: 0
+      current_weather: 
       temperature: 0
-      apparentTemperature: 0
-      dewPoint: 0
-      humidity: 0
-      pressure: 0
-      windSpeed: 0
-      windGust: 0
-      windBearing: 0
-      cloudCover: 0
-      uvIndex: 0
-      visibility: 0
-      ozone: 0
+      windspeed: 0
+      winddirection: 0
+      weathercode: 0
+      time: 0
+      hourly_units: 
+      temperature_2m: 
+      relativehumidity_2m: 
+      windspeed_10m: 
+      hourly: 
     offset: 0
   API_key: at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K
   currentWeatherText: {fileID: 821482079}
@@ -6417,6 +6414,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1590858257107225657, guid: b2bee8816c97b4653b3f6412c0d6348e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2299097233086537014, guid: b2bee8816c97b4653b3f6412c0d6348e, type: 3}
       propertyPath: m_Sprite
       value: 
