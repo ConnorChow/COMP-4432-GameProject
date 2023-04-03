@@ -254,9 +254,9 @@ public class Enemy : NetworkBehaviour {
             }
             float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
             if (dist < minRadius - radiusTolerance) {
-                //EnterChargePhase();
+                EnterChargePhase();
             } else if (dist > minRadius + radiusTolerance) {
-                //EnterConfrontPhase();
+                EnterConfrontPhase();
             }
         } else {
             // If patience expires, move to charge phase
