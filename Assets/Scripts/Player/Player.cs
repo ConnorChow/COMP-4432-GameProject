@@ -56,9 +56,6 @@ public class Player : NetworkBehaviour {
     public GameObject[] spawnLocations;
     int spawnLocationChoice = 0;
 
-    // Level Border
-    readonly GameObject border = GameObject.FindGameObjectWithTag("Wall");
-
     //Health damage buffer (also a timer for checking burns on the player)
     [SerializeField] ProtectedFloat dmgBufferInterval = 1;
     ProtectedFloat dmgBuffer;
