@@ -354,12 +354,15 @@ public class Player : NetworkBehaviour {
         Player player = collision.gameObject.GetComponentInParent<Player>();
         if (player != null)
         {
-
-            player.health += 1;
+            StartCoroutine(revive(player));
         }
     }
 
-    //void IEnumerator
+    public IEnumerator revive(Player player)
+    {
+        player.health += 1;
+        yield return new WaitForSeconds(1);
+    }
 
     // --------------------------
 
