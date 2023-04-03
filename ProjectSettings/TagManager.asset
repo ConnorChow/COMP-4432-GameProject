@@ -8,6 +8,7 @@ TagManager:
   - HUD
   - Pause
   - Spawn
+  - EnemySpawn
   layers:
   - Default
   - TransparentFX

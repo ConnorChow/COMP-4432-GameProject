@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Player : NetworkBehaviour {
 
@@ -72,14 +73,21 @@ public class Player : NetworkBehaviour {
 
         spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
 
-        System.Random r = new System.Random();
-        int rInt = r.Next(0, spawnLocations.Length);
-        spawnLocationChoice = rInt;
+        foreach (var item in spawnLocations)
+        {
+            NetworkManager.startPositions.Add(item.transform);
+        }
+        
+        //System.Random r = new System.Random();
+        //int rInt = r.Next(0, spawnLocations.Length);
+        //spawnLocationChoice = rInt;
 
         landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
 
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
+
+
         resumeButton.onClick.AddListener(Resume);
         quitButton.onClick.AddListener(Quit);
 
@@ -87,10 +95,11 @@ public class Player : NetworkBehaviour {
         rb = GetComponentInChildren<Rigidbody2D>();
         playerCamera = GetComponentInChildren<Camera>();
 
-        Debug.Log($"Spawn location choice: {rInt} -> {spawnLocations[rInt].transform}");
-        Debug.Log($"Player position: {rb.transform}");
+        //Debug.Log($"Spawn location choice: {rInt} -> {spawnLocations[rInt].transform}");
+        //Debug.Log($"Player position: {rb.transform}");
 
-        rb.transform.position.Set(spawnLocations[spawnLocationChoice].transform.position.x, spawnLocations[spawnLocationChoice].transform.position.y, spawnLocations[spawnLocationChoice].transform.position.z);
+        // Set player to random spawn location
+        //rb.transform.position.Set(spawnLocations[spawnLocationChoice].transform.position.x, spawnLocations[spawnLocationChoice].transform.position.y, spawnLocations[spawnLocationChoice].transform.position.z);
     }
 
     // Update is called once per frame
@@ -188,6 +197,7 @@ public class Player : NetworkBehaviour {
             rb.rotation = 0f;
         }
 
+        this.gameObject.transform.position = new Vector2(rb.position.x, rb.position.y);
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
     }
 
@@ -268,6 +278,7 @@ public class Player : NetworkBehaviour {
 
     }
 
+    [Client]
     public void Pause() {
         if (!paused) {
             paused = true;
@@ -283,6 +294,7 @@ public class Player : NetworkBehaviour {
         //}
     }
 
+    [Client]
     public void Resume() {
         if (paused) {
             paused = false;
@@ -311,6 +323,7 @@ public class Player : NetworkBehaviour {
         ipAddress.text = ("IP: " + networkManager.GetLocalIPv4());
     }
 
+    [Server]
     void allDead()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -326,6 +339,22 @@ public class Player : NetworkBehaviour {
                 // Show game over screen
             }
         }
+    }
+
+    [Command]
+    void requestRestart()
+    {
+        // Check if players are ready to restart
+        if (NetworkClient.ready)
+        {
+            restartWorld();
+        }
+    }
+
+    [Server]
+    void restartWorld()
+    {
+
     }
 
     // --------------------------
