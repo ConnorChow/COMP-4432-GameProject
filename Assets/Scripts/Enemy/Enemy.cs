@@ -200,6 +200,7 @@ public class Enemy : NetworkBehaviour {
         //Reset general state data
         attackState = confront;
         moveSpeed = regularSpeed;
+        MoveTo(transform.position);
         //Reset Flanking State
         ResetFlankInit();
         //Reset Charging State
@@ -223,8 +224,7 @@ public class Enemy : NetworkBehaviour {
         MoveTo(playerScript.rb.transform.position);
         if (moveTo) {
             float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
-            if (dist <= minRadius) {
-                Debug.Log("Player reached");
+            if (dist <= minRadius + UnityEngine.Random.Range(-radiusTolerance, radiusTolerance)) {
                 EnterFlankPhase();
             }
         }
@@ -237,7 +237,6 @@ public class Enemy : NetworkBehaviour {
                                                                 //Smaller values are smoother but have the AI calculate the rotation more frequently
     ProtectedFloat flankPatienceTimer;
     void EnterFlankPhase() {
-        Debug.Log("begin Flank");
         attackState = flank;
         MoveTo(transform.position);
         moveSpeed = regularSpeed;
@@ -292,7 +291,6 @@ public class Enemy : NetworkBehaviour {
     ProtectedBool enteredAttack = false;
     ProtectedFloat timeTillDamage = 0;
     void EnterChargePhase() {
-        Debug.Log("Begin Charge");
         MoveTo(transform.position);
         attackState = charge;
         moveSpeed = chargeSpeed;
@@ -305,6 +303,7 @@ public class Enemy : NetworkBehaviour {
         float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
         if (dist <= closingDistance && !enteredAttack) {
             MoveTo(transform.position);
+
             if (timeTillDamage <= 0) {
                 enemyAnimator.ResetTrigger("Attack");
             }
@@ -315,6 +314,7 @@ public class Enemy : NetworkBehaviour {
         }
         //behaviour for if in attack
         if (enteredAttack) {
+            MoveTo(transform.position);
             enemyAnimator.SetTrigger("Attack");
             moveTo = false;
             timeTillDamage -= Time.deltaTime;
@@ -338,7 +338,6 @@ public class Enemy : NetworkBehaviour {
     [SerializeField] ProtectedFloat maxRetreatDistance = 5;
     ProtectedBool startedRetreat = false;
     void EnterRetreatPhase() {
-        Debug.Log("Begin Retreat");
         moveSpeed = regularSpeed;
         enteredAttack = false;
         adrenalineTimer = 0;

@@ -198,6 +198,8 @@ MonoBehaviour:
     fakeValue: 2
   chargeSpeed:
     fakeValue: 4
+  LevelOfDamage:
+    fakeValue: 2
   playerTarget: {fileID: 0}
   playerScript: {fileID: 0}
   dmgBufferInterval:
@@ -215,15 +217,25 @@ MonoBehaviour:
   waitIdlyTime:
     fakeValue: 2
   minRadius:
-    fakeValue: 3
+    fakeValue: 3.5
   radiusTolerance:
     fakeValue: 2
   flankingPatience:
     fakeValue: 5
   flankingAngleInterval:
     fakeValue: 20
+  maxAdrenalineTime:
+    fakeValue: 10
+  closingDistance:
+    fakeValue: 1.5
+  inflictDamageDelay:
+    fakeValue: 0.15
+  maxRetreatDistance:
+    fakeValue: 5
   MoveToTolerance:
     fakeValue: 0.1
+  stuckDistance:
+    fakeValue: 0.0125
 --- !u!114 &8675217294755881859
 MonoBehaviour:
   m_ObjectHideFlags: 0
