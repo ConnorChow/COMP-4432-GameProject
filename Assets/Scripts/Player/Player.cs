@@ -26,7 +26,7 @@ public class Player : NetworkBehaviour {
 
     // Player Movement
     private Vector2 moveDirection;
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
     public Camera playerCamera;
     public Weapon weapon;
 

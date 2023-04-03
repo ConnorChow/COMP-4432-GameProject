@@ -17,6 +17,9 @@ public class Enemy : NetworkBehaviour {
     [SerializeField] ProtectedFloat chargeSpeed = 5;
     private Rigidbody2D rb;
 
+    [Header("Attack Data")]
+    [SerializeField] ProtectedInt32 LevelOfDamage;
+
     //List of players close to the enemy
     [SerializeField]public readonly HashSet<GameObject> playersDetected = new HashSet<GameObject>();
     //List of fellow enemies nearby
@@ -70,8 +73,6 @@ public class Enemy : NetworkBehaviour {
         if (playerEnemyTracker != null ) {
             playerEnemyTracker.enemies.Add(gameObject);
         }
-
-        
     }
 
     private void Update() {
@@ -202,9 +203,9 @@ public class Enemy : NetworkBehaviour {
         attackState = confront;
     }
     void ConfrontPhase() {
-        MoveTo(playerTarget.transform.position);
+        MoveTo(playerScript.rb.transform.position);
         if (moveTo) {
-            float dist = Vector3.Distance(playerTarget.transform.position, transform.position);
+            float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
             if (dist <= minRadius) {
                 Debug.Log("Player reached");
                 EnterFlankPhase();
@@ -232,9 +233,9 @@ public class Enemy : NetworkBehaviour {
             //continue flanking if done moving
             if (!moveTo) {
                 //find a new vector to move to that is a rotation of the current position around the player. Mimics a flanking behaviour
-                MoveTo(NextRotationAroundPoint(playerScript.transform.position, transform.position, flankingAngleInterval));
+                MoveTo(NextRotationAroundPoint(playerScript.rb.transform.position, transform.position, flankingAngleInterval));
             }
-            float dist = Vector3.Distance(playerTarget.transform.position, transform.position);
+            float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
             if (dist < minRadius - radiusTolerance) {
                 //EnterChargePhase();
             } else if (dist > minRadius + radiusTolerance) {
@@ -258,8 +259,14 @@ public class Enemy : NetworkBehaviour {
         return new Vector3(x, y, 0);
     }
 
-    //[Header("Charging Data")]
+    [Header("Charging Data")]
     //Charge Phase: Enemy will charge at the player until they run out of adrenaline or manage to attempt an attack
+    [SerializeField] ProtectedFloat maxAdrenalineLevel = 10;
+    [SerializeField] ProtectedFloat closingDistance = 1.5f;
+    [SerializeField] ProtectedFloat inflictDamageDelay = 0.1f;
+    ProtectedFloat adrenalineTimer = 0;
+    ProtectedBool enteredAttack = false;
+    ProtectedFloat timeTillDamage = 0;
     void EnterChargePhase() {
         Debug.Log("Begin Charge");
         MoveTo(transform.position);
@@ -270,19 +277,42 @@ public class Enemy : NetworkBehaviour {
         if (UnityEngine.Random.Range(0, 2) == 1) {
             flankingAngleInterval *= -1;
         }
+        //Initialize adrenaline level
+        adrenalineTimer = maxAdrenalineLevel;
     }
     void ChargePhase() {
-
+        float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
+        if (dist <= closingDistance && !enteredAttack) {
+            MoveTo(transform.position);
+            if (timeTillDamage <= 0) {
+                enemyAnimator.ResetTrigger("Attack");
+                enemyAnimator.SetTrigger("Attack");
+            }
+            enteredAttack = true;
+            timeTillDamage = inflictDamageDelay;
+        } else {
+            MoveTo(playerScript.rb.transform.position);
+        }
+        //behaviour for if in attack
+        if (enteredAttack) {
+            moveTo = false;
+            timeTillDamage -= Time.deltaTime;
+            if (timeTillDamage <= 0) {
+                if (dist <= closingDistance) {
+                    playerScript.TakeDamage()
+                }
+            }
+        }
     }
 
     //[Header("Retreat Data")]
+    [SerializeField] ProtectedFloat maxRetreatDistance = 5;
     void RetreatPhase() {
 
     }
 
     //******************************************* Movement Behaviour *******************************************
     //allows for very simple moveto command to inform the entity to go somewhere
-    [Header("MoveTo Data")]
     //is the enemy currently supposed to be moving somewhere?
     ProtectedBool moveTo;
     //Has the enemy reached their location?
@@ -293,7 +323,8 @@ public class Enemy : NetworkBehaviour {
         reachedLoc = false;
     }
 
-    [SerializeField]ProtectedFloat MoveToTolerance = 0.05f;
+    [Header("MoveTo Data")]
+    [SerializeField] ProtectedFloat MoveToTolerance = 0.05f;
     Vector3 lastFrameLoc;
     ProtectedInt32 stuckWarnings = 0;
     private void MoveToBehaviour() {
@@ -338,6 +369,18 @@ public class Enemy : NetworkBehaviour {
             }
         }
         return nearestPlayer;
+    }
+
+    bool IsPlayerValid(GameObject playerObj, Player playerScr) {
+        if (playerScr == null || playerObj == null) {
+            return false;
+        } else {
+            if (playerScr.health <= 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 
     public void TakeDamage(int damageAmount) {

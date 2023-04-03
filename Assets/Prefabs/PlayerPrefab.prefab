@@ -498,6 +498,7 @@ GameObject:
   - component: {fileID: 8550719708502651665}
   - component: {fileID: 8851166379663997008}
   - component: {fileID: 8627643801396240475}
+  - component: {fileID: 677320664489295680}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -786,6 +787,41 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!58 &677320664489295680
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1355595289387809642}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.325
 --- !u!1 &1463777541657489138
 GameObject:
   m_ObjectHideFlags: 0
@@ -3130,6 +3166,7 @@ MonoBehaviour:
   playerName:
     fakeValue: 
   ipAddress: {fileID: 4818615687092983029}
+  rb: {fileID: 0}
   playerCamera: {fileID: 5608808845241054491}
   weapon: {fileID: 7110099158603391453}
   bowCooldown:
