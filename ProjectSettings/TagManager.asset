@@ -10,6 +10,9 @@ TagManager:
   - Spawn
   - EnemySpawn
   - Wall
+  - Timer
+  - Revive
+  - DeathOverlay
   layers:
   - Default
   - TransparentFX
