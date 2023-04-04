@@ -493,7 +493,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 991131783}
   m_Direction: 2
   m_Value: 0.99999976
-  m_Size: 0.5882353
+  m_Size: 0.58823526
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1887,6 +1887,7 @@ MonoBehaviour:
   hostSlot2: {fileID: 58318668}
   hostSlot3: {fileID: 125807789}
   joinButton: {fileID: 657421383}
+  deletePrefs: 1
 --- !u!4 &798599046 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6861488911404734218, guid: 2c7bfbf6316154aed9bbfc6206043baa, type: 3}
@@ -2333,6 +2334,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0faa2a03ba33426685d74a969ff2523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprites: []
+  index: 0
 --- !u!114 &1070669263
 MonoBehaviour:
   m_ObjectHideFlags: 0
