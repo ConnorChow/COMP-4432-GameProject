@@ -3821,9 +3821,6 @@ MonoBehaviour:
   - {fileID: 6375676033790927927, guid: 365e12ae4cdf64395a9ae223647e828f, type: 3}
   - {fileID: 1998859551552497020, guid: 3c2aa3d27014246c4a40d428a3b735ef, type: 3}
   timeInterpolationGui: 0
-  swarmerPrefab: {fileID: 0}
-  bigSwarmerPrefab: {fileID: 0}
-  spawnLocations: []
 --- !u!114 &1639834846
 MonoBehaviour:
   m_ObjectHideFlags: 0
