@@ -23,6 +23,7 @@ public class Player : NetworkBehaviour {
     private ProtectedInt32 maxHealth = Globals.maxHealth;
     private ProtectedFloat playerSpeed = Globals.maxSpeed;
     public ProtectedString playerName;
+    public ProtectedBool isDead = false;
     public TMP_Text ipAddress = null;
 
     // Player Movement
@@ -171,6 +172,19 @@ public class Player : NetworkBehaviour {
             if (paused) Resume();
             else Pause();
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            RequestKillPlayer();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            StartCoroutine(revive(this));
+        }
+
+        rb.angularVelocity = 0;
+
         updateIP();
     }
 
@@ -232,6 +246,8 @@ public class Player : NetworkBehaviour {
     public void Die() {
         bombTimer = 0;
         bowTimer = 0;
+        isDead = true;
+        health = 0;
         RequestKillPlayer();
     }
 
@@ -348,19 +364,40 @@ public class Player : NetworkBehaviour {
 
 
     // Revive
-    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
+    private void OnTriggerStay2D(UnityEngine.Collider2D collision)
+    {
+        Player player = collision.gameObject.GetComponentInParent<Player>();
+        if (player != null && player.health <= 0)
+        {
+            Debug.Log("Start Reviving");
+            StartCoroutine(revive(player));
+        }
+    }
+
+    private void OnTriggerExit2D(UnityEngine.Collider2D collision)
     {
         Player player = collision.gameObject.GetComponentInParent<Player>();
         if (player != null)
         {
-            StartCoroutine(revive(player));
+            Debug.Log("Stop Reviving");
+            StopCoroutine(revive(player));
         }
     }
 
     public IEnumerator revive(Player player)
     {
-        player.health += 1;
-        yield return new WaitForSeconds(1);
+        while (player.health < 10)
+        {
+            Debug.Log($"Reviving: {player.health * 100}");
+            player.health += 1;
+            yield return new WaitForSecondsRealtime(1f);
+        }
+
+        if (player.health == Globals.maxHealth)
+        {
+            Debug.Log("Revived");
+            playerSprite.gameObject.SetActive(true);
+        }
     }
 
     // --------------------------
@@ -392,6 +429,7 @@ public class Player : NetworkBehaviour {
     // this is called by clients on the server
     [Command]
     void CmdFireArrow() {
+        if (playerSprite.gameObject.activeSelf == false) { return; }
         GameObject projectile = Instantiate(weapon.arrow, weapon.firePoint.position, weapon.firePoint.rotation);
         projectile.GetComponent<Rigidbody2D>().AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
         NetworkServer.Spawn(projectile); // Commenting this causes a error --- Need to fix double shots
@@ -401,6 +439,7 @@ public class Player : NetworkBehaviour {
 
     [Command]
     void CmdFireGrenade() {
+        if (playerSprite.gameObject.activeSelf == false) { return; }
         GameObject projectile = Instantiate(weapon.grenade, weapon.firePoint.position, weapon.firePoint.rotation);
         projectile.GetComponent<Rigidbody2D>().AddForce(weapon.firePoint.up * weapon.fireForce, ForceMode2D.Impulse);
         NetworkServer.Spawn(projectile); // Commenting this causes a error --- Need to fix double shots
