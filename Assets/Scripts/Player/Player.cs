@@ -69,6 +69,9 @@ public class Player : NetworkBehaviour {
     [SerializeField] AudioSource playerAudioSource;
     [SerializeField] Slider healthSlider;
 
+    [SerializeField] Sprite deadSprite;
+    [SerializeField] Sprite aliveSprite;
+
     // Start is called before the first frame update
     void Start() {
         health = maxHealth;
@@ -176,7 +179,7 @@ public class Player : NetworkBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            RequestKillPlayer();
+            ApplyDamage(10);
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
@@ -193,6 +196,8 @@ public class Player : NetworkBehaviour {
     void HandleMovement() {
         // check if not local player
         if (!isLocalPlayer) { return; }
+
+        if (isDead) { return; }
 
         // handle player movement
         float MoveX = Input.GetAxisRaw("Horizontal");
@@ -217,6 +222,7 @@ public class Player : NetworkBehaviour {
     }
 
     private void Aim() {
+        if (isDead) { return; }
         // Mouse Based Rotation
         Vector3 mousePos = playerCamera.ScreenToWorldPoint(Input.mousePosition);
         Quaternion targetRotation = Quaternion.LookRotation(rb.transform.forward, mousePos - rb.transform.position);
@@ -259,7 +265,8 @@ public class Player : NetworkBehaviour {
     [ClientRpc]
     public void KillPlayer() {
         Debug.Log("Kill Player");
-        playerSprite.gameObject.SetActive(false);
+        playerSprite.sprite = deadSprite;
+        //playerSprite.gameObject.SetActive(false);
     }
 
     [Command(requiresAuthority =false)]
@@ -397,7 +404,9 @@ public class Player : NetworkBehaviour {
         if (player.health == Globals.maxHealth)
         {
             Debug.Log("Revived");
-            playerSprite.gameObject.SetActive(true);
+            player.isDead = false;
+            playerSprite.sprite = aliveSprite;
+            //playerSprite.gameObject.SetActive(true);
         }
     }
 
