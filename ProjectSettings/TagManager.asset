@@ -10,7 +10,6 @@ TagManager:
   - Spawn
   - EnemySpawn
   - Wall
-  - MinimapCamera
   layers:
   - Default
   - TransparentFX
