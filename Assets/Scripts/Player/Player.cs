@@ -414,7 +414,7 @@ public class Player : NetworkBehaviour {
         reviveTimer.SetActive(true);
         while (player.health < 10)
         {
-            reviveTimer.GetComponent<TMP_Text>().text = $"{player.health * 10 + 10}%";
+            reviveTimer.GetComponent<TMP_Text>().text = $"{player.health * 10 + 10}%\nRevived";
             Debug.Log($"Reviving: {player.health * 10}%");
             player.Heal(1);
             yield return new WaitForSecondsRealtime(1f);

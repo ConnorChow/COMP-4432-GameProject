@@ -1130,7 +1130,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 43}
+  m_AnchoredPosition: {x: 0, y: 16}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1106736077686702233
@@ -1190,8 +1190,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2376,7 +2376,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -1, y: 24}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8715907642475684498
@@ -2436,8 +2436,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2472,7 +2472,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: -8.100739, z: 0, w: 0}
+  m_margin: {x: -26.61676, y: -8.100739, z: -26.616882, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3596,7 +3596,7 @@ MonoBehaviour:
   isDead:
     fakeValue: 0
   ipAddress: {fileID: 4818615687092983029}
-  rb: {fileID: 0}
+  rb: {fileID: 2401617904259430259}
   playerCamera: {fileID: 5608808845241054491}
   weapon: {fileID: 7110099158603391453}
   bowCooldown:
@@ -3606,6 +3606,8 @@ MonoBehaviour:
     fakeValue: 30
   bombCooldownSlider: {fileID: 2937663940216276927}
   playerHUD: {fileID: 7924528760338810948}
+  reviveText: {fileID: 4373595697076894194}
+  reviveTimer: {fileID: 2157817897765535142}
   playerMap: {fileID: 6278003308594426527}
   pauseMenu: {fileID: 8119435013753998623}
   resumeButton: {fileID: 3688565344351000050}
