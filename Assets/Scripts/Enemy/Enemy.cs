@@ -56,20 +56,10 @@ public class Enemy : NetworkBehaviour {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    [SerializeField] GameObject enemyMarker;
-
     private void Start() {
         health = maxHealth;
         
         spawnPosition = transform.position;
-
-        GameObject[] findPlayers = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject p in findPlayers) {
-            GameObject map = p.GetComponent<Player>().playerMap;
-            if (map != null) {
-                SpawnMarker(map);
-            }
-        }
 
         // perform some random initialization on the flanking behaviour
         flankPatienceTimer = UnityEngine.Random.Range(flankingPatience/2, flankingPatience);
@@ -80,11 +70,6 @@ public class Enemy : NetworkBehaviour {
         randomRadius = minRadius + UnityEngine.Random.Range(-radiusTolerance, radiusTolerance);
 
         landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
-    }
-    
-    void SpawnMarker(GameObject parent) {
-        enemyMarker.GetComponent<HostilesMarkerBehaviour>().marker = gameObject;
-        GameObject newMarker = Instantiate(enemyMarker, parent.transform);
     }
 
     private void Update() {
