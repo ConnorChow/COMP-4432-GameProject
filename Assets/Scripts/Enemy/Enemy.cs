@@ -64,7 +64,13 @@ public class Enemy : NetworkBehaviour {
         spawnPosition = transform.position;
 
         enemyMarker.GetComponent<HostilesMarkerBehaviour>().marker = gameObject;
-        Instantiate(enemyMarker);
+        GameObject[] findPlayers = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject p in findPlayers) {
+            GameObject map = p.GetComponent<Player>().playerMap;
+            if (map != null) {
+                RequestSpawnMarker(map);
+            }
+        }
 
         // perform some random initialization on the flanking behaviour
         flankPatienceTimer = UnityEngine.Random.Range(flankingPatience/2, flankingPatience);
@@ -75,6 +81,14 @@ public class Enemy : NetworkBehaviour {
         randomRadius = minRadius + UnityEngine.Random.Range(-radiusTolerance, radiusTolerance);
 
         landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
+    }
+    [Command(requiresAuthority = false)]
+    void RequestSpawnMarker(GameObject parent) {
+        SpawnMarker(parent);
+    }
+    [ClientRpc]
+    void SpawnMarker(GameObject parent) {
+        //Instantiate(enemyMarker, parent.transform);
     }
 
     private void Update() {
