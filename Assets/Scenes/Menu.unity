@@ -493,7 +493,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 991131783}
   m_Direction: 2
   m_Value: 0.99999976
-  m_Size: 0.58823526
+  m_Size: 0.5882353
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -536,6 +536,71 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 72808633}
   m_CullTransparentMesh: 1
+--- !u!1 &76679816
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 76679818}
+  - component: {fileID: 76679817}
+  m_Layer: 0
+  m_Name: GetLocation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &76679817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76679816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20181381c8fbb4d78b21e61c8701f0e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Info:
+    ip: 216.211.17.25
+    location: 
+    country: CA
+    region: Ontario
+    city: Thunder Bay
+    lat: 48.38202
+    lng: -89.25018
+    postalCode: P7B5V9
+    timezone: -04:00
+    geonameId: 6166142
+    asType: 
+    asn: 32277
+    name: TBAYTEL
+    route: 216.211.0.0\/17
+    domain: 
+    type: 
+    isp: 
+  latitude: 48.3702
+  longitude: -89.2812
+  weatherData: {fileID: 0}
+--- !u!4 &76679818
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76679816}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &108459949
 GameObject:
   m_ObjectHideFlags: 0
@@ -1822,92 +1887,6 @@ MonoBehaviour:
   hostSlot2: {fileID: 58318668}
   hostSlot3: {fileID: 125807789}
   joinButton: {fileID: 657421383}
---- !u!1 &794128132
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 794128134}
-  - component: {fileID: 794128133}
-  - component: {fileID: 794128135}
-  m_Layer: 0
-  m_Name: WeatherManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &794128133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794128132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 361a0725613ea4c64a282c5d92f96dca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minutesBetweenUpdate: 0.03
-  Info:
-    latitude: 48.3702
-    longitude: -89.2812
-    timezone: -04:00
-    currently:
-      time: 0
-      summary: 
-      icon: 
-      nearestStormDistance: 0
-      nearestStormBearing: 0
-      precipIntensity: 0
-      precipProbability: 0
-      temperature: 0
-      apparentTemperature: 0
-      dewPoint: 0
-      humidity: 0
-      pressure: 0
-      windSpeed: 0
-      windGust: 0
-      windBearing: 0
-      cloudCover: 0
-      uvIndex: 0
-      visibility: 0
-      ozone: 0
-    offset: 0
-  API_key: at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K
-  currentWeatherText: {fileID: 1180853682}
-  getLocation: {fileID: 0}
---- !u!4 &794128134
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794128132}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &794128135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794128132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ea26102c096f42678b4678296a908d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &798599046 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6861488911404734218, guid: 2c7bfbf6316154aed9bbfc6206043baa, type: 3}
@@ -2354,13 +2333,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0faa2a03ba33426685d74a969ff2523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprites:
-  - {fileID: 21300000, guid: bde2cc082109fdd478cce02facd89f1b, type: 3}
-  - {fileID: 21300000, guid: b173dd739f6e51844addeb9bce6fad5b, type: 3}
-  - {fileID: 21300000, guid: 412d618892d94854a955b46a51384461, type: 3}
-  - {fileID: 21300000, guid: cfe23f6c804094cbca9bc261cd6f0082, type: 3}
-  - {fileID: 21300000, guid: ac5f346b23d854883b6d73639e637936, type: 3}
-  index: 1
 --- !u!114 &1070669263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3821,9 +3793,6 @@ MonoBehaviour:
   - {fileID: 6375676033790927927, guid: 365e12ae4cdf64395a9ae223647e828f, type: 3}
   - {fileID: 1998859551552497020, guid: 3c2aa3d27014246c4a40d428a3b735ef, type: 3}
   timeInterpolationGui: 0
-  swarmerPrefab: {fileID: 0}
-  bigSwarmerPrefab: {fileID: 0}
-  spawnLocations: []
 --- !u!114 &1639834846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4787,6 +4756,8 @@ GameObject:
   - component: {fileID: 2115038568}
   - component: {fileID: 2115038569}
   - component: {fileID: 2115038570}
+  - component: {fileID: 2115038572}
+  - component: {fileID: 2115038571}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4837,7 +4808,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 3.2395833
+  orthographic size: 2.8125
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4968,3 +4939,59 @@ MonoBehaviour:
   latitude: 0
   longitude: 0
   weatherData: {fileID: 0}
+--- !u!114 &2115038571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115038564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44302c154ac7448c196bdef4964a626b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weatherData: {fileID: 0}
+  currentWeather: 
+  rainObject: {fileID: 0}
+  snowObject: {fileID: 0}
+  cloudyObject: {fileID: 0}
+  sunnyObject: {fileID: 0}
+--- !u!114 &2115038572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115038564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 361a0725613ea4c64a282c5d92f96dca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minutesBetweenUpdate: 0
+  Info:
+    latitude: 0
+    longitude: 0
+    timezone: 
+    currently:
+      generationtime_ms: 0
+      utc_offset_seconds: 0
+      timezone: 
+      timezone_abbreviation: 
+      elevation: 0
+      current_weather: 
+      temperature: 0
+      windspeed: 0
+      winddirection: 0
+      weathercode: 0
+      time: 
+      hourly_units: 
+      temperature_2m: 
+      relativehumidity_2m: 
+      windspeed_10m: 
+      hourly: 
+    offset: 0
+  API_key: 9a450fda46a74dc536c74286cbca0fbe
+  currentWeatherText: {fileID: 1180853682}
+  getLocation: {fileID: 76679817}
