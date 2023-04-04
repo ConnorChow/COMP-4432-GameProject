@@ -63,12 +63,11 @@ public class Enemy : NetworkBehaviour {
         
         spawnPosition = transform.position;
 
-        enemyMarker.GetComponent<HostilesMarkerBehaviour>().marker = gameObject;
         GameObject[] findPlayers = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject p in findPlayers) {
             GameObject map = p.GetComponent<Player>().playerMap;
             if (map != null) {
-                RequestSpawnMarker(map);
+                SpawnMarker(map);
             }
         }
 
@@ -82,13 +81,10 @@ public class Enemy : NetworkBehaviour {
 
         landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
     }
-    [Command(requiresAuthority = false)]
-    void RequestSpawnMarker(GameObject parent) {
-        SpawnMarker(parent);
-    }
-    [ClientRpc]
+    
     void SpawnMarker(GameObject parent) {
-        //Instantiate(enemyMarker, parent.transform);
+        enemyMarker.GetComponent<HostilesMarkerBehaviour>().marker = gameObject;
+        GameObject newMarker = Instantiate(enemyMarker, parent.transform);
     }
 
     private void Update() {
