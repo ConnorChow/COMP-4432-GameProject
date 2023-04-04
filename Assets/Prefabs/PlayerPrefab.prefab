@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 8517269422938072348}
   m_Layer: 0
   m_Name: Overlay
-  m_TagString: Untagged
+  m_TagString: DeathOverlay
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2757,7 +2757,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2423767496035042903
 Transform:
   m_ObjectHideFlags: 0
@@ -4867,7 +4867,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5209670880567552395
 Transform:
   m_ObjectHideFlags: 0
@@ -5718,6 +5718,10 @@ PrefabInstance:
     - target: {fileID: 6136842084765091760, guid: b2bee8816c97b4653b3f6412c0d6348e, type: 3}
       propertyPath: m_Name
       value: Weather
+      objectReference: {fileID: 0}
+    - target: {fileID: 6136842084765091760, guid: b2bee8816c97b4653b3f6412c0d6348e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7746496090271654763, guid: b2bee8816c97b4653b3f6412c0d6348e, type: 3}
       propertyPath: m_IsActive
