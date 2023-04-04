@@ -493,7 +493,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 991131783}
   m_Direction: 2
   m_Value: 0.99999976
-  m_Size: 0.58823526
+  m_Size: 0.5882353
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1822,6 +1822,7 @@ MonoBehaviour:
   hostSlot2: {fileID: 58318668}
   hostSlot3: {fileID: 125807789}
   joinButton: {fileID: 657421383}
+  deletePrefs: 0
 --- !u!1 &794128132
 GameObject:
   m_ObjectHideFlags: 0
@@ -1858,25 +1859,22 @@ MonoBehaviour:
     longitude: -89.2812
     timezone: -04:00
     currently:
-      time: 0
-      summary: 
-      icon: 
-      nearestStormDistance: 0
-      nearestStormBearing: 0
-      precipIntensity: 0
-      precipProbability: 0
+      generationtime_ms: 0
+      utc_offset_seconds: 0
+      timezone: 
+      timezone_abbreviation: 
+      elevation: 0
+      current_weather: 
       temperature: 0
-      apparentTemperature: 0
-      dewPoint: 0
-      humidity: 0
-      pressure: 0
-      windSpeed: 0
-      windGust: 0
-      windBearing: 0
-      cloudCover: 0
-      uvIndex: 0
-      visibility: 0
-      ozone: 0
+      windspeed: 0
+      winddirection: 0
+      weathercode: 0
+      time: 0
+      hourly_units: 
+      temperature_2m: 
+      relativehumidity_2m: 
+      windspeed_10m: 
+      hourly: 
     offset: 0
   API_key: at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K
   currentWeatherText: {fileID: 1180853682}
@@ -3821,9 +3819,6 @@ MonoBehaviour:
   - {fileID: 6375676033790927927, guid: 365e12ae4cdf64395a9ae223647e828f, type: 3}
   - {fileID: 1998859551552497020, guid: 3c2aa3d27014246c4a40d428a3b735ef, type: 3}
   timeInterpolationGui: 0
-  swarmerPrefab: {fileID: 0}
-  bigSwarmerPrefab: {fileID: 0}
-  spawnLocations: []
 --- !u!114 &1639834846
 MonoBehaviour:
   m_ObjectHideFlags: 0
