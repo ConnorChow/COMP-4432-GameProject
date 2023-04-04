@@ -283,6 +283,7 @@ MonoBehaviour:
     fakeValue: 1
   enemySprite: {fileID: 230057797940481495}
   enemyAnimator: {fileID: 928036331758251838}
+  enemyMarker: {fileID: 8563441594690959652, guid: 074c7e199b8c02246bd6d3f1503ddd2e, type: 3}
   behaviourState:
     fakeValue: 0
   attackState:

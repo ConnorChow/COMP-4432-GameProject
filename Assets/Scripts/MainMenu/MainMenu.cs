@@ -21,6 +21,15 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button hostSlot3 = null;
     [SerializeField] private Button joinButton = null;
 
+    [SerializeField] bool deletePrefs;
+
+    private void Awake()
+    {
+        if (deletePrefs)
+        {
+            PlayerPrefs.DeleteAll();
+        }
+    }
 
     private void Start()
     {

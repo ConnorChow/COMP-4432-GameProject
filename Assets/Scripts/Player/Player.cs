@@ -45,8 +45,6 @@ public class Player : NetworkBehaviour {
     [SerializeField] Slider bombCooldownSlider;
 
     [SerializeField] private GameObject playerHUD;
-    [SerializeField] private GameObject reviveText;
-    [SerializeField] private GameObject reviveTimer;
     public GameObject playerMap;
     [SerializeField] private GameObject pauseMenu;
     //Pause Menu Buttons for resuming the game and quitting the game
@@ -77,7 +75,6 @@ public class Player : NetworkBehaviour {
     // Start is called before the first frame update
     void Start() {
         health = maxHealth;
-        playerSprite.sprite = aliveSprite;
 
         spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
 
@@ -93,9 +90,6 @@ public class Player : NetworkBehaviour {
 
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
-
-        reviveText = GameObject.FindGameObjectWithTag("Revive");
-        reviveTimer = GameObject.FindGameObjectWithTag("Timer");
 
 
         rb = GetComponentInChildren<Rigidbody2D>();
@@ -141,11 +135,10 @@ public class Player : NetworkBehaviour {
             fireCheck -= Time.deltaTime;
         } else {
             Vector3Int tileLoc = new Vector3Int((int)Mathf.Round(rb.transform.position.x - 0.5f), (int)Mathf.Round(rb.transform.position.y - 0.5f), 0);
-
-            //if (landscape.FireGrid.GetTile(tileLoc) != null)
-            //{
-            //    TakeDamage(2);
-            //}
+            
+            if (landscape.FireGrid.GetTile(tileLoc) != null) {
+                TakeDamage(2);
+            }
             fireCheck = fireCheckInterval;
         }
 
@@ -153,12 +146,6 @@ public class Player : NetworkBehaviour {
             playerHUD.SetActive(false);
             pauseMenu.SetActive(false);
             return;
-        }
-
-        if (!isDead)
-        {
-            reviveText.gameObject.SetActive(false);
-            reviveTimer.gameObject.SetActive(false);
         }
         //Display the cooldown on objects
         if (bowTimer > 0) {
@@ -192,7 +179,7 @@ public class Player : NetworkBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            TakeDamage(10);
+            ApplyDamage(10);
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
@@ -268,7 +255,6 @@ public class Player : NetworkBehaviour {
         bowTimer = 0;
         isDead = true;
         health = 0;
-        reviveText.SetActive(true);
         RequestKillPlayer();
     }
 
@@ -280,7 +266,6 @@ public class Player : NetworkBehaviour {
     public void KillPlayer() {
         Debug.Log("Kill Player");
         playerSprite.sprite = deadSprite;
-        rb.simulated = false;
         //playerSprite.gameObject.SetActive(false);
     }
 
@@ -294,9 +279,8 @@ public class Player : NetworkBehaviour {
         playerAudioSource.Play();
     }
 
-    [ClientRpc]
     public void Heal(int amount) {
-        if (health < Globals.maxHealth) { health += amount; }
+        if (health! >= 0) { health += amount; }
     }
 
     public void OnApplicationPause(bool pause) {
@@ -410,22 +394,17 @@ public class Player : NetworkBehaviour {
 
     public IEnumerator revive(Player player)
     {
-        reviveText.SetActive(false);
-        reviveTimer.SetActive(true);
         while (player.health < 10)
         {
-            reviveTimer.GetComponent<TMP_Text>().text = $"{player.health * 10 + 10}%";
-            Debug.Log($"Reviving: {player.health * 10}%");
-            player.Heal(1);
+            Debug.Log($"Reviving: {player.health * 100}");
+            player.health += 1;
             yield return new WaitForSecondsRealtime(1f);
         }
 
         if (player.health == Globals.maxHealth)
         {
-            reviveTimer.SetActive(false);
             Debug.Log("Revived");
             player.isDead = false;
-            rb.simulated = true;
             playerSprite.sprite = aliveSprite;
             //playerSprite.gameObject.SetActive(true);
         }
