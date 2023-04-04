@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class HostilesMarkerBehaviour : NetworkBehaviour {
+public class HostilesMarkerBehaviour : MonoBehaviour {
     public GameObject marker;
     public float terrainSize;
     public float mapDimensions = 150;
