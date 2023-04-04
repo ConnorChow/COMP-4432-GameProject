@@ -493,7 +493,6 @@ GameObject:
   - component: {fileID: 2401617904259430259}
   - component: {fileID: 5212624745210291563}
   - component: {fileID: 2592949241928296027}
-  - component: {fileID: 8158357164697452690}
   - component: {fileID: 8550719708502651665}
   - component: {fileID: 8851166379663997008}
   - component: {fileID: 8627643801396240475}
@@ -635,25 +634,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8158357164697452690
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1355595289387809642}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0faa2a03ba33426685d74a969ff2523, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprites:
-  - {fileID: 21300000, guid: bde2cc082109fdd478cce02facd89f1b, type: 3}
-  - {fileID: 21300000, guid: b173dd739f6e51844addeb9bce6fad5b, type: 3}
-  - {fileID: 21300000, guid: 412d618892d94854a955b46a51384461, type: 3}
-  - {fileID: 21300000, guid: cfe23f6c804094cbca9bc261cd6f0082, type: 3}
-  - {fileID: 21300000, guid: ac5f346b23d854883b6d73639e637936, type: 3}
-  index: 1
 --- !u!114 &8550719708502651665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3609,6 +3589,7 @@ MonoBehaviour:
   playerHUD: {fileID: 7924528760338810948}
   reviveText: {fileID: 4373595697076894194}
   reviveTimer: {fileID: 2157817897765535142}
+  deathOverlay: {fileID: 0}
   playerMap: {fileID: 6278003308594426527}
   pauseMenu: {fileID: 8119435013753998623}
   resumeButton: {fileID: 3688565344351000050}
