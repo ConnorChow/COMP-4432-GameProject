@@ -347,7 +347,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &318216040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6059,7 +6059,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1167715274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6078,25 +6078,22 @@ MonoBehaviour:
     longitude: -89.2812
     timezone: America/Toronto
     currently:
-      time: 0
-      summary: 
-      icon: 
-      nearestStormDistance: 0
-      nearestStormBearing: 0
-      precipIntensity: 0
-      precipProbability: 0
+      generationtime_ms: 0
+      utc_offset_seconds: 0
+      timezone: 
+      timezone_abbreviation: 
+      elevation: 0
+      current_weather: 
       temperature: 0
-      apparentTemperature: 0
-      dewPoint: 0
-      humidity: 0
-      pressure: 0
-      windSpeed: 0
-      windGust: 0
-      windBearing: 0
-      cloudCover: 0
-      uvIndex: 0
-      visibility: 0
-      ozone: 0
+      windspeed: 0
+      winddirection: 0
+      weathercode: 0
+      time: 0
+      hourly_units: 
+      temperature_2m: 
+      relativehumidity_2m: 
+      windspeed_10m: 
+      hourly: 
     offset: 0
   API_key: at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K
   currentWeatherText: {fileID: 821482079}
@@ -6520,7 +6517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6136842084765091760, guid: b2bee8816c97b4653b3f6412c0d6348e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8187478828478425321, guid: b2bee8816c97b4653b3f6412c0d6348e, type: 3}
       propertyPath: m_LocalPosition.x
