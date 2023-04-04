@@ -282,6 +282,8 @@ public class Player : NetworkBehaviour {
         playerSprite.sprite = deadSprite;
         rb.simulated = false;
         //playerSprite.gameObject.SetActive(false);
+        string playerDataCSV = GetPlayerDataAsCSV();
+        SavePlayerDataToFile(playerDataCSV);
     }
 
     [Command(requiresAuthority =false)]
@@ -496,6 +498,9 @@ public class Player : NetworkBehaviour {
         // Add player position adjustment
         Debug.Log($"Moving player back to 0,0");
         rb.transform.position.Set(0, 0, 0);
+
+        string playerDataCSV = GetPlayerDataAsCSV();
+        SavePlayerDataToFile(playerDataCSV);
     }
 
     [TargetRpc]
@@ -507,6 +512,9 @@ public class Player : NetworkBehaviour {
 
         // Raise cheat flag
         isCheater = true;
+
+        string playerDataCSV = GetPlayerDataAsCSV();
+        SavePlayerDataToFile(playerDataCSV);
     }
 
     [TargetRpc]
@@ -518,6 +526,36 @@ public class Player : NetworkBehaviour {
 
         // Raise cheat flag
         isCheater = true;
+
+        string playerDataCSV = GetPlayerDataAsCSV();
+        SavePlayerDataToFile(playerDataCSV);
+    }
+    public string GetPlayerDataAsCSV()
+    {
+        string data = "";
+
+        data += playerName.Value + ",";
+        data += health.Value + ",";
+        data += maxHealth.Value + ",";
+        data += playerSpeed.Value + ",";
+        data += isDead.Value + ",";
+        data += isCheater.Value;
+
+        return data;
+    }
+    public void SavePlayerDataToFile(string data)
+    {
+        string filePath = Application.dataPath + "/player_data.csv";
+
+        // If the file doesn't exist, create it and write the header
+        if (!File.Exists(filePath))
+        {
+            string header = "Player Name,Health,Max Health,Player Speed,Is Dead,Is Cheater\n";
+            File.WriteAllText(filePath, header);
+        }
+
+        // Append the player data to the file
+        File.AppendAllText(filePath, data + "\n");
     }
 
 
