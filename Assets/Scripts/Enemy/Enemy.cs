@@ -68,11 +68,6 @@ public class Enemy : NetworkBehaviour {
         }
 
         landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
-
-        playerEnemyTracker = GameObject.Find("CharacterTracker").GetComponent<PlayerEnemyTracker>();
-        if (playerEnemyTracker != null ) {
-            playerEnemyTracker.enemies.Add(gameObject);
-        }
     }
 
     private void Update() {
@@ -83,6 +78,7 @@ public class Enemy : NetworkBehaviour {
             MoveToBehaviour();
         } else {
             rb.velocity = Vector3.zero;
+            rb.angularVelocity = 0;
         }
         //Damage related behaviour
         if (dmgBuffer > 0) {
@@ -239,7 +235,7 @@ public class Enemy : NetworkBehaviour {
     void EnterFlankPhase() {
         attackState = flank;
         MoveTo(transform.position);
-        moveSpeed = regularSpeed;
+        moveSpeed = chargeSpeed;
     }
     void FlankPhase() {
         //check if the enemy has any patience, otherwise perform a charge
@@ -286,6 +282,7 @@ public class Enemy : NetworkBehaviour {
     //Charge Phase: Enemy will charge at the player until they run out of adrenaline or manage to attempt an attack
     [SerializeField] ProtectedFloat maxAdrenalineTime = 10;
     [SerializeField] ProtectedFloat closingDistance = 1.5f;
+    [SerializeField] ProtectedFloat stabbingDistance = 1.5f;
     [SerializeField] ProtectedFloat inflictDamageDelay = 0.1f;
     ProtectedFloat adrenalineTimer = 0;
     ProtectedBool enteredAttack = false;
@@ -319,7 +316,7 @@ public class Enemy : NetworkBehaviour {
             moveTo = false;
             timeTillDamage -= Time.deltaTime;
             if (timeTillDamage <= 0) {
-                if (dist <= closingDistance) {
+                if (dist <= stabbingDistance) {
                     playerScript.TakeDamage(LevelOfDamage);
                     Debug.Log("Inflict damage");
                 }
@@ -459,10 +456,10 @@ public class Enemy : NetworkBehaviour {
         Player player = collision.gameObject.GetComponentInParent<Player>();
         if (player != null) {
             playersDetected.Remove(player.gameObject);
-            if (player = playerScript) {
-                playerTarget = null;
-                playerScript = null;
-            }
+            //if (player = playerScript) {
+            //    playerTarget = null;
+            //    playerScript = null;
+            //}
         }
         Enemy enemy = collision.gameObject.GetComponent<Enemy>();
         if (enemy != null) {

@@ -385,6 +385,34 @@ public class FoliageSimulator : NetworkBehaviour {
             return false;
         }
     }
+
+    public void LoadBushFromClassifier(BushesClassifier bc) {
+        //fill all data values
+        for (int i = 0; i < bc.length; i++) {
+            Vector2Int tile = new Vector2Int(bc.bushLocX[i], bc.bushLocY[i]);
+            //Debug.Log(tile.x * LandScapeSimulator.TerrainSize + tile.y);
+            FoliageTilemap.SetTile(new Vector3Int(tile.x - LandScapeSimulator.TerrainSize / 2, tile.y - LandScapeSimulator.TerrainSize / 2, 0), FreshBerryBushes[Random.Range(0, 4)]);
+            LandScapeSimulator.NavComponent[tile.x * LandScapeSimulator.TerrainSize + tile.y].Traversability = avoid;
+            LandScapeSimulator.FlammefyTile(tile.x * LandScapeSimulator.TerrainSize + tile.y);
+
+            FoliageData.AddEntity(new BushBerriesComponent {
+                BerryCount = 0,
+                Countdown = 0,
+                Tile = tile
+            });
+        }
+    }
+    public void LoadRocksFromClassifier(RocksClassifier rc) {
+        for (int i = 0; i < rc.rockLocX.Length; i++) {
+            Vector2Int tile = new Vector2Int(rc.rockLocX[i], rc.rockLocY[i]);
+
+            FoliageTilemap.SetTile(new Vector3Int(tile.x - LandScapeSimulator.TerrainSize / 2, tile.y - LandScapeSimulator.TerrainSize / 2, 0), Rocks[Random.Range(0, 9)]);
+
+            LandScapeSimulator.NavComponent[tile.x * LandScapeSimulator.TerrainSize + tile.y].Traversability = obstacle;
+            LandScapeSimulator.NeutralizeTile(tile.x * LandScapeSimulator.TerrainSize + tile.y);
+            RockTilingData.Add(new Vector2Int(tile.x, tile.y));
+        }
+    }
 }
 
 [System.Serializable]
