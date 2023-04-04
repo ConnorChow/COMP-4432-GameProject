@@ -12,9 +12,6 @@ public class MainMenu : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private NetworkManager networkManager;
-    [SerializeField] private myNetworkManager mnetworkManager;
-    //[SerializeField] private GameObject mainMenuPage = null;
-    //[SerializeField] private GameObject joinPage = null;
     [SerializeField] private TMP_InputField ipAddressInputField = null;
     [SerializeField] private Button hostSlot1 = null;
     [SerializeField] private Button hostSlot2 = null;

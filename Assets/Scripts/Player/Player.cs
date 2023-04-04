@@ -296,6 +296,12 @@ public class Player : NetworkBehaviour {
         playerAudioSource.Play();
     }
 
+    [Command]
+    void RequestToHeal(int amount)
+    {
+        Heal(amount);
+    }
+
     [ClientRpc]
     public void Heal(int amount) {
         if (health < Globals.maxHealth) { health += amount; }
@@ -418,7 +424,7 @@ public class Player : NetworkBehaviour {
         {
             reviveTimer.GetComponent<TMP_Text>().text = $"{player.health * 10 + 10}%\nRevived";
             Debug.Log($"Reviving: {player.health * 10}%");
-            player.Heal(1);
+            player.RequestToHeal(1);
             yield return new WaitForSecondsRealtime(1f);
         }
 
