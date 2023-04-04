@@ -37,6 +37,10 @@ public class SlotSelectionTool : MonoBehaviour {
         //identify slot index for each save slot (1, 2, 3, ...)
         string prefName = "SlotSaved" + slotIndex.ToString();
 
+        //specify slot we must load for landscape simulator
+        PlayerPrefs.SetInt("loadSlot", slotIndex);
+        PlayerPrefs.SetString(prefName, "ACTIVE");
+
         //either generate a new map to fill a slot
         if (slotName == "EMPTY") {
             PlayerPrefs.SetInt("loadMap", 0);
@@ -44,8 +48,5 @@ public class SlotSelectionTool : MonoBehaviour {
         } else { //or, load a map from a slot
             PlayerPrefs.SetInt("loadMap", 0);
         }
-        //specify slot we must load for landscape simulator
-        PlayerPrefs.SetInt("loadSlot", slotIndex);
-        PlayerPrefs.SetString(prefName, "ACTIVE");
     }
 }

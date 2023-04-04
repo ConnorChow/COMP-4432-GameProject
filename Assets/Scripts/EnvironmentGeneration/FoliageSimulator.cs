@@ -332,18 +332,17 @@ public class FoliageSimulator : NetworkBehaviour {
                 //1 represents true
                 case 1: tryLoad = true; break;
             }
-            //Try to load from a slot or generate a new one
-            if (PlayerPrefs.HasKey("loadSlot") && tryLoad) {
-                saveSlot = PlayerPrefs.GetInt("loadSlot");
-            } else {
-                //by default override slot 0 if there is no incoming data
-                PlayerPrefs.SetInt("numSlots", 1);
-                PlayerPrefs.SetInt("loadSlot", 1);
-                //ensure map does not try loading as there definitely does not exist said slot
-                tryLoad = false;
-            }
         } else {
             PlayerPrefs.SetInt("loadMap", 0);
+            tryLoad = false;
+        }
+        //Try to load from a slot or generate a new one
+        if (PlayerPrefs.HasKey("loadSlot")) {
+            saveSlot = PlayerPrefs.GetInt("loadSlot");
+        } else {
+            //by default override slot 0 if there is no incoming data
+            PlayerPrefs.SetInt("loadSlot", 1);
+            //ensure map does not try loading as there definitely does not exist said slot
             tryLoad = false;
         }
     }
@@ -388,9 +387,9 @@ public class FoliageSimulator : NetworkBehaviour {
 
     public void LoadBushFromClassifier(BushesClassifier bc) {
         //fill all data values
-        for (int i = 0; i < bc.length; i++) {
+        for (int i = 0; i < bc.bushLocX.Length; i++) {
             Vector2Int tile = new Vector2Int(bc.bushLocX[i], bc.bushLocY[i]);
-            //Debug.Log(tile.x * LandScapeSimulator.TerrainSize + tile.y);
+
             FoliageTilemap.SetTile(new Vector3Int(tile.x - LandScapeSimulator.TerrainSize / 2, tile.y - LandScapeSimulator.TerrainSize / 2, 0), FreshBerryBushes[Random.Range(0, 4)]);
             LandScapeSimulator.NavComponent[tile.x * LandScapeSimulator.TerrainSize + tile.y].Traversability = avoid;
             LandScapeSimulator.FlammefyTile(tile.x * LandScapeSimulator.TerrainSize + tile.y);

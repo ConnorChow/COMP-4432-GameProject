@@ -13,12 +13,10 @@ public struct BurnQueueClassifier {
 }
 
 public struct BushesClassifier {
-    public int length;
     public int[] bushLocX;
     public int[] bushLocY;
 }
 public struct RocksClassifier {
-    public int length;
     public int[] rockLocX;
     public int[] rockLocY;
 }
@@ -56,9 +54,23 @@ public class EnvironmentSync : NetworkBehaviour {
 
         // init bush sync data
         chunkQty = Mathf.CeilToInt((float)fsd.BerryTilesX.Length / (float)foliageChunkSize);
-        int remainingInstances = fsd.BerryTilesX.Length;
+        int numInstances = fsd.BerryTilesX.Length;
+        BushesClassifier bc = new BushesClassifier {
+            bushLocX = fsd.BerryTilesX,
+            bushLocY = fsd.BerryTilesY
+        };
+        SynchronizeBushes(bc);
 
-        // Load bushes instances
+        //init rock sync data
+        chunkQty = Mathf.CeilToInt((float)fsd.RockTilesX.Length / (float)foliageChunkSize);
+        numInstances = fsd.RockTilesX.Length;
+        RocksClassifier rc = new RocksClassifier {
+            rockLocX = fsd.RockTilesX,
+            rockLocY = fsd.RockTilesY
+        };
+        SynchronizeRocks(rc);
+
+        //// Load bushes instances
         //for (int chunkInterval = 0; chunkInterval < chunkQty; chunkInterval++) {
         //    if (remainingInstances > chunkSize) {
         //        remainingInstances -= chunkSize;
@@ -69,6 +81,7 @@ public class EnvironmentSync : NetworkBehaviour {
         //        };
         //        for (int i = 0; i < chunkSize; i++) {
         //            int j = (chunkInterval * chunkQty) + i;
+        //            Debug.Log("i = " + j);
         //            bc.bushLocX[i] = fsd.BerryTilesX[j];
         //            bc.bushLocY[i] = fsd.BerryTilesY[j];
         //        }
@@ -81,6 +94,7 @@ public class EnvironmentSync : NetworkBehaviour {
         //        };
         //        for (int i = 0; i < remainingInstances; i++) {
         //            int j = (chunkInterval * chunkQty) + i;
+        //            Debug.Log("i = " + j);
         //            bc.bushLocX[i] = fsd.BerryTilesX[j];
         //            bc.bushLocY[i] = fsd.BerryTilesY[j];
         //        }
@@ -88,12 +102,10 @@ public class EnvironmentSync : NetworkBehaviour {
         //    }
         //}
 
-        //init rock sync data
-        chunkQty = Mathf.CeilToInt((float)fsd.RockTilesX.Length / (float)foliageChunkSize);
-        remainingInstances = fsd.RockTilesX.Length;
 
-        // Load rocks instances
-        //for (int chunkInterval = 0; chunkInterval < chunkQty; chunkInterval++) {
+
+        //// Load rocks instances
+        //for (int rockChunkInterval = 0; rockChunkInterval < chunkQty; rockChunkInterval++) {
         //    if (remainingInstances > chunkSize) {
         //        remainingInstances -= chunkSize;
         //        RocksClassifier rc = new RocksClassifier {
@@ -102,7 +114,8 @@ public class EnvironmentSync : NetworkBehaviour {
         //            rockLocY = new int[chunkSize]
         //        };
         //        for (int i = 0; i < chunkSize; i++) {
-        //            int j = (chunkInterval * chunkQty) + i;
+        //            int j = (rockChunkInterval * chunkQty) + i;
+        //            Debug.Log("i = " + j);
         //            rc.rockLocX[i] = fsd.RockTilesX[j];
         //            rc.rockLocY[i] = fsd.RockTilesY[j];
         //        }
@@ -114,7 +127,8 @@ public class EnvironmentSync : NetworkBehaviour {
         //            rockLocY = new int[remainingInstances]
         //        };
         //        for (int i = 0; i < remainingInstances; i++) {
-        //            int j = (chunkInterval * chunkQty) + i;
+        //            int j = (rockChunkInterval * chunkQty) + i;
+        //            Debug.Log("i = " + j);
         //            rc.rockLocX[i] = fsd.RockTilesX[j];
         //            rc.rockLocY[i] = fsd.RockTilesY[j];
         //        }
@@ -195,10 +209,12 @@ public class EnvironmentSync : NetworkBehaviour {
 
     [ClientRpc]
     public void SynchronizeBushes(BushesClassifier bc) {
+        if (isServer) return;
         foliage.LoadBushFromClassifier(bc);
     }
     [ClientRpc]
-    public void SyncronizeRocks(RocksClassifier bc) {
+    public void SynchronizeRocks(RocksClassifier bc) {
+        if (isServer) return;
         foliage.LoadRocksFromClassifier(bc);
     }
 }
