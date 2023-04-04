@@ -161,9 +161,9 @@ public class Player : NetworkBehaviour {
 
         if (!isDead)
         {
-            reviveText.gameObject.SetActive(false);
-            reviveTimer.gameObject.SetActive(false);
-            deathOverlay.gameObject.SetActive(false);
+            reviveText.SetActive(false);
+            reviveTimer.SetActive(false);
+            deathOverlay.SetActive(false);
         }
         //Display the cooldown on objects
         if (bowTimer > 0) {
@@ -195,12 +195,13 @@ public class Player : NetworkBehaviour {
             else Pause();
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            TakeDamage(10);
-        }
+        // Suicide
+        //if (Input.GetKeyDown(KeyCode.Q))
+        //{
+        //    TakeDamage(10);
+        //}
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             StartCoroutine(revive(this));
         }
