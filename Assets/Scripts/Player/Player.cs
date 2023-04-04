@@ -45,6 +45,7 @@ public class Player : NetworkBehaviour {
     [SerializeField] Slider bombCooldownSlider;
 
     [SerializeField] private GameObject playerHUD;
+    public GameObject playerMap;
     [SerializeField] private GameObject pauseMenu;
     //Pause Menu Buttons for resuming the game and quitting the game
     [SerializeField] Button resumeButton;

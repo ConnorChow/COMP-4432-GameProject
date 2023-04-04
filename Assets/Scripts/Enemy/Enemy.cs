@@ -56,10 +56,15 @@ public class Enemy : NetworkBehaviour {
         rb = GetComponent<Rigidbody2D>();
     }
 
+    [SerializeField] GameObject enemyMarker;
+
     private void Start() {
         health = maxHealth;
         
         spawnPosition = transform.position;
+
+        enemyMarker.GetComponent<HostilesMarkerBehaviour>().marker = gameObject;
+        Instantiate(enemyMarker);
 
         // perform some random initialization on the flanking behaviour
         flankPatienceTimer = UnityEngine.Random.Range(flankingPatience/2, flankingPatience);
