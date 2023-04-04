@@ -47,6 +47,8 @@ public class Player : NetworkBehaviour {
     [SerializeField] private GameObject playerHUD;
     [SerializeField] private GameObject reviveText;
     [SerializeField] private GameObject reviveTimer;
+    [SerializeField] private GameObject deathOverlay;
+
     public GameObject playerMap;
     [SerializeField] private GameObject pauseMenu;
     //Pause Menu Buttons for resuming the game and quitting the game
@@ -96,7 +98,7 @@ public class Player : NetworkBehaviour {
 
         reviveText = GameObject.FindGameObjectWithTag("Revive");
         reviveTimer = GameObject.FindGameObjectWithTag("Timer");
-
+        deathOverlay = GameObject.FindGameObjectWithTag("DeathOverlay");
 
         rb = GetComponentInChildren<Rigidbody2D>();
 
@@ -144,10 +146,10 @@ public class Player : NetworkBehaviour {
         } else {
             Vector3Int tileLoc = new Vector3Int((int)Mathf.Round(rb.transform.position.x - 0.5f), (int)Mathf.Round(rb.transform.position.y - 0.5f), 0);
 
-            //if (landscape.FireGrid.GetTile(tileLoc) != null)
-            //{
-            //    TakeDamage(2);
-            //}
+            if (landscape.FireGrid.GetTile(tileLoc) != null)
+            {
+                TakeDamage(2);
+            }
             fireCheck = fireCheckInterval;
         }
 
@@ -161,6 +163,7 @@ public class Player : NetworkBehaviour {
         {
             reviveText.gameObject.SetActive(false);
             reviveTimer.gameObject.SetActive(false);
+            deathOverlay.gameObject.SetActive(false);
         }
         //Display the cooldown on objects
         if (bowTimer > 0) {
@@ -271,6 +274,7 @@ public class Player : NetworkBehaviour {
         isDead = true;
         health = 0;
         reviveText.SetActive(true);
+        deathOverlay.SetActive(true);
         RequestKillPlayer();
     }
 
@@ -431,6 +435,7 @@ public class Player : NetworkBehaviour {
         if (player.health == Globals.maxHealth)
         {
             reviveTimer.SetActive(false);
+            deathOverlay.SetActive(true);
             Debug.Log("Revived");
             player.isDead = false;
             rb.simulated = true;
