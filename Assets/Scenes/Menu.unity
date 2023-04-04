@@ -1816,13 +1816,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 1639834844}
-  mnetworkManager: {fileID: 0}
   ipAddressInputField: {fileID: 178945051}
   hostSlot1: {fileID: 1823371250}
   hostSlot2: {fileID: 58318668}
   hostSlot3: {fileID: 125807789}
   joinButton: {fileID: 657421383}
-  deletePrefs: 0
+  deletePrefs: 1
 --- !u!1 &794128132
 GameObject:
   m_ObjectHideFlags: 0
@@ -4832,7 +4831,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 3.2395833
+  orthographic size: 3.0572917
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
