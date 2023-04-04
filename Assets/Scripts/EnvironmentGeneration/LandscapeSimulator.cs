@@ -435,7 +435,7 @@ public class LandscapeSimulator : NetworkBehaviour {
         tiles[16].SetParams(DirtGrassRight, new int[4] { Dirt, DirtVGrass, Grass, DirtVGrass });
         tiles[17].SetParams(DirtGrassDownRight, new int[4] { Dirt, Dirt, GrassVDirt, DirtVGrass });
 
-        SaveEnvironment(saveSlot);
+        //SaveEnvironment(saveSlot);
     }
 
     // Update is called once per frame
