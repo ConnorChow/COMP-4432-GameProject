@@ -66,6 +66,8 @@ public class Enemy : NetworkBehaviour {
         if (UnityEngine.Random.Range(0, 2) == 1) {
             flankingAngleInterval *= -1;
         }
+        //Start the default radius for enemies to start flanking at
+        randomRadius = minRadius + UnityEngine.Random.Range(-radiusTolerance, radiusTolerance);
 
         landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
     }
@@ -211,16 +213,18 @@ public class Enemy : NetworkBehaviour {
     //Confront phase: Try to get within a certain radius of the player before shifting to flank phase
     [SerializeField] ProtectedFloat minRadius = 3;
     [SerializeField] ProtectedFloat radiusTolerance = 1;
+    ProtectedFloat randomRadius;
     void EnterConfrontPhase() {
         moveSpeed = regularSpeed;
         MoveTo(transform.position);
         attackState = confront;
+        randomRadius = minRadius + UnityEngine.Random.Range(-radiusTolerance, radiusTolerance);
     }
     void ConfrontPhase() {
         MoveTo(playerScript.rb.transform.position);
         if (moveTo) {
             float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
-            if (dist <= minRadius + UnityEngine.Random.Range(-radiusTolerance, radiusTolerance)) {
+            if (dist <= randomRadius) {
                 EnterFlankPhase();
             }
         }

@@ -16,7 +16,7 @@ public class Player : NetworkBehaviour {
     [SyncVar(hook = nameof(helloChange))]
     public int helloCount = 0;
 
-    public readonly myNetworkManager networkManager;// = new myNetworkManager();
+    public readonly myNetworkManager networkManager = new myNetworkManager();
 
     // Player Stats
     public ProtectedInt32 health;
@@ -171,7 +171,7 @@ public class Player : NetworkBehaviour {
             if (paused) Resume();
             else Pause();
         }
-        //updateIP();
+        updateIP();
     }
 
     // Player Functions
@@ -209,9 +209,14 @@ public class Player : NetworkBehaviour {
         rb.MoveRotation(rotation);
     }
 
+    [Command(requiresAuthority = false)]
     public void TakeDamage(int amount) {
         if (dmgBuffer > 0) return;
+        ApplyDamage(amount);
+    }
 
+    [ClientRpc]
+    void ApplyDamage(int amount) {
         health -= amount;
 
         dmgBuffer = dmgBufferInterval;
