@@ -343,7 +343,6 @@ public class LandscapeSimulator : NetworkBehaviour {
                 CollapseTerrain(x, y);
             }
         }
-        SaveEnvironment(saveSlot);
     }
 
     public void initializeTileTypes() {
@@ -382,7 +381,6 @@ public class LandscapeSimulator : NetworkBehaviour {
         Map2D = new WFCTile[TerrainSize * TerrainSize];
         NavComponent = new Navigation[TerrainSize * TerrainSize];
         BurnData = new BurnComponent[TerrainSize * TerrainSize];
-        //BurnQueue = new ProtectedInt32[TerrainSize];
     }
 
     // Awake is called when object loads
@@ -414,6 +412,31 @@ public class LandscapeSimulator : NetworkBehaviour {
 
     public bool loadInFire = true;
     public bool isMapLoaded = false;
+
+    private void Start() {
+        //[0] = left, [1] = up, [2] = right, [3] = down
+        //GrassVDirt = Grass on down/left, Dirt on up/right
+        tiles[0].SetParams(DirtFull, new int[4] { Dirt, Dirt, Dirt, Dirt });
+        tiles[1].SetParams(GrassFull, new int[4] { Grass, Grass, Grass, Grass });
+        tiles[2].SetParams(GrassDirtDown, new int[4] { DirtVGrass, Grass, DirtVGrass, Dirt });
+        tiles[3].SetParams(GrassDirtDownLeft, new int[4] { DirtVGrass, Grass, Grass, DirtVGrass });
+        tiles[4].SetParams(GrassDirtLeft, new int[4] { Dirt, DirtVGrass, Grass, DirtVGrass });
+        tiles[5].SetParams(GrassDirtUpLeft, new int[4] { GrassVDirt, DirtVGrass, Grass, Grass });
+        tiles[6].SetParams(GrassDirtUp, new int[4] { GrassVDirt, Dirt, GrassVDirt, Grass });
+        tiles[7].SetParams(GrassDirtUpRight, new int[4] { Grass, GrassVDirt, GrassVDirt, Grass });
+        tiles[8].SetParams(GrassDirtRight, new int[4] { Grass, GrassVDirt, Dirt, GrassVDirt });
+        tiles[9].SetParams(GrassDirtDownRight, new int[4] { Grass, Grass, DirtVGrass, GrassVDirt });
+        tiles[10].SetParams(DirtGrassDown, new int[4] { GrassVDirt, Dirt, GrassVDirt, Grass });
+        tiles[11].SetParams(DirtGrassDownLeft, new int[4] { GrassVDirt, Dirt, Dirt, GrassVDirt });
+        tiles[12].SetParams(DirtGrassLeft, new int[4] { Grass, GrassVDirt, Dirt, GrassVDirt });
+        tiles[13].SetParams(DirtGrassUpLeft, new int[4] { DirtVGrass, GrassVDirt, Dirt, Dirt });
+        tiles[14].SetParams(DirtGrassUp, new int[4] { DirtVGrass, Grass, DirtVGrass, Dirt });
+        tiles[15].SetParams(DirtGrassUpRight, new int[4] { Dirt, DirtVGrass, DirtVGrass, Dirt });
+        tiles[16].SetParams(DirtGrassRight, new int[4] { Dirt, DirtVGrass, Grass, DirtVGrass });
+        tiles[17].SetParams(DirtGrassDownRight, new int[4] { Dirt, Dirt, GrassVDirt, DirtVGrass });
+
+        //SaveEnvironment(saveSlot);
+    }
 
     // Update is called once per frame
     void Update() {
@@ -556,7 +579,7 @@ public class LandscapeSimulator : NetworkBehaviour {
 
     //Write to Player JSON file
     public void SaveEnvironment(int slot) {
-        Debug.Log("Saving");
+        Debug.Log("Saving to slot " + slot);
         LandscapeSaveData lsd = new LandscapeSaveData(this);
         string EnvData = JsonUtility.ToJson(lsd);
         File.WriteAllText(Application.persistentDataPath + "/LandscapeData" + slot + ".json", EnvData);
@@ -573,27 +596,26 @@ public class LandscapeSimulator : NetworkBehaviour {
                 //1 represents true
                 case 1: tryLoadMap = true; break;
             }
-            //Try to load from a slot or generate a new one
-            if (PlayerPrefs.HasKey("loadSlot") && tryLoadMap) {
-                saveSlot = PlayerPrefs.GetInt("loadSlot");
-            } else {
-                //by default override slot 0 if there is no incoming data
-                PlayerPrefs.SetInt("numSlots", 1);
-                PlayerPrefs.SetInt("loadSlot", 1);
-                //ensure map does not try loading as there definitely does not exist said slot
-                tryLoadMap = false;
-            }
         } else {
             PlayerPrefs.SetInt("loadMap", 0);
+            tryLoadMap = false;
+        }
+        //Try to load from a slot or generate a new one
+        if (PlayerPrefs.HasKey("loadSlot")) {
+            saveSlot = PlayerPrefs.GetInt("loadSlot");
+        } else {
+            PlayerPrefs.SetInt("loadSlot", 1);
+            //ensure map does not try loading as there definitely does not exist said slot
             tryLoadMap = false;
         }
     }
 
     //We load save data from JSON if it exists, otherwise delete it
     public bool LoadEnvironment(int slot) {
+        Debug.Log("Loading from slot " + slot);
         if (File.Exists(Application.persistentDataPath + "/LandscapeData" + slot + ".json") && tryLoadMap) {
             LandscapeSaveData lsd = JsonUtility.FromJson<LandscapeSaveData>(File.ReadAllText(Application.persistentDataPath + "/LandscapeData" + slot + ".json"));
-            TerrainSize = lsd.terrainSize;
+            //TerrainSize = lsd.terrainSize;
             Map2D = new WFCTile[lsd.map2DIndex.Length];
             NavComponent = new Navigation[lsd.map2DIndex.Length];
             BurnData = new BurnComponent[lsd.map2DIndex.Length];
@@ -623,7 +645,6 @@ public class LandscapeSimulator : NetworkBehaviour {
         int chunkSize = m2d.chunkSize;
         int chunkInterval = m2d.chunkInterval;
         int offset = chunkSize * chunkInterval;
-
 
         for (int i = 0; i < chunkSize; i++) {
             Map2D[i + offset] = tiles[

@@ -36,7 +36,8 @@ public class GetLocation : MonoBehaviour
 
 		IPAddress = www.downloadHandler.text;
 		StartCoroutine (GetCoordinates());*/
-		var www = UnityWebRequest.Get("https://api.ipify.org?format=json&ip=216.211.17.25");
+		//var www = UnityWebRequest.Get("https://api.ipify.org?format=json&ip=216.211.17.25");
+		var www = UnityWebRequest.Get("https://geo.ipify.org/api/v2/country,city?apiKey=at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K&ipAddress=216.211.17.25");
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)

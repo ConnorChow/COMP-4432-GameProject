@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6861488911404734218}
   - component: {fileID: 1567308257045694328}
+  - component: {fileID: 1372246841207924192}
   - component: {fileID: 5999090430591205366}
-  - component: {fileID: 3931750851400574068}
   - component: {fileID: 4144951305791333973}
   - component: {fileID: 4088202382498979552}
   - component: {fileID: 353038191877939572}
@@ -57,35 +57,8 @@ MonoBehaviour:
   serverOnly: 0
   visible: 0
   hasSpawned: 0
---- !u!50 &5999090430591205366
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6375676033790927927}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 0.0001
-  m_LinearDrag: 0
-  m_AngularDrag: 0
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!61 &3931750851400574068
-BoxCollider2D:
+--- !u!58 &1372246841207924192
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -117,18 +90,35 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.64, y: 0.65}
-    newSize: {x: 0.64, y: 0.65}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.33
+--- !u!50 &5999090430591205366
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6375676033790927927}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 0.0001
+  m_LinearDrag: 0
+  m_AngularDrag: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!114 &4144951305791333973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,7 +187,9 @@ MonoBehaviour:
   regularSpeed:
     fakeValue: 2
   chargeSpeed:
-    fakeValue: 4
+    fakeValue: 3.5
+  LevelOfDamage:
+    fakeValue: 2
   playerTarget: {fileID: 0}
   playerScript: {fileID: 0}
   dmgBufferInterval:
@@ -215,15 +207,27 @@ MonoBehaviour:
   waitIdlyTime:
     fakeValue: 2
   minRadius:
-    fakeValue: 3
+    fakeValue: 3.5
   radiusTolerance:
     fakeValue: 2
   flankingPatience:
     fakeValue: 5
   flankingAngleInterval:
     fakeValue: 20
+  maxAdrenalineTime:
+    fakeValue: 10
+  closingDistance:
+    fakeValue: 1
+  stabbingDistance:
+    fakeValue: 1.25
+  inflictDamageDelay:
+    fakeValue: 0.175
+  maxRetreatDistance:
+    fakeValue: 5
   MoveToTolerance:
     fakeValue: 0.1
+  stuckDistance:
+    fakeValue: 0.0125
 --- !u!114 &8675217294755881859
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -66,13 +66,10 @@ public class Enemy : NetworkBehaviour {
         if (UnityEngine.Random.Range(0, 2) == 1) {
             flankingAngleInterval *= -1;
         }
+        //Start the default radius for enemies to start flanking at
+        randomRadius = minRadius + UnityEngine.Random.Range(-radiusTolerance, radiusTolerance);
 
         landscape = GameObject.Find("Landscape").GetComponent<LandscapeSimulator>();
-
-        playerEnemyTracker = GameObject.Find("CharacterTracker").GetComponent<PlayerEnemyTracker>();
-        if (playerEnemyTracker != null ) {
-            playerEnemyTracker.enemies.Add(gameObject);
-        }
     }
 
     private void Update() {
@@ -83,6 +80,7 @@ public class Enemy : NetworkBehaviour {
             MoveToBehaviour();
         } else {
             rb.velocity = Vector3.zero;
+            rb.angularVelocity = 0;
         }
         //Damage related behaviour
         if (dmgBuffer > 0) {
@@ -200,6 +198,7 @@ public class Enemy : NetworkBehaviour {
         //Reset general state data
         attackState = confront;
         moveSpeed = regularSpeed;
+        MoveTo(transform.position);
         //Reset Flanking State
         ResetFlankInit();
         //Reset Charging State
@@ -214,17 +213,18 @@ public class Enemy : NetworkBehaviour {
     //Confront phase: Try to get within a certain radius of the player before shifting to flank phase
     [SerializeField] ProtectedFloat minRadius = 3;
     [SerializeField] ProtectedFloat radiusTolerance = 1;
+    ProtectedFloat randomRadius;
     void EnterConfrontPhase() {
         moveSpeed = regularSpeed;
         MoveTo(transform.position);
         attackState = confront;
+        randomRadius = minRadius + UnityEngine.Random.Range(-radiusTolerance, radiusTolerance);
     }
     void ConfrontPhase() {
         MoveTo(playerScript.rb.transform.position);
         if (moveTo) {
             float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
-            if (dist <= minRadius) {
-                Debug.Log("Player reached");
+            if (dist <= randomRadius) {
                 EnterFlankPhase();
             }
         }
@@ -237,10 +237,9 @@ public class Enemy : NetworkBehaviour {
                                                                 //Smaller values are smoother but have the AI calculate the rotation more frequently
     ProtectedFloat flankPatienceTimer;
     void EnterFlankPhase() {
-        Debug.Log("begin Flank");
         attackState = flank;
         MoveTo(transform.position);
-        moveSpeed = regularSpeed;
+        moveSpeed = chargeSpeed;
     }
     void FlankPhase() {
         //check if the enemy has any patience, otherwise perform a charge
@@ -287,12 +286,12 @@ public class Enemy : NetworkBehaviour {
     //Charge Phase: Enemy will charge at the player until they run out of adrenaline or manage to attempt an attack
     [SerializeField] ProtectedFloat maxAdrenalineTime = 10;
     [SerializeField] ProtectedFloat closingDistance = 1.5f;
+    [SerializeField] ProtectedFloat stabbingDistance = 1.5f;
     [SerializeField] ProtectedFloat inflictDamageDelay = 0.1f;
     ProtectedFloat adrenalineTimer = 0;
     ProtectedBool enteredAttack = false;
     ProtectedFloat timeTillDamage = 0;
     void EnterChargePhase() {
-        Debug.Log("Begin Charge");
         MoveTo(transform.position);
         attackState = charge;
         moveSpeed = chargeSpeed;
@@ -305,6 +304,7 @@ public class Enemy : NetworkBehaviour {
         float dist = Vector3.Distance(playerScript.rb.transform.position, transform.position);
         if (dist <= closingDistance && !enteredAttack) {
             MoveTo(transform.position);
+
             if (timeTillDamage <= 0) {
                 enemyAnimator.ResetTrigger("Attack");
             }
@@ -315,11 +315,12 @@ public class Enemy : NetworkBehaviour {
         }
         //behaviour for if in attack
         if (enteredAttack) {
+            MoveTo(transform.position);
             enemyAnimator.SetTrigger("Attack");
             moveTo = false;
             timeTillDamage -= Time.deltaTime;
             if (timeTillDamage <= 0) {
-                if (dist <= closingDistance) {
+                if (dist <= stabbingDistance) {
                     playerScript.TakeDamage(LevelOfDamage);
                     Debug.Log("Inflict damage");
                 }
@@ -338,7 +339,6 @@ public class Enemy : NetworkBehaviour {
     [SerializeField] ProtectedFloat maxRetreatDistance = 5;
     ProtectedBool startedRetreat = false;
     void EnterRetreatPhase() {
-        Debug.Log("Begin Retreat");
         moveSpeed = regularSpeed;
         enteredAttack = false;
         adrenalineTimer = 0;
@@ -460,6 +460,10 @@ public class Enemy : NetworkBehaviour {
         Player player = collision.gameObject.GetComponentInParent<Player>();
         if (player != null) {
             playersDetected.Remove(player.gameObject);
+            //if (player = playerScript) {
+            //    playerTarget = null;
+            //    playerScript = null;
+            //}
         }
         Enemy enemy = collision.gameObject.GetComponent<Enemy>();
         if (enemy != null) {

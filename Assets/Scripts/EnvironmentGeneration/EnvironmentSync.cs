@@ -25,7 +25,7 @@ public class EnvironmentSync : NetworkBehaviour {
     [SerializeField] LandscapeSimulator landscape;
     [SerializeField] FoliageSimulator foliage;
     int chunkSize = 4096; //FUCKING MAKE INTO 2^x
-    int foliageChunkSize = 2048;
+    int foliageChunkSize = 1024;
     public int chunkQty = 0;
     private Map2dClassifier[] m2d;
 
@@ -49,9 +49,92 @@ public class EnvironmentSync : NetworkBehaviour {
     [Command(requiresAuthority = false)]
     public void RequestSynchronizeClientTerrain() {
 
+        // for loading foliage data
         FoliageSaveData fsd = new FoliageSaveData(foliage);
-        chunkQty = fsd.BerryTilesX.Length;
 
+        // init bush sync data
+        chunkQty = Mathf.CeilToInt((float)fsd.BerryTilesX.Length / (float)foliageChunkSize);
+        int numInstances = fsd.BerryTilesX.Length;
+        BushesClassifier bc = new BushesClassifier {
+            bushLocX = fsd.BerryTilesX,
+            bushLocY = fsd.BerryTilesY
+        };
+        SynchronizeBushes(bc);
+
+        //init rock sync data
+        chunkQty = Mathf.CeilToInt((float)fsd.RockTilesX.Length / (float)foliageChunkSize);
+        numInstances = fsd.RockTilesX.Length;
+        RocksClassifier rc = new RocksClassifier {
+            rockLocX = fsd.RockTilesX,
+            rockLocY = fsd.RockTilesY
+        };
+        SynchronizeRocks(rc);
+
+        //// Load bushes instances
+        //for (int chunkInterval = 0; chunkInterval < chunkQty; chunkInterval++) {
+        //    if (remainingInstances > chunkSize) {
+        //        remainingInstances -= chunkSize;
+        //        BushesClassifier bc = new BushesClassifier {
+        //            length = chunkSize,
+        //            bushLocX = new int[chunkSize],
+        //            bushLocY = new int[chunkSize]
+        //        };
+        //        for (int i = 0; i < chunkSize; i++) {
+        //            int j = (chunkInterval * chunkQty) + i;
+        //            Debug.Log("i = " + j);
+        //            bc.bushLocX[i] = fsd.BerryTilesX[j];
+        //            bc.bushLocY[i] = fsd.BerryTilesY[j];
+        //        }
+        //        SynchronizeBushes(bc);
+        //    } else {
+        //        BushesClassifier bc = new BushesClassifier {
+        //            length = remainingInstances,
+        //            bushLocX = new int[remainingInstances],
+        //            bushLocY = new int[remainingInstances]
+        //        };
+        //        for (int i = 0; i < remainingInstances; i++) {
+        //            int j = (chunkInterval * chunkQty) + i;
+        //            Debug.Log("i = " + j);
+        //            bc.bushLocX[i] = fsd.BerryTilesX[j];
+        //            bc.bushLocY[i] = fsd.BerryTilesY[j];
+        //        }
+        //        SynchronizeBushes(bc);
+        //    }
+        //}
+
+
+
+        //// Load rocks instances
+        //for (int rockChunkInterval = 0; rockChunkInterval < chunkQty; rockChunkInterval++) {
+        //    if (remainingInstances > chunkSize) {
+        //        remainingInstances -= chunkSize;
+        //        RocksClassifier rc = new RocksClassifier {
+        //            length = chunkSize,
+        //            rockLocX = new int[chunkSize],
+        //            rockLocY = new int[chunkSize]
+        //        };
+        //        for (int i = 0; i < chunkSize; i++) {
+        //            int j = (rockChunkInterval * chunkQty) + i;
+        //            Debug.Log("i = " + j);
+        //            rc.rockLocX[i] = fsd.RockTilesX[j];
+        //            rc.rockLocY[i] = fsd.RockTilesY[j];
+        //        }
+        //        SyncronizeRocks(rc);
+        //    } else {
+        //        RocksClassifier rc = new RocksClassifier {
+        //            length = remainingInstances,
+        //            rockLocX = new int[remainingInstances],
+        //            rockLocY = new int[remainingInstances]
+        //        };
+        //        for (int i = 0; i < remainingInstances; i++) {
+        //            int j = (rockChunkInterval * chunkQty) + i;
+        //            Debug.Log("i = " + j);
+        //            rc.rockLocX[i] = fsd.RockTilesX[j];
+        //            rc.rockLocY[i] = fsd.RockTilesY[j];
+        //        }
+        //        SyncronizeRocks(rc);
+        //    }
+        //}
 
         LandscapeSaveData lsd = new LandscapeSaveData(landscape);
 
@@ -122,5 +205,16 @@ public class EnvironmentSync : NetworkBehaviour {
             landscape.BurnData[index].Health = bq.health[i];
         }
         landscape.isMapLoaded = true;
+    }
+
+    [ClientRpc]
+    public void SynchronizeBushes(BushesClassifier bc) {
+        if (isServer) return;
+        foliage.LoadBushFromClassifier(bc);
+    }
+    [ClientRpc]
+    public void SynchronizeRocks(RocksClassifier bc) {
+        if (isServer) return;
+        foliage.LoadRocksFromClassifier(bc);
     }
 }

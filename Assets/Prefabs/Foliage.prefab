@@ -184,6 +184,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51354237d34a6574a9fee5aceb2041f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
   BerryBushPicked1: {fileID: 11400000, guid: 842edab7f0a11a944a60b9bc6e95843a, type: 2}
   BerryBushPicked2: {fileID: 11400000, guid: 26cb051e418763a45957863dd188da90, type: 2}
   BerryBushPicked3: {fileID: 11400000, guid: a444b9fb52001994c99b6c5da73737d6, type: 2}
@@ -212,14 +215,14 @@ MonoBehaviour:
   BigRockLeft: {fileID: 11400000, guid: 3d270834cfeeec24ba8eaef4c4c471a2, type: 2}
   BigRockRight: {fileID: 11400000, guid: a6f1f8693e7186240b090bf96d5cbf37, type: 2}
   ClumpQty:
-    fakeValue: 750
+    fakeValue: 400
   ClumpSize:
     fakeValue: 10
   foliageSpacing:
     fakeValue: 5
   FoliageTilemap: {fileID: 1400569845213995982}
   MaxBushInstances:
-    fakeValue: 8192
+    fakeValue: 4096
   LandScapeSimulator: {fileID: 0}
   isHosting:
     fakeValue: 0

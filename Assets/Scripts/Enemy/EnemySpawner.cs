@@ -13,6 +13,7 @@ public class EnemySpawner : NetworkBehaviour
 
     public GameObject[] spawnLocations;
 
+    public HashSet<GameObject> enemyList = new HashSet<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -48,7 +49,21 @@ public class EnemySpawner : NetworkBehaviour
 
         yield return new WaitForSeconds(interval);
         GameObject newEnemy = Instantiate(enemy, spawnLocations[rInt].transform.position, spawnLocations[rInt].transform.rotation); //Enemy spawn
+        enemyList.Add(newEnemy);
         NetworkServer.Spawn(newEnemy);
         StartCoroutine(spawnEnemy(interval, enemy));
+    }
+
+    void load(HashSet<GameObject> enemies)
+    {
+        foreach (var enemy in enemies)
+        {
+            NetworkServer.Spawn(enemy);
+        }
+    }
+
+    void save()
+    {
+
     }
 }

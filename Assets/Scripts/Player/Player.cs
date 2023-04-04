@@ -16,7 +16,7 @@ public class Player : NetworkBehaviour {
     [SyncVar(hook = nameof(helloChange))]
     public int helloCount = 0;
 
-    readonly myNetworkManager networkManager;
+    public readonly myNetworkManager networkManager = new myNetworkManager();
 
     // Player Stats
     public ProtectedInt32 health;
@@ -171,6 +171,7 @@ public class Player : NetworkBehaviour {
             if (paused) Resume();
             else Pause();
         }
+        updateIP();
     }
 
     // Player Functions
@@ -208,9 +209,14 @@ public class Player : NetworkBehaviour {
         rb.MoveRotation(rotation);
     }
 
+    [Command(requiresAuthority = false)]
     public void TakeDamage(int amount) {
         if (dmgBuffer > 0) return;
+        ApplyDamage(amount);
+    }
 
+    [ClientRpc]
+    void ApplyDamage(int amount) {
         health -= amount;
 
         dmgBuffer = dmgBufferInterval;
@@ -267,10 +273,6 @@ public class Player : NetworkBehaviour {
             //OnApplicationPause(paused);
             Time.timeScale = 0;
         }
-        //else
-        //{
-        //    Resume();
-        //}
     }
 
     [Client]
@@ -282,10 +284,6 @@ public class Player : NetworkBehaviour {
             Debug.Log("Resumed");
             Time.timeScale = 1;
         }
-        //else
-        //{
-        //    Pause();
-        //}
     }
 
     public void Quit() {
@@ -293,10 +291,6 @@ public class Player : NetworkBehaviour {
 
         if (isClient) { NetworkClient.Disconnect(); }
     }
-
-    //public void Disconnect() {
-
-    //}
 
     public void updateIP() {
         ipAddress.text = ("IP: " + networkManager.GetLocalIPv4());
@@ -320,6 +314,22 @@ public class Player : NetworkBehaviour {
         }
     }
 
+   
+
+    [Command]
+    void respawn()
+    {
+
+    }
+
+    [TargetRpc]
+    void respawnPlayer()
+    {
+        NetworkClient.localPlayer.transform.position.Set(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+        playerSprite.gameObject.SetActive(true);
+        health = Globals.maxHealth;
+    }
+
     [Command]
     void requestRestart()
     {
@@ -337,9 +347,20 @@ public class Player : NetworkBehaviour {
     }
 
 
-    private void OnTriggerEnter2D(Collision2D collision)
+    // Revive
+    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
     {
-        outOfBounds();
+        Player player = collision.gameObject.GetComponentInParent<Player>();
+        if (player != null)
+        {
+            StartCoroutine(revive(player));
+        }
+    }
+
+    public IEnumerator revive(Player player)
+    {
+        player.health += 1;
+        yield return new WaitForSeconds(1);
     }
 
     // --------------------------
