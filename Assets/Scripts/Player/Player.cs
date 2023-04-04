@@ -119,6 +119,8 @@ public class Player : NetworkBehaviour {
         HandleMovement();
         RotateInDirection0fInput();
 
+        healthSlider.value = (float)health / (float)maxHealth;
+
         // Testing Client to Server Commands
         if (isLocalPlayer && Input.GetKeyDown(KeyCode.X)) {
             Debug.Log("Sending Hello to Server");
