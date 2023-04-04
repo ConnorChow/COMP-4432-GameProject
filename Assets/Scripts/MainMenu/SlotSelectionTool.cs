@@ -46,7 +46,7 @@ public class SlotSelectionTool : MonoBehaviour {
             PlayerPrefs.SetInt("loadMap", 0);
 
         } else { //or, load a map from a slot
-            PlayerPrefs.SetInt("loadMap", 0);
+            PlayerPrefs.SetInt("loadMap", 1);
         }
     }
 }
