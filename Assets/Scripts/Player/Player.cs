@@ -13,6 +13,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : NetworkBehaviour {
 
+    public string playerDataPath = "Assets/Resources/updated_player_data.csv"; // Path to your updated_player_data.csv
+
     // Sync Variable from Server to Client
     [SyncVar(hook = nameof(helloChange))]
     public int helloCount = 0;
@@ -115,6 +117,40 @@ public class Player : NetworkBehaviour {
 
         // Set player to random spawn location
         //rb.transform.position.Set(spawnLocations[spawnLocationChoice].transform.position.x, spawnLocations[spawnLocationChoice].transform.position.y, spawnLocations[spawnLocationChoice].transform.position.z);
+
+        // Read the CSV file
+        string[] lines = File.ReadAllLines(playerDataPath);
+
+        // Parse the CSV and store the data in a Dictionary
+        Dictionary<string, bool> playerCheatingStatus = new Dictionary<string, bool>();
+        bool header = true;
+        foreach (string line in lines)
+        {
+            if (header) // Skip the header line
+            {
+                header = false;
+                continue;
+            }
+
+            string[] columns = line.Split(',');
+            string name = columns[0]; // Get the player name from the first column
+            bool isCheating = Convert.ToBoolean(columns[columns.Length - 1]); // Get the 'cheating_detected' column value
+            playerCheatingStatus.Add(name, isCheating);
+        }
+
+        // Check if the player is marked as cheating and take action
+        if (playerCheatingStatus.ContainsKey(playerName) && playerCheatingStatus[playerName])
+        {
+            Debug.Log("Player is cheating. Access to the game is denied.");
+            // Prevent the player from playing the game
+
+        }
+        else
+        {
+            Debug.Log("Player is not cheating. Access to the game is granted.");
+            // Allow the player to play the game
+
+        }
     }
 
     // Update is called once per frame
@@ -565,10 +601,9 @@ public class Player : NetworkBehaviour {
         // If the file doesn't exist, create it and write the header
         if (!File.Exists(filePath))
         {
-            string header = "Player Name,Health,Max Health,Player Speed,Is Dead,Is Cheater\n";
+            string header = "Player Name,Health,Max Health,Player Speed,Is Dead,is_cheating\n";
             File.WriteAllText(filePath, header);
         }
-
         // Append the player data to the file
         File.AppendAllText(filePath, data + "\n");
     }
