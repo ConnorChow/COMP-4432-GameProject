@@ -405,7 +405,7 @@ public class Player : NetworkBehaviour {
             pauseMenu.gameObject.SetActive(true);
             Debug.Log("Paused");
             //OnApplicationPause(paused);
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
         }
     }
 
@@ -416,7 +416,7 @@ public class Player : NetworkBehaviour {
             pauseMenu.gameObject.SetActive(false);
             playerHUD.gameObject.SetActive(true);
             Debug.Log("Resumed");
-            Time.timeScale = 1;
+            //Time.timeScale = 1;
         }
     }
 
