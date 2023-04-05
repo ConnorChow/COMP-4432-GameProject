@@ -11,7 +11,7 @@ public class EnemySpawner : NetworkBehaviour
 
     public ProtectedFloat swarmerInterval = 10f; //Interchangeable time to spawn enemy
 
-    public ProtectedInt32 mapPopulation = 100;
+    public ProtectedInt32 mapPopulation = 30;
 
     public GameObject[] spawnLocations;
     public ProtectedFloat spawnLocationsJitter = 20;
