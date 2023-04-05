@@ -290,6 +290,8 @@ public class Player : NetworkBehaviour {
         {
             yield return new WaitForSeconds(1/10); // Wait for 5 minutes
             playerSpeed = 0;
+            canFireBomb = false;
+            canFireArrow = false;
         }
     }
 
