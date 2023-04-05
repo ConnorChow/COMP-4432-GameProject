@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class HostilesMarkerBehaviour : NetworkBehaviour {
+public class HostilesMarkerBehaviour : MonoBehaviour {
     public GameObject marker;
     public float terrainSize;
     public float mapDimensions = 150;
@@ -21,8 +21,6 @@ public class HostilesMarkerBehaviour : NetworkBehaviour {
             float posx = mapDimensions * (marker.transform.position.x / terrainSize + 0.5f);
             float posy = mapDimensions * (marker.transform.position.y / terrainSize - 0.5f);
             rtrans.transform.localPosition = new Vector3 (posx, posy, 0);
-            //transform.localPosition = new Vector3(posx, posy, 0);
-            //Debug.Log(new Vector3(posx, posy, 0));
         } else {
             Destroy(gameObject);
         }

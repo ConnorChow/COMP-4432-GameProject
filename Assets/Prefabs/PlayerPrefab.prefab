@@ -3590,6 +3590,7 @@ MonoBehaviour:
   reviveTimer: {fileID: 2157817897765535142}
   deathOverlay: {fileID: 522125154182389581}
   playerMap: {fileID: 6278003308594426527}
+  playerMarker: {fileID: 8563441594690959652, guid: 074c7e199b8c02246bd6d3f1503ddd2e, type: 3}
   pauseMenu: {fileID: 8119435013753998623}
   resumeButton: {fileID: 3688565344351000050}
   quitButton: {fileID: 4113528301519229688}
