@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 Player Name,Health,Max Health,Player Speed,Is Dead,is_cheating
 ,10,10,2.5,False,False
 ,10,10,2.5,False,False
+=======
+Player Name,Health,Max Health,Player Speed,Is Dead,Is Cheater
+,0,10,2.5,True,False
+,0,10,2.5,True,False
+>>>>>>> parent of b69d021 (Revert ".，，，")
