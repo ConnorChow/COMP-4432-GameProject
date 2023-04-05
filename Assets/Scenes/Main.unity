@@ -6018,12 +6018,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 988210770}
   m_Enabled: 1
   m_EditorHideFlags: 0
+<<<<<<< HEAD
   m_Script: {fileID: 11500000, guid: 3c04b447f4b6e48639667fc7ee376004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   health: 0
   maxHealth: 10
   healthBar: {fileID: 1512268778}
+=======
+  m_Script: {fileID: 11500000, guid: dc5493fd8ba3bd149acd35104defd3b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerDataPath: Assets/Resources/updated_player_data.csv
+  player: {fileID: 988210770}
+  gameStatusText: {fileID: 0}
+>>>>>>> 15fdb17a7d7fb5528b13f3c933d5a1e1a4c9aab4
 --- !u!1 &1064509501
 GameObject:
   m_ObjectHideFlags: 0
