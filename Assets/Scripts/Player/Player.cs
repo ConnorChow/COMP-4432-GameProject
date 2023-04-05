@@ -311,7 +311,7 @@ public class Player : NetworkBehaviour {
     {
         while (true)
         {
-            yield return new WaitForSeconds(1/10); // Wait for 5 minutes
+            yield return new WaitForSeconds(1/10); 
             playerSpeed = 0;
             TakeDamage(10);
         }
