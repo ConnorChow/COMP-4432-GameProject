@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OPS.AntiCheat.Field;
 using Mirror;
 
 public class EnemySpawner : NetworkBehaviour
@@ -8,10 +9,12 @@ public class EnemySpawner : NetworkBehaviour
     public GameObject swarmerPrefab;
     public GameObject bigSwarmerPrefab;
 
-    public float swarmerInterval = 10f; //Interchangeable time to spawn enemy
-    public float bigSwarmerInterval = 50f; //Interchangeable time to spawn enemy
+    public ProtectedFloat swarmerInterval = 10f; //Interchangeable time to spawn enemy
+
+    public ProtectedInt32 mapPopulation = 100;
 
     public GameObject[] spawnLocations;
+    public ProtectedFloat spawnLocationsJitter = 20;
 
     public HashSet<GameObject> enemyList = new HashSet<GameObject>();
 
@@ -19,14 +22,22 @@ public class EnemySpawner : NetworkBehaviour
     void Start()
     {
         spawnLocations = GameObject.FindGameObjectsWithTag("EnemySpawn");
+        foreach (GameObject spawnLocation in spawnLocations) {
+            spawnLocation.transform.position += new Vector3(Random.Range(-spawnLocationsJitter, spawnLocationsJitter), Random.Range(-spawnLocationsJitter, spawnLocationsJitter), 0);
+        }
 
-        StartCoroutine(spawnEnemy(swarmerInterval,swarmerPrefab)); //Use this to quickly spawn enemy
-        StartCoroutine(spawnEnemy(bigSwarmerInterval,bigSwarmerPrefab)); //Use this to spawn a second enemy, preferably a tougher one
+        for (int i = 0; i < mapPopulation; i++) {
+            StartCoroutine(spawnEnemy(swarmerInterval, swarmerPrefab));
+        }
+
+        //StartCoroutine(spawnEnemy(swarmerInterval,swarmerPrefab)); //Use this to quickly spawn enemy
+        //StartCoroutine(spawnEnemy(bigSwarmerInterval,bigSwarmerPrefab)); //Use this to spawn a second enemy, preferably a tougher one
     }
 
     // Update is called once per frame
     private void Update()
     {
+        /*return;
         int numOfEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
         if (numOfEnemies >= 10)
@@ -37,7 +48,7 @@ public class EnemySpawner : NetworkBehaviour
         {
             StartCoroutine(spawnEnemy(swarmerInterval, swarmerPrefab)); //Use this to quickly spawn enemy
             StartCoroutine(spawnEnemy(bigSwarmerInterval, bigSwarmerPrefab)); //Use this to spawn a second enemy, preferably a tougher one
-        }
+        }*/
     }
 
 
@@ -50,7 +61,7 @@ public class EnemySpawner : NetworkBehaviour
         GameObject newEnemy = Instantiate(enemy, spawnLocations[rInt].transform.position, spawnLocations[rInt].transform.rotation); //Enemy spawn
         enemyList.Add(newEnemy);
         NetworkServer.Spawn(newEnemy);
-        StartCoroutine(spawnEnemy(interval, enemy));
+        //StartCoroutine(spawnEnemy(interval, enemy));
     }
 
     void load(HashSet<GameObject> enemies)
