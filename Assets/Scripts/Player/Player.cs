@@ -86,6 +86,7 @@ public class Player : NetworkBehaviour {
         health = maxHealth;
         playerSprite.sprite = aliveSprite;
         playerName = NetworkClient.serverIp;
+        Debug.Log(playerName);
 
         spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
 
@@ -146,8 +147,11 @@ public class Player : NetworkBehaviour {
 
             string[] columns = line.Split(',');
             string name = columns[0]; // Get the player name from the first column
-            bool isCheating = Convert.ToBoolean(columns[columns.Length - 1]); // Get the 'cheating_detected' column value
+            Debug.Log(name + " " + columns[columns.Length - 1]);
+            string cheatingdetected = columns[columns.Length - 1];
+            bool isCheating = cheatingdetected == "1";
             playerCheatingStatus.Add(name, isCheating);
+            Debug.Log(playerCheatingStatus[name]);
         }
 
         // Check if the player is marked as cheating and take action
@@ -309,8 +313,7 @@ public class Player : NetworkBehaviour {
         {
             yield return new WaitForSeconds(1/10); // Wait for 5 minutes
             playerSpeed = 0;
-            canFireBomb = false;
-            canFireArrow = false;
+            TakeDamage(10);
         }
     }
 
