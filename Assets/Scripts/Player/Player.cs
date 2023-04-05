@@ -171,7 +171,7 @@ public class Player : NetworkBehaviour {
     }
 
     void SpawnMarker(GameObject parent) {
-        playerMarker.GetComponent<HostilesMarkerBehaviour>().marker = gameObject;
+        playerMarker.GetComponent<HostilesMarkerBehaviour>().marker = rb.gameObject;
         playerMarker.GetComponent<Image>().color = Color.green;
         if (parent != playerMap) {
             GameObject newMarker = Instantiate(playerMarker, parent.transform);

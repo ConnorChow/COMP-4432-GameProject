@@ -21,6 +21,9 @@ public class Enemy : NetworkBehaviour {
     [Header("Attack Data")]
     [SerializeField] ProtectedInt32 LevelOfDamage = 1;
 
+
+    [Header("Detection Data")]
+    [SerializeField] ProtectedFloat detectionRadius = 10;
     //List of players close to the enemy
     [SerializeField]public readonly HashSet<GameObject> playersDetected = new HashSet<GameObject>();
     //List of fellow enemies nearby
@@ -117,6 +120,17 @@ public class Enemy : NetworkBehaviour {
             }
             fireCheck = fireCheckInterval;
         }
+        //Detection-related behaviour
+        GameObject[] getAllPlayers = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in getAllPlayers) {
+            if (player != null && player.GetComponent<Player>() != null) {
+                if (Vector3.Distance(player.GetComponent<Player>().rb.transform.position, transform.position) <= detectionRadius) {
+                    playersDetected.Add(player);
+                } else {
+                    playersDetected.Remove(player);
+                }
+            }
+        }
     }
     [Header("AI States")]
     public ProtectedInt32 behaviourState = 0; //incurred to direct whether to remain idle or to Attack the nearest player
@@ -175,17 +189,6 @@ public class Enemy : NetworkBehaviour {
         playerScript = playerTarget.GetComponent<Player>();
         behaviourState = 1;
         attackState = confront;
-        AlertFriends();
-    }
-
-    void AlertFriends() {
-        foreach (GameObject friend in comradesNearby) {
-            if (friend != null) {
-                friend.GetComponent<Enemy>().TriggerAttackMode(gameObject);
-            } else {
-                comradesNearby.Remove(friend);
-            }
-        }
     }
     //******************************************* Attack Behaviour *******************************************
     void AttackBehaviour() {
@@ -426,7 +429,8 @@ public class Enemy : NetworkBehaviour {
     GameObject DetectNearestPlayerInRadius() {
         if (playersDetected.Count == 0) return null;
         GameObject nearestPlayer = playersDetected.ElementAt(0);
-        foreach (GameObject player in playersDetected) {
+        for ( int i = 0; i < playersDetected.Count; i++) {
+            GameObject player = playersDetected.ElementAt(i);
             if (!IsPlayerValid(player, player.GetComponentInParent<Player>())) continue;
             float newDistance = Vector3.Distance(transform.position, player.transform.position);
             float currentDistance = Vector3.Distance(transform.position, nearestPlayer.transform.position);
@@ -460,31 +464,6 @@ public class Enemy : NetworkBehaviour {
         if (health <= 0) {
             Destroy(gameObject);
             OnEnemyKilled?.Invoke(this);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision) {
-        Player player = collision.gameObject.GetComponentInParent<Player>();
-        if (player != null) {
-            playersDetected.Add(player.gameObject);
-        }
-        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-        if (enemy != null) {
-            comradesNearby.Add(enemy.gameObject);
-        }
-    }
-    private void OnTriggerExit2D(Collider2D collision) {
-        Player player = collision.gameObject.GetComponentInParent<Player>();
-        if (player != null) {
-            playersDetected.Remove(player.gameObject);
-            //if (player = playerScript) {
-            //    playerTarget = null;
-            //    playerScript = null;
-            //}
-        }
-        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-        if (enemy != null) {
-            comradesNearby.Remove(enemy.gameObject);
         }
     }
 }
