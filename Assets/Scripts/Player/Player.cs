@@ -144,12 +144,13 @@ public class Player : NetworkBehaviour {
         {
             Debug.Log("Player is cheating. Access to the game is denied.");
             // Prevent the player from playing the game
-
+            StartCoroutine(StopMovement());
         }
         else
         {
             Debug.Log("Player is not cheating. Access to the game is granted.");
             // Allow the player to play the game
+            StopCoroutine(StopMovement());
 
         }
     }
@@ -280,6 +281,15 @@ public class Player : NetworkBehaviour {
             Debug.Log("Data Saved");
             string data = GetPlayerDataAsCSV();
             SavePlayerDataToFile(data);
+        }
+    }
+
+    private IEnumerator StopMovement()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1/10); // Wait for 5 minutes
+            playerSpeed = 0;
         }
     }
 
