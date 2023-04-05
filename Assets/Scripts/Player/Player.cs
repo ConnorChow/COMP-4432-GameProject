@@ -565,7 +565,7 @@ public class Player : NetworkBehaviour {
         // If the file doesn't exist, create it and write the header
         if (!File.Exists(filePath))
         {
-            string header = "Player Name,Health,Max Health,Player Speed,Is Dead,Is Cheater\n";
+            string header = "Player Name,Health,Max Health,Player Speed,Is Dead,is_cheating\n";
             File.WriteAllText(filePath, header);
         }
 
