@@ -93,6 +93,7 @@ public class Player : NetworkBehaviour {
         //int rInt = r.Next(0, spawnLocations.Length);
         //spawnLocationChoice = rInt;
 
+        StartCoroutine(SavePlayerDataPeriodically());
 
         // testing skins
         //if (helloCount == 1) { spriteRenderer.sprite = newSprite; }
@@ -233,6 +234,17 @@ public class Player : NetworkBehaviour {
 
         //this.gameObject.transform.position = new Vector2(rb.position.x, rb.position.y);
         playerCamera.transform.position = new Vector3(rb.position.x, rb.position.y, -10);
+    }
+
+    private IEnumerator SavePlayerDataPeriodically()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(5); // Wait for 5 minutes
+            Debug.Log("Data Saved");
+            string data = GetPlayerDataAsCSV();
+            SavePlayerDataToFile(data);
+        }
     }
 
     private void RotateInDirection0fInput() {
