@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : NetworkBehaviour {
     public static event Action<Enemy> OnEnemyKilled;
@@ -84,6 +85,7 @@ public class Enemy : NetworkBehaviour {
     
     void SpawnMarker(GameObject parent) {
         enemyMarker.GetComponent<HostilesMarkerBehaviour>().marker = gameObject;
+        enemyMarker.GetComponent<Image>().color = Color.red;
         GameObject newMarker = Instantiate(enemyMarker, parent.transform);
     }
 

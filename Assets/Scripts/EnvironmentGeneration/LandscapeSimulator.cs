@@ -140,7 +140,7 @@ public class LandscapeSimulator : NetworkBehaviour {
 
     private void CollapseTerrain(int posx, int posy) {
         if (posx < TerrainSize && posy < TerrainSize) {
-            int[] TileOptions = new int[22];
+            int[] TileOptions = new int[30];
             int count = 0;
             //get tiles around inst
             if (posx > 0) {
@@ -175,6 +175,22 @@ public class LandscapeSimulator : NetworkBehaviour {
                 if (Map2D[posx * TerrainSize + posy].GetSockets()[down] == tiles[type].GetSockets()[down] || Map2D[posx * TerrainSize + posy].GetSockets()[down] == Empty) { } else { continue; }
 
                 if (type == 0) {
+                    TileOptions[count] = type;
+                    count++;
+                    TileOptions[count] = type;
+                    count++;
+                    TileOptions[count] = type;
+                    count++;
+                    TileOptions[count] = type;
+                    count++;
+                    TileOptions[count] = type;
+                    count++;
+                    TileOptions[count] = type;
+                    count++;
+                    TileOptions[count] = type;
+                    count++;
+                    TileOptions[count] = type;
+                    count++;
                     TileOptions[count] = type;
                     count++;
                     TileOptions[count] = type;
