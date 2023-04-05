@@ -5563,7 +5563,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &389881950
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10509,7 +10509,7 @@ GameObject:
   m_Layer: 0
   m_Name: EnemySpawn (2)
   m_TagString: EnemySpawn
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -10663,7 +10663,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &746866025
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16220,7 +16220,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 50
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -20380,7 +20380,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 769774772}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.25, y: 5.54, z: 1}
   m_LocalScale: {x: 1.0625, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20513,7 +20513,7 @@ GameObject:
   m_Layer: 0
   m_Name: EnemySpawn
   m_TagString: EnemySpawn
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -20894,25 +20894,22 @@ MonoBehaviour:
     longitude: -89.2812
     timezone: America/Toronto
     currently:
-      time: 0
-      summary: 
-      icon: 
-      nearestStormDistance: 0
-      nearestStormBearing: 0
-      precipIntensity: 0
-      precipProbability: 0
+      generationtime_ms: 0
+      utc_offset_seconds: 0
+      timezone: 
+      timezone_abbreviation: 
+      elevation: 0
+      current_weather: 
       temperature: 0
-      apparentTemperature: 0
-      dewPoint: 0
-      humidity: 0
-      pressure: 0
-      windSpeed: 0
-      windGust: 0
-      windBearing: 0
-      cloudCover: 0
-      uvIndex: 0
-      visibility: 0
-      ozone: 0
+      windspeed: 0
+      winddirection: 0
+      weathercode: 0
+      time: 0
+      hourly_units: 
+      temperature_2m: 
+      relativehumidity_2m: 
+      windspeed_10m: 
+      hourly: 
     offset: 0
   API_key: at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K
   currentWeatherText: {fileID: 821482079}
@@ -21117,7 +21114,7 @@ GameObject:
   m_Layer: 0
   m_Name: EnemySpawn (3)
   m_TagString: EnemySpawn
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -21161,7 +21158,7 @@ GameObject:
   m_Layer: 0
   m_Name: EnemySpawn (1)
   m_TagString: EnemySpawn
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1

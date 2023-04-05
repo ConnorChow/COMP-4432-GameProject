@@ -19,7 +19,6 @@ public class EnemySpawner : NetworkBehaviour
     void Start()
     {
         spawnLocations = GameObject.FindGameObjectsWithTag("EnemySpawn");
-        Debug.Log(spawnLocations);
 
         StartCoroutine(spawnEnemy(swarmerInterval,swarmerPrefab)); //Use this to quickly spawn enemy
         StartCoroutine(spawnEnemy(bigSwarmerInterval,bigSwarmerPrefab)); //Use this to spawn a second enemy, preferably a tougher one
