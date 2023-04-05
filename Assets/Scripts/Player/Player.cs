@@ -83,6 +83,7 @@ public class Player : NetworkBehaviour {
     void Start() {
         health = maxHealth;
         playerSprite.sprite = aliveSprite;
+        playerName = NetworkClient.serverIp;
 
         spawnLocations = GameObject.FindGameObjectsWithTag("Spawn");
 
@@ -324,8 +325,6 @@ public class Player : NetworkBehaviour {
 
         RequestToCry();
 
-        healthSlider.value = (float)health / (float)maxHealth;
-
         if (health <= 0) {
             Die();
         }
@@ -424,6 +423,7 @@ public class Player : NetworkBehaviour {
 
             if (deadCount == players.Length) {
                 // Show game over screen
+                SceneManager.LoadScene("GameOver");
             }
         }
     }
@@ -484,6 +484,7 @@ public class Player : NetworkBehaviour {
 
     public IEnumerator revive(Player player)
     {
+        if (!isDead) { yield return 0; }
         reviveText.SetActive(false);
         reviveTimer.SetActive(true);
         while (player.health < 10)
@@ -630,12 +631,6 @@ public class Player : NetworkBehaviour {
         // Append the player data to the file
         File.AppendAllText(filePath, data + "\n");
     }
-
-
-
-
-
-
 
 
     // Extra Code

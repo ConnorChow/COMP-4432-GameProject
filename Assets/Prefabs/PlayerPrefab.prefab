@@ -3568,6 +3568,7 @@ MonoBehaviour:
   syncMode: 1
   syncInterval: 0.1
   helloCount: 0
+  playerDataPath: Assets/Resources/updated_player_data.csv
   health:
     fakeValue: 0
   playerName:
@@ -3587,7 +3588,7 @@ MonoBehaviour:
   playerHUD: {fileID: 7924528760338810948}
   reviveText: {fileID: 4373595697076894194}
   reviveTimer: {fileID: 2157817897765535142}
-  deathOverlay: {fileID: 0}
+  deathOverlay: {fileID: 522125154182389581}
   playerMap: {fileID: 6278003308594426527}
   pauseMenu: {fileID: 8119435013753998623}
   resumeButton: {fileID: 3688565344351000050}
