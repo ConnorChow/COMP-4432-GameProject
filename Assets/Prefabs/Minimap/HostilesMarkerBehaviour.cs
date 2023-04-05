@@ -16,7 +16,6 @@ public class HostilesMarkerBehaviour : MonoBehaviour {
     RectTransform rtrans;
     // Update is called once per frame
     void Update() {
-        //if (!isLocalPlayer) return;
         if (marker != null) {
             float posx = mapDimensions * (marker.transform.position.x / terrainSize + 0.5f);
             float posy = mapDimensions * (marker.transform.position.y / terrainSize - 0.5f);

@@ -429,7 +429,8 @@ public class Enemy : NetworkBehaviour {
     GameObject DetectNearestPlayerInRadius() {
         if (playersDetected.Count == 0) return null;
         GameObject nearestPlayer = playersDetected.ElementAt(0);
-        foreach (GameObject player in playersDetected) {
+        for ( int i = 0; i < playersDetected.Count; i++) {
+            GameObject player = playersDetected.ElementAt(i);
             if (!IsPlayerValid(player, player.GetComponentInParent<Player>())) continue;
             float newDistance = Vector3.Distance(transform.position, player.transform.position);
             float currentDistance = Vector3.Distance(transform.position, nearestPlayer.transform.position);
@@ -465,21 +466,4 @@ public class Enemy : NetworkBehaviour {
             OnEnemyKilled?.Invoke(this);
         }
     }
-
-    /*private void OnTriggerEnter2D(Collider2D collision) {
-        Player player = collision.gameObject.GetComponentInParent<Player>();
-        if (player != null) {
-            playersDetected.Add(player.gameObject);
-        }
-    }
-    private void OnTriggerExit2D(Collider2D collision) {
-        Player player = collision.gameObject.GetComponentInParent<Player>();
-        if (player != null) {
-            playersDetected.Remove(player.gameObject);
-            //if (player = playerScript) {
-            //    playerTarget = null;
-            //    playerScript = null;
-            //}
-        }
-    }*/
 }

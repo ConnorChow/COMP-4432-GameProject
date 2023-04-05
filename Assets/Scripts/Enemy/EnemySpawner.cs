@@ -22,12 +22,13 @@ public class EnemySpawner : NetworkBehaviour
     void Start()
     {
         spawnLocations = GameObject.FindGameObjectsWithTag("EnemySpawn");
-        foreach (GameObject spawnLocation in spawnLocations) {
-            spawnLocation.transform.position += new Vector3(Random.Range(-spawnLocationsJitter, spawnLocationsJitter), Random.Range(-spawnLocationsJitter, spawnLocationsJitter), 0);
-        }
-
-        for (int i = 0; i < mapPopulation; i++) {
-            StartCoroutine(spawnEnemy(swarmerInterval, swarmerPrefab));
+        if (isServer) {
+            foreach (GameObject spawnLocation in spawnLocations) {
+                spawnLocation.transform.position += new Vector3(Random.Range(-spawnLocationsJitter, spawnLocationsJitter), Random.Range(-spawnLocationsJitter, spawnLocationsJitter), 0);
+            }
+            for (int i = 0; i < mapPopulation; i++) {
+                StartCoroutine(spawnEnemy(swarmerInterval, swarmerPrefab));
+            }
         }
 
         //StartCoroutine(spawnEnemy(swarmerInterval,swarmerPrefab)); //Use this to quickly spawn enemy
