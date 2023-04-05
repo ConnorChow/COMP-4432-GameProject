@@ -53,6 +53,8 @@ public class Player : NetworkBehaviour {
     [SerializeField] private GameObject deathOverlay;
 
     public GameObject playerMap;
+    [SerializeField] GameObject playerMarker;
+
     [SerializeField] private GameObject pauseMenu;
     //Pause Menu Buttons for resuming the game and quitting the game
     [SerializeField] Button resumeButton;
@@ -91,6 +93,14 @@ public class Player : NetworkBehaviour {
         foreach (var item in spawnLocations)
         {
             NetworkManager.startPositions.Add(item.transform);
+        }
+
+        GameObject[] findPlayers = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject p in findPlayers) {
+            GameObject map = p.GetComponent<Player>().playerMap;
+            if (map != null) {
+                SpawnMarker(map);
+            }
         }
 
         //System.Random r = new System.Random();
@@ -157,6 +167,14 @@ public class Player : NetworkBehaviour {
             // Allow the player to play the game
             StopCoroutine(StopMovement());
 
+        }
+    }
+
+    void SpawnMarker(GameObject parent) {
+        playerMarker.GetComponent<HostilesMarkerBehaviour>().marker = gameObject;
+        playerMarker.GetComponent<Image>().color = Color.green;
+        if (parent != playerMap) {
+            GameObject newMarker = Instantiate(playerMarker, parent.transform);
         }
     }
 
