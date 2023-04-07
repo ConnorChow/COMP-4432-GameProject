@@ -493,7 +493,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 991131783}
   m_Direction: 2
   m_Value: 0.99999976
-  m_Size: 0.5882353
+  m_Size: 0.58823526
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1833,7 +1833,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 794128134}
-  - component: {fileID: 794128133}
+  - component: {fileID: 794128136}
   - component: {fileID: 794128135}
   m_Layer: 0
   m_Name: WeatherManager
@@ -1842,44 +1842,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &794128133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794128132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 361a0725613ea4c64a282c5d92f96dca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minutesBetweenUpdate: 0.03
-  Info:
-    latitude: 48.3702
-    longitude: -89.2812
-    timezone: -04:00
-    currently:
-      generationtime_ms: 0
-      utc_offset_seconds: 0
-      timezone: 
-      timezone_abbreviation: 
-      elevation: 0
-      current_weather: 
-      temperature: 0
-      windspeed: 0
-      winddirection: 0
-      weathercode: 0
-      time: 0
-      hourly_units: 
-      temperature_2m: 
-      relativehumidity_2m: 
-      windspeed_10m: 
-      hourly: 
-    offset: 0
-  API_key: at_epWvkge9QQ6gRvowZ2cVZwhkd5u6K
-  currentWeatherText: {fileID: 0}
-  getLocation: {fileID: 0}
 --- !u!4 &794128134
 Transform:
   m_ObjectHideFlags: 0
@@ -1904,9 +1866,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 794128132}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ea26102c096f42678b4678296a908d2, type: 3}
+  m_Script: {fileID: 11500000, guid: ff303089d3e224bf7af1dd633789b254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myLoction: {fileID: 0}
+--- !u!114 &794128136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 794128132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20181381c8fbb4d78b21e61c8701f0e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  location:
+    ipAddress: 
+    latitude: 0
+    longitude: 0
+    countryName: 
+    countryCode: 
+    timeZone: 
+    zipCode: 
+    cityName: 
+    regionName: 
 --- !u!4 &798599046 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6861488911404734218, guid: 2c7bfbf6316154aed9bbfc6206043baa, type: 3}
@@ -4651,7 +4636,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 3.2395833
+  orthographic size: 6.015625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4761,24 +4746,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20181381c8fbb4d78b21e61c8701f0e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Info:
-    ip: 
-    location: 
-    country: 
-    region: 
-    city: 
-    lat: 0
-    lng: 0
-    postalCode: 
-    timezone: 
-    geonameId: 0
-    asType: 
-    asn: 0
-    name: 
-    route: 
-    domain: 
-    type: 
-    isp: 
-  latitude: 0
-  longitude: 0
-  weatherData: {fileID: 0}
+  location:
+    ipAddress: 
+    latitude: 0
+    longitude: 0
+    countryName: 
+    countryCode: 
+    timeZone: 
+    zipCode: 
+    cityName: 
+    regionName: 
