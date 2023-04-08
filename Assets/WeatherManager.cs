@@ -17,6 +17,7 @@ public class WeatherManager : MonoBehaviour
         instance = this;
         StartCoroutine(GetWeatherInfo());
         myLocation = GetComponent<GetLocation>();
+        DontDestroyOnLoad(gameObject);
     }
 
     private IEnumerator GetWeatherInfo()

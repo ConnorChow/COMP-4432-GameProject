@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class StateManager : MonoBehaviour {
 
@@ -16,6 +17,8 @@ public class StateManager : MonoBehaviour {
 	//public GameObject sunnyObject;
 
 	public WeatherItem itemPrefab;
+	public Text cityText;
+	public Text weatherText;
 
 	public List<WeatherItem> weatherItems = new List<WeatherItem>();
 
@@ -32,8 +35,10 @@ public class StateManager : MonoBehaviour {
 				item.transform.SetParent(transform);
 			}
 		}
-	
+
+		cityText.text = WeatherManager.instance.myLocation.location.cityName;
 		currentWeather = WeatherManager.instance.Info.weather[0].main.ToLower();
+		weatherText.text = currentWeather;
 		UpdateWeather();
 	}
 

@@ -1833,8 +1833,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 794128134}
-  - component: {fileID: 794128136}
   - component: {fileID: 794128135}
+  - component: {fileID: 794128137}
   m_Layer: 0
   m_Name: WeatherManager
   m_TagString: Untagged
@@ -1866,19 +1866,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 794128132}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff303089d3e224bf7af1dd633789b254, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myLoction: {fileID: 0}
---- !u!114 &794128136
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794128132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 20181381c8fbb4d78b21e61c8701f0e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -1892,6 +1879,19 @@ MonoBehaviour:
     zipCode: 
     cityName: 
     regionName: 
+--- !u!114 &794128137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 794128132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff303089d3e224bf7af1dd633789b254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myLocation: {fileID: 0}
 --- !u!4 &798599046 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6861488911404734218, guid: 2c7bfbf6316154aed9bbfc6206043baa, type: 3}
@@ -4585,7 +4585,6 @@ GameObject:
   - component: {fileID: 2115038565}
   - component: {fileID: 2115038568}
   - component: {fileID: 2115038569}
-  - component: {fileID: 2115038570}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4636,7 +4635,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6.015625
+  orthographic size: 5.265625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4734,25 +4733,3 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
---- !u!114 &2115038570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2115038564}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20181381c8fbb4d78b21e61c8701f0e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  location:
-    ipAddress: 
-    latitude: 0
-    longitude: 0
-    countryName: 
-    countryCode: 
-    timeZone: 
-    zipCode: 
-    cityName: 
-    regionName: 
