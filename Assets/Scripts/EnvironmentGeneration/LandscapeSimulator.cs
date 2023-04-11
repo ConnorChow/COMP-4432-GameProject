@@ -17,6 +17,9 @@ using System.IO;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 using System.Linq;
+public struct Navigation {
+    public ProtectedInt32 Traversability;
+}
 
 public struct WFCTile {
     Tile tile;
@@ -36,11 +39,6 @@ public struct WFCTile {
         this.sockets[direction] = SocketType;
     }
 }
-
-public struct Navigation {
-    public ProtectedInt32 Traversability;
-}
-
 public struct BurnComponent {
     public ProtectedInt32 BurnState;
     public ProtectedInt32 TimeToLive;
@@ -235,30 +233,27 @@ public class LandscapeSimulator : NetworkBehaviour {
     }
 
     public void BurnCell(int CurrentIndex, int ttl) {
-        if (BurningEntities < TerrainSize) {
+        float healthSaved = BurnData[CurrentIndex].Health;
 
-            float healthSaved = BurnData[CurrentIndex].Health;
+        if (BurnData[CurrentIndex].BurnState == Normal) {
+            healthSaved = BurningHealth;
+        } else if (BurnData[CurrentIndex].BurnState == Burned) {
+            return;
+        } else if (!loadInFire) return;
 
-            if (BurnData[CurrentIndex].BurnState == Normal) {
-                healthSaved = BurningHealth;
-            } else if (BurnData[CurrentIndex].BurnState == Burned) {
-                return;
-            } else if (!loadInFire) return;
+        BurnData[CurrentIndex] = new BurnComponent {
+            BurnState = Burning,
+            Health = healthSaved,
+            TimeToLive = ttl
+        };
+        Vector3Int spawnLoc = new Vector3Int(GetX(CurrentIndex) - (TerrainSize / 2), GetY(CurrentIndex) - (TerrainSize / 2), 0);
 
-            BurnData[CurrentIndex] = new BurnComponent {
-                BurnState = Burning,
-                Health = healthSaved,
-                TimeToLive = ttl
-            };
-            Vector3Int spawnLoc = new Vector3Int(GetX(CurrentIndex) - (TerrainSize / 2), GetY(CurrentIndex) - (TerrainSize / 2), 0);
+        FireGrid.SetTile(spawnLoc, FireSprite);
+        CreateFireSound(spawnLoc, healthSaved);
 
-            FireGrid.SetTile(spawnLoc, FireSprite);
-            CreateFireSound(spawnLoc, healthSaved);
-
-            BurnQueueAdd(CurrentIndex);
-            BurnQueue[BurningEntities] = CurrentIndex;
-            BurningEntities += 1;
-        }
+        BurnQueueAdd(CurrentIndex);
+        BurnQueue[BurningEntities] = CurrentIndex;
+        BurningEntities += 1;
     }
     //Allows the Client or server to send a request to Burn a specific cell
     [Command(requiresAuthority = false)]
